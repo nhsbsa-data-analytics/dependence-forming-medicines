@@ -65,7 +65,7 @@ nhsbsaUtils::check_and_install_packages(req_pkgs)
 # set up logging
 lf <-
   logr::log_open(paste0(
-    "Y:/Official Stats/DFM/log/pfd_log",
+    "Y:/Official Stats/DFM/log/dfm_log",
     format(Sys.time(), "%d%m%y%H%M%S"),
     ".log"
   ))
