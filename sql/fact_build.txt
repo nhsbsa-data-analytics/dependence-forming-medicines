@@ -328,7 +328,7 @@ lsoa AS  (
   FROM
     lsoa
   LEFT OUTER JOIN
-    grali.ons_nspl_may_23  imd
+    mawil.imd_2019  imd
     ON  lsoa.lsoa_code  = imd.lsoa11
 )
 
@@ -354,31 +354,9 @@ SELECT
     ,calc_age
     ,gender_descr
     ,imd_decile
-    ,sum(item_count)        AS  item_count
-    ,sum(item_pay_dr_nic)   AS  item_pay_dr_nic
-    ,sum(item_calc_pay_qty) AS  item_calc_pay_qty
+    ,item_count
+    ,item_pay_dr_nic
+    ,item_calc_pay_qty
 FROM
   imd
-WHERE 1 = 1
-GROUP BY
-    financial_year
-    ,year_month
-    ,pds_dob
-    ,identified_patient_id
-    ,patient_identified
-    ,region_name
-    ,region_code
-    ,icb_name
-    ,icb_code
-    ,category
-    ,section_descr
-    ,bnf_section
-    ,paragraph_descr
-    ,bnf_paragraph
-    ,chemical_substance_bnf_descr
-    ,bnf_chemical_substance
-    ,pds_gender
-    ,calc_age
-    ,gender_descr
-    ,imd_decile
     ;

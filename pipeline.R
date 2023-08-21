@@ -88,9 +88,9 @@ con <- nhsbsaR::con_nhsbsa(dsn = "FBS_8192k",
 
 # 3. Extract data required ------------------------------------------------
 
+age_category_data <- age_category_extract(con = con)
 
-
-
+age_data <- age_extract(con = con)
 
 # 7. create markdowns -------
 
