@@ -92,6 +92,8 @@ age_category_data <- age_category_extract(con = con)
 
 age_data <- age_extract(con = con)
 
+age_gender_cat_data <- age_gender_cat_extract(con = con)
+
 # 7. create markdowns -------
 
 # rmarkdown::render("pfd-narrative.Rmd",
