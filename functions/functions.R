@@ -1,20 +1,17 @@
-create_fact_category <- function(
-    con,
-    from = 201504L,
-    to = 202203L) {
+create_fact_category <- function(con,
+                                 from = 201504L,
+                                 to = 202203L) {
   # Build tdim ---------------------------------------------------------
   tdim <- dplyr::tbl(con,
-                     from = dbplyr::in_schema("DIM", "YEAR_MONTH_DIM")) %>%
-    select(FINANCIAL_YEAR, YEAR_MONTH) %>%
-    filter(
-      YEAR_MONTH >= from,
-      YEAR_MONTH <= to
-    )
+                     from = dbplyr::in_schema("DIM", "YEAR_MONTH_DIM")) |>
+    select(FINANCIAL_YEAR, YEAR_MONTH) |>
+    filter(YEAR_MONTH >= from,
+           YEAR_MONTH <= to)
   
   # Build porg ---------------------------------------------------------
   porg <- dplyr::tbl(con,
-                     from = dbplyr::in_schema("DIM", "CUR_EP_LEVEL_5_FLAT_DIM")) %>%
-    filter(CUR_CTRY_OU == 1) %>%
+                     from = dbplyr::in_schema("DIM", "CUR_EP_LEVEL_5_FLAT_DIM")) |>
+    filter(CUR_CTRY_OU == 1) |>
     mutate(
       ICB_NAME = case_when(
         CUR_AREA_LTST_CLSD == "Y" ~ "UNKNOWN ICB",
@@ -52,162 +49,178 @@ create_fact_category <- function(
         ) ~ "-",
         TRUE ~ CUR_REGION_LTST_ALT_CDE
       )
-    ) %>%
-    select(LVL_5_OUPDT, LVL_5_OU, ICB_NAME, ICB_CODE, REGION_NAME, REGION_CODE)
+    ) |>
+    select(LVL_5_OUPDT,
+           LVL_5_OU,
+           ICB_NAME,
+           ICB_CODE,
+           REGION_NAME,
+           REGION_CODE)
   
   # Build drug ---------------------------------------------------------
   drug <- dplyr::tbl(con,
-                     from = dbplyr::in_schema("DIM", "CDR_EP_DRUG_BNF_DIM")) %>%
-    filter(BNF_CHEMICAL_SUBSTANCE %in% c("0408010G0",
-                                         "0408010AE",
-                                         "0401010T0",
-                                         "0401010L0",
-                                         "0401010N0",
-                                         "0401020E0",
-                                         "0401020K0",
-                                         "0401020P0",
-                                         "0401020T0",
-                                         "0401010R0",
-                                         "0401010P0",
-                                         "0401020A0",
-                                         "040702020",
-                                         "040702040",
-                                         "040702050",
-                                         "0407010F0",
-                                         "0407010N0",
-                                         "0407020A0",
-                                         "0407020AB",
-                                         "0407020AD",
-                                         "0407020AF",
-                                         "0407020AG",
-                                         "0407020AH",
-                                         "0407020B0",
-                                         "0407020C0",
-                                         "0407020D0",
-                                         "0407020G0",
-                                         "0407020H0",
-                                         "0407020K0",
-                                         "0407020L0",
-                                         "0407020M0",
-                                         "0407020P0",
-                                         "0407020Q0",
-                                         "0407020T0",
-                                         "0407020U0",
-                                         "0407020V0",
-                                         "0407020Z0",
-                                         "0401010Z0",
-                                         "0401010Y0",
-                                         "0401010W0",
-                                         "0403020Q0",
-                                         "0403020M0",
-                                         "0403020K0",
-                                         "0403040X0",
-                                         "0403010L0",
-                                         "0403010S0",
-                                         "0403040S0",
-                                         "0403010Y0",
-                                         "0403040Y0",
-                                         "0403010V0",
-                                         "0403010X0",
-                                         "0403030L0",
-                                         "0403030E0",
-                                         "0403030D0",
-                                         "0403040W0",
-                                         "0403010B0",
-                                         "0403030Q0",
-                                         "0403020H0",
-                                         "0403010J0",
-                                         "0403010F0",
-                                         "0403040R0",
-                                         "0403010T0",
-                                         "0403010C0",
-                                         "0403040T0",
-                                         "0403030P0",
-                                         "0403010N0",
-                                         "0403040AB",
-                                         "0403040F0",
-                                         "0403030Z0",
-                                         "0403040U0",
-                                         "0403010R0",
-                                         "0403030X0",
-                                         "0403040Z0"
-                                         
-    )) %>%
+                     from = dbplyr::in_schema("DIM", "CDR_EP_DRUG_BNF_DIM")) |>
+    filter(
+      BNF_CHEMICAL_SUBSTANCE %in% c(
+        "0408010G0",
+        "0408010AE",
+        "0401010T0",
+        "0401010L0",
+        "0401010N0",
+        "0401020E0",
+        "0401020K0",
+        "0401020P0",
+        "0401020T0",
+        "0401010R0",
+        "0401010P0",
+        "0401020A0",
+        "040702020",
+        "040702040",
+        "040702050",
+        "0407010F0",
+        "0407010N0",
+        "0407020A0",
+        "0407020AB",
+        "0407020AD",
+        "0407020AF",
+        "0407020AG",
+        "0407020AH",
+        "0407020B0",
+        "0407020C0",
+        "0407020D0",
+        "0407020G0",
+        "0407020H0",
+        "0407020K0",
+        "0407020L0",
+        "0407020M0",
+        "0407020P0",
+        "0407020Q0",
+        "0407020T0",
+        "0407020U0",
+        "0407020V0",
+        "0407020Z0",
+        "0401010Z0",
+        "0401010Y0",
+        "0401010W0",
+        "0403020Q0",
+        "0403020M0",
+        "0403020K0",
+        "0403040X0",
+        "0403010L0",
+        "0403010S0",
+        "0403040S0",
+        "0403010Y0",
+        "0403040Y0",
+        "0403010V0",
+        "0403010X0",
+        "0403030L0",
+        "0403030E0",
+        "0403030D0",
+        "0403040W0",
+        "0403010B0",
+        "0403030Q0",
+        "0403020H0",
+        "0403010J0",
+        "0403010F0",
+        "0403040R0",
+        "0403010T0",
+        "0403010C0",
+        "0403040T0",
+        "0403030P0",
+        "0403010N0",
+        "0403040AB",
+        "0403040F0",
+        "0403030Z0",
+        "0403040U0",
+        "0403010R0",
+        "0403030X0",
+        "0403040Z0"
+        
+      )
+    ) |>
     mutate(
-      CATEGORY=case_when(BNF_CHEMICAL_SUBSTANCE %in% c("0408010G0",
-                                                       "0408010AE")  ~ "GABAPENTINOIDS",
-                         BNF_CHEMICAL_SUBSTANCE %in% c("0401010T0",
-                                                       "0401010L0",
-                                                       "0401010N0",
-                                                       "0401020E0",
-                                                       "0401020K0",
-                                                       "0401020P0",
-                                                       "0401020T0",
-                                                       "0401010R0",
-                                                       "0401010P0",
-                                                       "0401020A0") ~ "BENZODIAZEPINES",
-                         BNF_CHEMICAL_SUBSTANCE %in% c("040702020",
-                                                       "040702040",
-                                                       "040702050",
-                                                       "0407010F0",
-                                                       "0407010N0",
-                                                       "0407020A0",
-                                                       "0407020AB",
-                                                       "0407020AD",
-                                                       "0407020AF",
-                                                       "0407020AG",
-                                                       "0407020AH",
-                                                       "0407020B0",
-                                                       "0407020C0",
-                                                       "0407020D0",
-                                                       "0407020G0",
-                                                       "0407020H0",
-                                                       "0407020K0",
-                                                       "0407020L0",
-                                                       "0407020M0",
-                                                       "0407020P0",
-                                                       "0407020Q0",
-                                                       "0407020T0",
-                                                       "0407020U0",
-                                                       "0407020V0",
-                                                       "0407020Z0") ~ "OPIOIDS",
-                         BNF_CHEMICAL_SUBSTANCE %in% c("0401010Z0",
-                                                       "0401010Y0",
-                                                       "0401010W0") ~ "Z-DRUGS",
-                         BNF_CHEMICAL_SUBSTANCE %in% c("0403020Q0",
-                                                       "0403020M0",
-                                                       "0403020K0",
-                                                       "0403040X0",
-                                                       "0403010L0",
-                                                       "0403010S0",
-                                                       "0403040S0",
-                                                       "0403010Y0",
-                                                       "0403040Y0",
-                                                       "0403010V0",
-                                                       "0403010X0",
-                                                       "0403030L0",
-                                                       "0403030E0",
-                                                       "0403030D0",
-                                                       "0403040W0",
-                                                       "0403010B0",
-                                                       "0403030Q0",
-                                                       "0403020H0",
-                                                       "0403010J0",
-                                                       "0403010F0",
-                                                       "0403040R0",
-                                                       "0403010T0",
-                                                       "0403010C0",
-                                                       "0403040T0",
-                                                       "0403030P0",
-                                                       "0403010N0",
-                                                       "0403040AB",
-                                                       "0403040F0",
-                                                       "0403030Z0",
-                                                       "0403040U0",
-                                                       "0403010R0",
-                                                       "0403030X0",
-                                                       "0403040Z0") ~ "ANTIDEPRESSANTS"
-      )) %>%
+      CATEGORY = case_when(
+        BNF_CHEMICAL_SUBSTANCE %in% c("0408010G0",
+                                      "0408010AE")  ~ "GABAPENTINOIDS",
+        BNF_CHEMICAL_SUBSTANCE %in% c(
+          "0401010T0",
+          "0401010L0",
+          "0401010N0",
+          "0401020E0",
+          "0401020K0",
+          "0401020P0",
+          "0401020T0",
+          "0401010R0",
+          "0401010P0",
+          "0401020A0"
+        ) ~ "BENZODIAZEPINES",
+        BNF_CHEMICAL_SUBSTANCE %in% c(
+          "040702020",
+          "040702040",
+          "040702050",
+          "0407010F0",
+          "0407010N0",
+          "0407020A0",
+          "0407020AB",
+          "0407020AD",
+          "0407020AF",
+          "0407020AG",
+          "0407020AH",
+          "0407020B0",
+          "0407020C0",
+          "0407020D0",
+          "0407020G0",
+          "0407020H0",
+          "0407020K0",
+          "0407020L0",
+          "0407020M0",
+          "0407020P0",
+          "0407020Q0",
+          "0407020T0",
+          "0407020U0",
+          "0407020V0",
+          "0407020Z0"
+        ) ~ "OPIOIDS",
+        BNF_CHEMICAL_SUBSTANCE %in% c("0401010Z0",
+                                      "0401010Y0",
+                                      "0401010W0") ~ "Z-DRUGS",
+        BNF_CHEMICAL_SUBSTANCE %in% c(
+          "0403020Q0",
+          "0403020M0",
+          "0403020K0",
+          "0403040X0",
+          "0403010L0",
+          "0403010S0",
+          "0403040S0",
+          "0403010Y0",
+          "0403040Y0",
+          "0403010V0",
+          "0403010X0",
+          "0403030L0",
+          "0403030E0",
+          "0403030D0",
+          "0403040W0",
+          "0403010B0",
+          "0403030Q0",
+          "0403020H0",
+          "0403010J0",
+          "0403010F0",
+          "0403040R0",
+          "0403010T0",
+          "0403010C0",
+          "0403040T0",
+          "0403030P0",
+          "0403010N0",
+          "0403040AB",
+          "0403040F0",
+          "0403030Z0",
+          "0403040U0",
+          "0403010R0",
+          "0403030X0",
+          "0403040Z0"
+        ) ~ "ANTIDEPRESSANTS"
+      )
+    ) |>
     select(
       YEAR_MONTH,
       RECORD_ID,
@@ -227,22 +240,22 @@ create_fact_category <- function(
   
   # Build age ---------------------------------------------------------
   age <- dplyr::tbl(con,
-                    from = dbplyr::in_schema("DIM", "AGE_DIM")) %>%
+                    from = dbplyr::in_schema("DIM", "AGE_DIM")) |>
     select(AGE,
            DALL_5YR_BAND)
   
   # Build imd ---------------------------------------------------------
   imd <- dplyr::tbl(con,
-                    from = dbplyr::in_schema("KIGRA", "ONS_NSPL_MAY_2022")) %>%
+                    from = dbplyr::in_schema("KIGRA", "ONS_NSPL_MAY_2022")) |>
     select(LSOA11,
            IMD_DECILE,
-           IMD_RANK) %>%
+           IMD_RANK) |>
     #using distinct to remove duplicate rows
     distinct()
   
   # Build fact ---------------------------------------------------------
   fact <- dplyr::tbl(con,
-                     from = dbplyr::in_schema("AML", "PX_FORM_ITEM_ELEM_COMB_FACT_AV")) %>%
+                     from = dbplyr::in_schema("AML", "PX_FORM_ITEM_ELEM_COMB_FACT_AV")) |>
     #regular exclusions
     filter(
       PAY_DA_END == "N",
@@ -260,7 +273,7 @@ create_fact_category <- function(
       IGNORE_FLAG == "N",
       # excludes LDP dummy forms
       PRESC_TYPE_PRNT %NOT IN% c(8L, 54L)
-    ) %>%
+    ) |>
     select(
       YEAR_MONTH,
       PRESC_TYPE_PRNT,
@@ -274,7 +287,7 @@ create_fact_category <- function(
       ITEM_COUNT,
       ITEM_PAY_DR_NIC,
       EPS_PART_DATE
-    ) %>%
+    ) |>
     group_by(
       YEAR_MONTH,
       PRESC_TYPE_PRNT,
@@ -285,7 +298,7 @@ create_fact_category <- function(
       PATIENT_ID,
       PDS_GENDER,
       EPS_PART_DATE
-    ) %>%
+    ) |>
     summarise(
       TOTAL_QTY = sum(ITEM_CALC_PAY_QTY, na.rm = T),
       ITEM_COUNT = sum(ITEM_COUNT, na.rm = T),
@@ -293,37 +306,41 @@ create_fact_category <- function(
       .groups = "drop"
     )
   
-  query <- fact %>%
+  query <- fact |>
     inner_join(tdim,
-               by = c("YEAR_MONTH" = "YEAR_MONTH")) %>%
+               by = c("YEAR_MONTH" = "YEAR_MONTH")) |>
     inner_join(porg,
                by = c("PRESC_TYPE_PRNT" = "LVL_5_OUPDT",
-                      "PRESC_ID_PRNT" = "LVL_5_OU")) %>%
+                      "PRESC_ID_PRNT" = "LVL_5_OU")) |>
     inner_join(drug,
                by = c(
                  "CALC_PREC_DRUG_RECORD_ID" = "RECORD_ID",
                  "YEAR_MONTH" = "YEAR_MONTH"
-               )) %>%
+               )) |>
     #	calculate age of patient using PDS_DOB at 30th Sept of given year
-    mutate(CALC_AGE= sql("nvl(trunc((to_number(substr(financial_year,1,4)||'0930') - to_number(to_char(pds_dob,'YYYYMMDD')))/10000),-1)")) %>%
+    mutate(
+      CALC_AGE = sql(
+        "nvl(trunc((to_number(substr(financial_year,1,4)||'0930') - to_number(to_char(pds_dob,'YYYYMMDD')))/10000),-1)"
+      )
+    ) |>
     # create identified flag using pds
-    mutate(PATIENT_IDENTIFIED = sql("case when	pds_dob	is	null	and	pds_gender	=	0	then	'N'	else	'Y'	end")) %>%
+    mutate(PATIENT_IDENTIFIED = sql("case when	pds_dob	is	null	and	pds_gender	=	0	then	'N'	else	'Y'	end")) |>
     
     
     
     
     
     inner_join(age,
-               by = c("CALC_AGE" = "AGE")) %>%
+               by = c("CALC_AGE" = "AGE")) |>
     #pull forward last observation of PATIENT_LSOA_CODE to account for null data
     mutate(
       PATIENT_LSOA_CODE = sql(
         "last_value(PATIENT_LSOA_CODE ignore nulls) over (partition by PATIENT_ID order by YEAR_MONTH, EPS_PART_DATE, PATIENT_LSOA_CODE NULLS last rows between unbounded preceding and current row)"
       )
-    ) %>%
+    ) |>
     
     left_join(imd,
-              by = c("PATIENT_LSOA_CODE" = "LSOA11")) %>%
+              by = c("PATIENT_LSOA_CODE" = "LSOA11")) |>
     select(
       FINANCIAL_YEAR,
       REGION_NAME,
@@ -346,14 +363,14 @@ create_fact_category <- function(
       TOTAL_QTY,
       ITEM_COUNT,
       ITEM_PAY_DR_NIC
-    ) %>%
+    ) |>
     mutate(
       PDS_GENDER = case_when(PDS_GENDER == 1 ~ "M",
                              PDS_GENDER == 2 ~ "F",
                              TRUE ~ "U"),
       DALL_5YR_BAND = case_when(is.na(DALL_5YR_BAND) ~ "Unknown",
                                 TRUE ~ DALL_5YR_BAND)
-    ) %>%
+    ) |>
     group_by(
       FINANCIAL_YEAR,
       REGION_NAME,
@@ -373,7 +390,7 @@ create_fact_category <- function(
       IMD_RANK,
       PDS_GENDER,
       DALL_5YR_BAND
-    ) %>%
+    ) |>
     summarise(
       TOTAL_QTY = sum(TOTAL_QTY, na.rm = T),
       ITEM_COUNT = sum(ITEM_COUNT, na.rm = T),
@@ -382,17 +399,19 @@ create_fact_category <- function(
     )
   
   # drop time dimension if exists
-  exists <- con %>%
+  exists <- con |>
     DBI::dbExistsTable(name = "DFM_FACT_CAT_DIM")
   # Drop any existing table beforehand
   if (exists) {
-    con %>%
+    con |>
       DBI::dbRemoveTable(name = "DFM_FACT_CAT_DIM")
   }
   
   #build table
-  query %>%
-    compute("DFM_FACT_CAT_DIM", analyze = FALSE, temporary = FALSE)
+  query |>
+    compute("DFM_FACT_CAT_DIM",
+            analyze = FALSE,
+            temporary = FALSE)
   
 }
 
@@ -544,3 +563,57 @@ get_download_button <-
     return(dt)
   }
 #---------------
+age_category_extract <- function(
+    con,
+    schema = "GRPLA",
+    table = "DFM_FACT_CAT_DIM"
+) {
+
+fact <- dplyr::tbl(src = con,
+                   dbplyr::in_schema(schema, table)) |>
+  dplyr::mutate(PATIENT_COUNT = case_when(PATIENT_IDENTIFIED == "Y" ~ 1,
+                                          TRUE ~ 0)) |>
+  dplyr::filter(CATEGORY != "ANTIDEPRESSANTS") |>
+  dplyr::inner_join(dplyr::tbl(con,
+                               from = dbplyr::in_schema("DIM", "AGE_DIM")),
+                    by = c("CALC_AGE" = "AGE")) |>
+  dplyr::group_by(
+    FINANCIAL_YEAR,
+    CATEGORY,
+    DALL_5YR_BAND,
+    IDENTIFIED_PATIENT_ID,
+    PATIENT_IDENTIFIED,
+    PATIENT_COUNT
+  ) |>
+  dplyr::summarise(
+    ITEM_COUNT = sum(ITEM_COUNT, na.rm = T),
+    ITEM_PAY_DR_NIC = sum(ITEM_PAY_DR_NIC, na.rm = T)
+  )
+
+fact_age_cat <- fact |>
+  dplyr::mutate(AGE_BAND = dplyr::case_when(is.na(DALL_5YR_BAND) ~ "Unknown",
+                                            TRUE ~ DALL_5YR_BAND)) |>
+  dplyr::group_by(
+    `Financial Year` = FINANCIAL_YEAR,
+    `Drug Category` = stringr::str_to_title(CATEGORY),
+    `Age Band` = AGE_BAND,
+    `Identified Patient Flag` = PATIENT_IDENTIFIED
+  ) |>
+  dplyr::summarise(
+    `Total Identified Patients` = sum(PATIENT_COUNT, na.rm = T),
+    `Total Items` = sum(ITEM_COUNT, na.rm = T),
+    `Total Net Ingredient Cost (GBP)` = sum(ITEM_PAY_DR_NIC, na.rm = T) /
+      100,
+    .groups = "drop"
+  ) |>
+  dplyr::arrange(`Financial Year`,
+                 `Drug Category`,
+                 `Age Band`,
+                 desc(`Identified Patient Flag`)) |>
+  collect()
+
+return(fact_age_cat)
+
+}
+
+# extract functions -------------------------------------------------------
