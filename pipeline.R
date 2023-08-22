@@ -118,6 +118,9 @@ gender_data <- gender_extract(con = con) |>
 
 icb_category_data <- icb_category_extract(con = con) |>
   apply_sdc(rounding = F)
+
+icb_data <- icb_extract(con = con) |>
+  apply_sdc(rounding = F)
   
 
 # 7. create markdowns -------
