@@ -240,8 +240,8 @@ write_sheet(
   wb,
   "Patient_Identification",
   paste0(
-    "Prescribing for Diabetes - 2015/16 to ",
-    config$full_year,
+    "Dependency Forming Medicines - 2015/16 to ",
+    config$fy,
     " - Proportion of items for which an NHS number was recorded (%)"
   ),
   c(
@@ -268,41 +268,46 @@ format_data(wb,
 #suggest note 3. could be condensed to something like "Total costs and items may not match those in our Prescription Cost Analysis (PCA) publication, as they are based on a prescribing view while PCA uses a dispensing view instead."
 write_sheet(
   wb,
-  "National_Total",
+  "Table_1",
   paste0(
-    "Table 1: Prescribing for Diabetes - England 2015/16 to ",
-    config$full_year,
-    " total dispensed items and costs per financial year"
+    "Table 1: Dependency Forming Medicines - England 2015/16 to ",
+    config$fy,
+    " - Total dispensed items and costs per financial year"
   ),
   c(
     "1. Field definitions can be found on the 'Metadata' tab.",
     "2. The patient counts shown in these statistics should only be analysed at the level at which they are presented. Adding together any patient counts is likely to result in an overestimate of the number of patients.",
     "3. Total costs and items may not be reconciled back to Prescribing Cost Analysis (PCA) publication figures as these figures are based around a 'prescribing view' of the data. This is where we use the drug or device that was prescribed to a patient, rather than the drug that was reimbursed to the dispenser to classify a prescription item. PCA uses a dispensing view where the inverse is true."
   ),
-  pfd_national_overall,
+  national_data,
   14
 )
 
 #left align columns A to C
 format_data(wb,
-            "National_Total",
-            c("A", "B", "C"),
+            "Table_1",
+            c("A", "B"),
             "left",
             "")
 
 #right align columns D and E and round to whole numbers with thousand separator
 format_data(wb,
-            "National_Total",
-            c("D", "E"),
+            "Table_1",
+            c("C", "D"),
             "right",
             "#,##0")
 
 #right align column F and round to 2dp with thousand separator
 format_data(wb,
-            "National_Total",
-            c("F"),
+            "Table_1",
+            c("E"),
             "right",
             "#,##0.00")
+
+#save file into outputs folder
+openxlsx::saveWorkbook(wb,
+                       "outputs/dfm_2022_2023_costs_and_items_v001.xlsx",
+                       overwrite = TRUE)
 
 
 
