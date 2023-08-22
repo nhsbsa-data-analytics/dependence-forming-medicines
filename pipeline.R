@@ -103,6 +103,9 @@ age_gender_data <- age_gender_extract(con = con) |>
 ageband_data <- ageband_extract(con = con) |>
   apply_sdc(rounding = F)
 
+category_data <- category_extract(con = con) |>
+  apply_sdc(rounding = F)
+
 # 7. create markdowns -------
 
 # rmarkdown::render("pfd-narrative.Rmd",

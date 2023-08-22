@@ -424,7 +424,7 @@ apply_sdc <-
            rounding = TRUE,
            round_val = 5,
            mask = "") {
-    `%>%` <- magrittr::`%>%`
+    `|>` <- magrittr::`|>`
     
     rnd <- round_val
     
@@ -436,7 +436,7 @@ apply_sdc <-
         x
     }
     
-    data %>% dplyr::mutate(dplyr::across(
+    data |> dplyr::mutate(dplyr::across(
       where(is.numeric),
       .fns = ~ dplyr::case_when(
         .x >= level &
@@ -871,5 +871,61 @@ ageband_extract <- function(con,
     collect()
   
   return(fact_age)
+  
+}
+
+category_extract <- function(con,
+                             schema = "GRPLA",
+                             table = "DFM_FACT_CATEGORY_202308") {
+  fact <- dplyr::tbl(src = con,
+                     dbplyr::in_schema("GRPLA", "DFM_FACT_CATEGORY_202308")) |>
+    dplyr::mutate(
+      PATIENT_COUNT = case_when(
+        PATIENT_IDENTIFIED == "Y" ~ 1,
+        TRUE ~ 0
+      )
+    ) |>
+    dplyr::group_by(
+      FINANCIAL_YEAR,
+      IDENTIFIED_PATIENT_ID,
+      PATIENT_IDENTIFIED,
+      SECTION_DESCR,
+      BNF_SECTION,
+      CATEGORY,
+      PATIENT_COUNT
+    ) |>
+    dplyr::summarise(
+      ITEM_COUNT = sum(ITEM_COUNT, na.rm = T),
+      ITEM_PAY_DR_NIC = sum(ITEM_PAY_DR_NIC, na.rm = T),
+      .groups = "drop"
+    )
+  
+  fact_category <- fact |>
+    dplyr::group_by(
+      `Financial Year` = FINANCIAL_YEAR,
+      `BNF Section Name` = SECTION_DESCR,
+      `BNF Section Code` = BNF_SECTION,
+      `Drug Category` = stringr::str_to_title(CATEGORY),
+      `Identified Patient Flag` = PATIENT_IDENTIFIED
+    ) |>
+    dplyr::summarise(
+      `Total Identified Patients` = sum(PATIENT_COUNT, na.rm = T),
+      `Total Items` = sum(ITEM_COUNT, na.rm = T),
+      `Total Net Ingredient Cost (GBP)` = sum(ITEM_PAY_DR_NIC, na.rm = T)/100,
+      .groups = "drop"
+      ) |>
+    dplyr::arrange(
+      `Financial Year`,
+      `BNF Section Code`,
+      `Drug Category`,
+      desc(`Identified Patient Flag`)
+    ) |>
+    collect()
+  
+  #remove antidepressants from final table using not in function
+  fact_category <- fact_category |>
+    dplyr::filter(`Drug Category` %!in% c("Antidepressants"))
+  
+  return(fact_category)
   
 }
