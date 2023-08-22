@@ -110,7 +110,14 @@ coprescribing_data <- coprescribing_extract(con = con)
 
 coprescribing_matrix_data <- coprescribing_matrix_extract(con = con)
 
-gender_category_data <- gender_category_extract(con = con)
+gender_category_data <- gender_category_extract(con = con)|>
+  apply_sdc(rounding = F)
+
+gender_data <- gender_extract(con = con) |>
+  apply_sdc(rounding = F)
+
+icb_category_data <- icb_category_extract(con = con) |>
+  apply_sdc(rounding = F)
   
 
 # 7. create markdowns -------
