@@ -941,7 +941,10 @@ coprescribing_extract <-  function(con,
   fact_coprescribing <- fact |>
     dplyr::group_by(`Year Month` = YEAR_MONTH,
                     `Number of Categories` = cat_count) |>
-    dplyr::summarise(`Total Identified Patients` = count(IDENTIFIED_PATIENT_ID), groups = "drop") |>
+    dplyr::summarise(
+      `Total Identified Patients` = count(IDENTIFIED_PATIENT_ID),
+      groups = "drop"
+    ) |>
     dplyr::arrange(`Year Month`,
                    `Number of Categories`) |>
     collect()
@@ -954,44 +957,31 @@ coprescribing_matrix_extract <- function(con,
   fact <- dplyr::tbl(src = con,
                      dbplyr::in_schema("GRPLA", "DFM_FACT_CATEGORY_202308")) |>
     dplyr::filter(PATIENT_IDENTIFIED == "Y") |>
-    dplyr::mutate(
-      OPIOIDS=  case_when (
-        CATEGORY == "OPIOIDS"  ~ 1,
-        TRUE ~ 0)
-    ) |>
-    dplyr::mutate(
-      BENZODIAZEPINES =  case_when (
-        CATEGORY == "BENZODIAZEPINES"  ~ 1,
-        TRUE ~ 0)
-    ) |>
-    dplyr::mutate(
-      GABAPENTINOIDS =  case_when (
-        CATEGORY == "GABAPENTINOIDS"  ~ 1,
-        TRUE ~ 0)
-    ) |>
+    dplyr::mutate(OPIOIDS =  case_when (CATEGORY == "OPIOIDS"  ~ 1,
+                                        TRUE ~ 0)) |>
+    dplyr::mutate(BENZODIAZEPINES =  case_when (CATEGORY == "BENZODIAZEPINES"  ~ 1,
+                                                TRUE ~ 0)) |>
+    dplyr::mutate(GABAPENTINOIDS =  case_when (CATEGORY == "GABAPENTINOIDS"  ~ 1,
+                                               TRUE ~ 0)) |>
     
-    dplyr::mutate(
-      ZDRUGS =  case_when (
-        CATEGORY == "Z-DRUGS"  ~ 1,
-        TRUE ~ 0)
-    ) |>
-    dplyr::mutate(
-      ANTIDEPRESSANTS =  case_when (
-        CATEGORY == "ANTIDEPRESSANTS"  ~ 1,
-        TRUE ~ 0)
-    ) |>
+    dplyr::mutate(ZDRUGS =  case_when (CATEGORY == "Z-DRUGS"  ~ 1,
+                                       TRUE ~ 0)) |>
+    dplyr::mutate(ANTIDEPRESSANTS =  case_when (CATEGORY == "ANTIDEPRESSANTS"  ~ 1,
+                                                TRUE ~ 0)) |>
     
     dplyr::group_by(IDENTIFIED_PATIENT_ID,
                     YEAR_MONTH) |>
-    dplyr::summarise(CAT_COUNT = n_distinct(CATEGORY),
-                     ITEM_COUNT = sum(ITEM_COUNT, na.rm = T),
-                     ITEM_PAY_DR_NIC = sum(ITEM_PAY_DR_NIC, na.rm = T),
-                     OPIOIDS= sum(OPIOIDS, na.rm = T),
-                     BENZODIAZEPINES= sum(BENZODIAZEPINES, na.rm = T),
-                     GABAPENTINOIDS= sum(GABAPENTINOIDS, na.rm = T),
-                     ZDRUGS= sum(ZDRUGS, na.rm = T),
-                     ANTIDEPRESSANTS= sum(ANTIDEPRESSANTS, na.rm = T),
-                     .groups = "drop")
+    dplyr::summarise(
+      CAT_COUNT = n_distinct(CATEGORY),
+      ITEM_COUNT = sum(ITEM_COUNT, na.rm = T),
+      ITEM_PAY_DR_NIC = sum(ITEM_PAY_DR_NIC, na.rm = T),
+      OPIOIDS = sum(OPIOIDS, na.rm = T),
+      BENZODIAZEPINES = sum(BENZODIAZEPINES, na.rm = T),
+      GABAPENTINOIDS = sum(GABAPENTINOIDS, na.rm = T),
+      ZDRUGS = sum(ZDRUGS, na.rm = T),
+      ANTIDEPRESSANTS = sum(ANTIDEPRESSANTS, na.rm = T),
+      .groups = "drop"
+    )
   
   
   
@@ -1000,31 +990,91 @@ coprescribing_matrix_extract <- function(con,
     dplyr::filter(CAT_COUNT == 2) |>
     dplyr::mutate(
       COMBINATION =  case_when(
-        OPIOIDS >0 & BENZODIAZEPINES >0 ~ "Opioids and Benzodiazepines",
-        OPIOIDS >0 & GABAPENTINOIDS >0 ~ "Opioids and Gabapentinoids",
-        OPIOIDS >0 & ZDRUGS >0 ~ "Opioids and Z-Drugs",
-        OPIOIDS >0 & ANTIDEPRESSANTS >0 ~ "Opioids and Antidepressants",
-        BENZODIAZEPINES >0 & GABAPENTINOIDS >0 ~ "Benzodiazepines and Gabapentinoids",
-        BENZODIAZEPINES >0 & ZDRUGS >0 ~ "Benzodiazepines and Z-Drugs",
-        BENZODIAZEPINES >0 & ANTIDEPRESSANTS >0 ~ "Benzodiazepines and Antidepressants",
-        ZDRUGS >0 & GABAPENTINOIDS >0 ~ "Z-Drugs and Gabapentinoids",
-        ZDRUGS >0 & ANTIDEPRESSANTS >0 ~ "Z-Drugs and Antidepressants",
-        GABAPENTINOIDS >0 & ANTIDEPRESSANTS >0 ~ "Gabapentinoids and Antidepressants"
+        OPIOIDS > 0 & BENZODIAZEPINES > 0 ~ "Opioids and Benzodiazepines",
+        OPIOIDS > 0 &
+          GABAPENTINOIDS > 0 ~ "Opioids and Gabapentinoids",
+        OPIOIDS > 0 & ZDRUGS > 0 ~ "Opioids and Z-Drugs",
+        OPIOIDS > 0 &
+          ANTIDEPRESSANTS > 0 ~ "Opioids and Antidepressants",
+        BENZODIAZEPINES > 0 &
+          GABAPENTINOIDS > 0 ~ "Benzodiazepines and Gabapentinoids",
+        BENZODIAZEPINES > 0 &
+          ZDRUGS > 0 ~ "Benzodiazepines and Z-Drugs",
+        BENZODIAZEPINES > 0 &
+          ANTIDEPRESSANTS > 0 ~ "Benzodiazepines and Antidepressants",
+        ZDRUGS > 0 &
+          GABAPENTINOIDS > 0 ~ "Z-Drugs and Gabapentinoids",
+        ZDRUGS > 0 &
+          ANTIDEPRESSANTS > 0 ~ "Z-Drugs and Antidepressants",
+        GABAPENTINOIDS > 0 &
+          ANTIDEPRESSANTS > 0 ~ "Gabapentinoids and Antidepressants"
       )
-    )|>
-    dplyr::group_by(
-      `Drug Combination` = COMBINATION,
-      `Year Month` = YEAR_MONTH
     ) |>
+    dplyr::group_by(`Drug Combination` = COMBINATION,
+                    `Year Month` = YEAR_MONTH) |>
     dplyr::summarise(
       `Total Identified Patients` = count(IDENTIFIED_PATIENT_ID),
       .groups = "drop"
     ) |>
     dplyr::arrange(`Year Month`,
-                   `Total Identified Patients`,
-                   COMBINATION) |>
-    select(`Year Month`, `Drug Combination`, `Total Identified Patients`)
+                   `Drug Combination`) |>
+    select(`Year Month`, `Drug Combination`, `Total Identified Patients`) |>
     collect()
   
   return(fact_coprescribing_m)
+}
+
+gender_category_extract <- function(con,
+                                    schema = "GRPLA",
+                                    table = "DFM_FACT_CATEGORY_202308") {
+  fact <- dplyr::tbl(src = con,
+                     dbplyr::in_schema("GRPLA", "DFM_FACT_CATEGORY_202308")) |>
+    dplyr::mutate(PATIENT_COUNT = case_when(PATIENT_IDENTIFIED == "Y" ~ 1,
+                                            TRUE ~ 0)) |>
+    dplyr::filter(CATEGORY != "ANTIDEPRESSANTS") |>
+    dplyr::group_by(
+      FINANCIAL_YEAR,
+      IDENTIFIED_PATIENT_ID,
+      PATIENT_IDENTIFIED,
+      CATEGORY,
+      PDS_GENDER,
+      PATIENT_COUNT
+    ) |>
+    dplyr::summarise(
+      ITEM_COUNT = sum(ITEM_COUNT, na.rm = T),
+      ITEM_PAY_DR_NIC = sum(ITEM_PAY_DR_NIC, na.rm = T),
+      .groups = "drop"
+    )
+  
+  fact_gender <- fact |>
+    dplyr::mutate(PDS_GENDER = case_when(
+      PDS_GENDER == 1 ~ "Male",
+      PDS_GENDER == 2 ~ "Female",
+      TRUE ~ "Unknown"
+    )) |>
+    dplyr::group_by(
+      `Financial Year` = FINANCIAL_YEAR,
+      `Drug Category` = stringr::str_to_title(CATEGORY),
+      `Patient Sex` = PDS_GENDER,
+      `Identified Patient Flag` = PATIENT_IDENTIFIED
+    ) |>
+    dplyr::summarise(
+      `Total Identified Patients` = sum(PATIENT_COUNT, na.rm = T),
+      `Total Items` = sum(ITEM_COUNT, na.rm = T),
+      `Total Net Ingredient Cost (GBP)` = sum(ITEM_PAY_DR_NIC, na.rm = T) /
+        100,
+      .groups = "drop"
+    ) |>
+    dplyr::arrange(`Financial Year`,
+                   `Drug Category`,
+                   `Patient Sex`,
+                   desc(`Identified Patient Flag`)) |>
+    
+    collect()
+  
+  
+  return(fact_gender)
+  
+  
+  
 }

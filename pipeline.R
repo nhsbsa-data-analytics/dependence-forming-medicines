@@ -79,7 +79,7 @@ log_print(config, hide_notes = TRUE)
 nhsbsaUtils::publication_options()
 log_print("Options loaded", hide_notes = TRUE)
 
-# 2. connect to DWH and pull max CY/FY  ---------
+# 2. connect to DWH  ---------
 #build connection to warehouse
 con <- nhsbsaR::con_nhsbsa(dsn = "FBS_8192k",
                            driver = "Oracle in OraClient19Home1",
@@ -109,6 +109,8 @@ category_data <- category_extract(con = con) |>
 coprescribing_data <- coprescribing_extract(con = con) 
 
 coprescribing_matrix_data <- coprescribing_matrix_extract(con = con)
+
+gender_category_data <- gender_category_extract(con = con)
   
 
 # 7. create markdowns -------
