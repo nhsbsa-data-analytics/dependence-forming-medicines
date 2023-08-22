@@ -124,6 +124,9 @@ icb_data <- icb_extract(con = con) |>
 
 imd_category_data <- imd_category_extract(con = con) |>
   apply_sdc(rounding = F)
+
+imd_data <- imd_extract(con = con) |>
+  apply_sdc(rounding = F)
   
 
 # 7. create markdowns -------
