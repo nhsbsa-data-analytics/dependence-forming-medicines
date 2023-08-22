@@ -88,22 +88,27 @@ con <- nhsbsaR::con_nhsbsa(dsn = "FBS_8192k",
 
 # 3. Extract data required ------------------------------------------------
 
-age_category_data <- age_category_extract(con = con)
+age_category_data <- age_category_extract(con = con) |>
+  apply_sdc(rounding = F)
 
-age_data <- age_extract(con = con)
+age_data <- age_extract(con = con) |>
+  apply_sdc(rounding = F)
 
-age_gender_cat_data <- age_gender_cat_extract(con = con)
+age_gender_cat_data <- age_gender_cat_extract(con = con) |>
+  apply_sdc(rounding = F)
 
-age_gender_data <- age_gender_extract(con = con)
+age_gender_data <- age_gender_extract(con = con) |>
+  apply_sdc(rounding = F)
 
-ageband_data <- ageband_extract(con = con)
+ageband_data <- ageband_extract(con = con) |>
+  apply_sdc(rounding = F)
 
 # 7. create markdowns -------
 
 # rmarkdown::render("pfd-narrative.Rmd",
 #                   output_format = "html_document",
 #                   output_file = "outputs/pfd_summary_narrative_2022_23_v001.html")
-# 
+#
 # rmarkdown::render("pfd-narrative.Rmd",
 #                   output_format = "word_document",
 #                   output_file = "outputs/pfd_summary_narrative_2022_23_v001.docx")
