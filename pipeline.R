@@ -107,6 +107,8 @@ category_data <- category_extract(con = con) |>
   apply_sdc(rounding = F)
 
 coprescribing_data <- coprescribing_extract(con = con) 
+
+coprescribing_matrix_data <- coprescribing_matrix_extract(con = con)
   
 
 # 7. create markdowns -------
