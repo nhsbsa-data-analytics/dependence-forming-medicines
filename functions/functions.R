@@ -702,7 +702,7 @@ age_gender_cat_extract <- function(con,
                                    schema = "GRPLA",
                                    table = "DFM_FACT_CATEGORY_202308") {
   fact <- dplyr::tbl(src = con,
-                     dbplyr::in_schema("GRPLA", "DFM_FACT_CATEGORY_202308")) |>
+                     dbplyr::in_schema(schema, table)) |>
     dplyr::mutate(PATIENT_COUNT = case_when(PATIENT_IDENTIFIED == "Y" ~ 1,
                                             TRUE ~ 0)) |>
     dplyr::filter(CATEGORY != "ANTIDEPRESSANTS") |>
@@ -767,7 +767,7 @@ age_gender_extract <-  function(con,
                                 schema = "GRPLA",
                                 table = "DFM_FACT_CATEGORY_202308") {
   fact <- dplyr::tbl(src = con,
-                     dbplyr::in_schema("GRPLA", "DFM_FACT_CATEGORY_202308")) |>
+                     dbplyr::in_schema(schema, table)) |>
     dplyr::mutate(PATIENT_COUNT = case_when(PATIENT_IDENTIFIED == "Y" ~ 1,
                                             TRUE ~ 0)) |>
     dplyr::filter(CATEGORY != "ANTIDEPRESSANTS") |>
@@ -828,7 +828,7 @@ ageband_extract <- function(con,
                             schema = "GRPLA",
                             table = "DFM_FACT_CATEGORY_202308") {
   fact <- dplyr::tbl(src = con,
-                     dbplyr::in_schema("GRPLA", "DFM_FACT_CATEGORY_202308")) |>
+                     dbplyr::in_schema(schema, table)) |>
     dplyr::mutate(PATIENT_COUNT = case_when(PATIENT_IDENTIFIED == "Y" ~ 1,
                                             TRUE ~ 0)) |>
     dplyr::filter(CATEGORY != "ANTIDEPRESSANTS") |>
@@ -876,7 +876,7 @@ category_extract <- function(con,
                              schema = "GRPLA",
                              table = "DFM_FACT_CATEGORY_202308") {
   fact <- dplyr::tbl(src = con,
-                     dbplyr::in_schema("GRPLA", "DFM_FACT_CATEGORY_202308")) |>
+                     dbplyr::in_schema(schema, table)) |>
     dplyr::mutate(PATIENT_COUNT = case_when(PATIENT_IDENTIFIED == "Y" ~ 1,
                                             TRUE ~ 0)) |>
     dplyr::group_by(
@@ -929,7 +929,7 @@ coprescribing_extract <-  function(con,
                                    schema = "GRPLA",
                                    table = "DFM_FACT_CATEGORY_202308") {
   fact <- dplyr::tbl(src = con,
-                     dbplyr::in_schema("GRPLA", "DFM_FACT_CATEGORY_202308")) |>
+                     dbplyr::in_schema(schema, table)) |>
     dplyr::filter(PATIENT_IDENTIFIED == "Y") |>
     dplyr::group_by(IDENTIFIED_PATIENT_ID, YEAR_MONTH) |>
     dplyr::summarise(cat_count = n_distinct(CATEGORY), groups = "drop")
@@ -953,7 +953,7 @@ coprescribing_matrix_extract <- function(con,
                                          schema = "GRPLA",
                                          table = "DFM_FACT_CATEGORY_202308") {
   fact <- dplyr::tbl(src = con,
-                     dbplyr::in_schema("GRPLA", "DFM_FACT_CATEGORY_202308")) |>
+                     dbplyr::in_schema(schema, table)) |>
     dplyr::filter(PATIENT_IDENTIFIED == "Y") |>
     dplyr::mutate(OPIOIDS =  case_when (CATEGORY == "OPIOIDS"  ~ 1,
                                         TRUE ~ 0)) |>
@@ -1026,7 +1026,7 @@ gender_category_extract <- function(con,
                                     schema = "GRPLA",
                                     table = "DFM_FACT_CATEGORY_202308") {
   fact <- dplyr::tbl(src = con,
-                     dbplyr::in_schema("GRPLA", "DFM_FACT_CATEGORY_202308")) |>
+                     dbplyr::in_schema(schema, table)) |>
     dplyr::mutate(PATIENT_COUNT = case_when(PATIENT_IDENTIFIED == "Y" ~ 1,
                                             TRUE ~ 0)) |>
     dplyr::filter(CATEGORY != "ANTIDEPRESSANTS") |>
@@ -1079,7 +1079,7 @@ gender_extract <- function(con,
                            schema = "GRPLA",
                            table = "DFM_FACT_CATEGORY_202308") {
   fact <- dplyr::tbl(src = con,
-                     dbplyr::in_schema("GRPLA", "DFM_FACT_CATEGORY_202308")) |>
+                     dbplyr::in_schema(schema, table)) |>
     dplyr::mutate(PATIENT_COUNT = case_when(PATIENT_IDENTIFIED == "Y" ~ 1,
                                             TRUE ~ 0)) |>
     dplyr::filter(CATEGORY != "ANTIDEPRESSANTS") |>
@@ -1127,7 +1127,7 @@ icb_category_extract <- function(con,
                                  schema = "GRPLA",
                                  table = "DFM_FACT_CATEGORY_202308") {
   fact <- dplyr::tbl(src = con,
-                     dbplyr::in_schema("GRPLA", "DFM_FACT_CATEGORY_202308")) |>
+                     dbplyr::in_schema(schema, table)) |>
     dplyr::filter(CATEGORY != "ANTIDEPRESSANTS") |>
     dplyr::mutate(PATIENT_COUNT = case_when(PATIENT_IDENTIFIED == "Y" ~ 1,
                                             TRUE ~ 0)) |>
@@ -1178,7 +1178,7 @@ icb_extract <- function(con,
                         schema = "GRPLA",
                         table = "DFM_FACT_CATEGORY_202308") {
   fact <- dplyr::tbl(src = con,
-                     dbplyr::in_schema("GRPLA", "DFM_FACT_CATEGORY_202308")) |>
+                     dbplyr::in_schema(schema, table)) |>
     dplyr::filter(CATEGORY != "ANTIDEPRESSANTS") |>
     dplyr::mutate(PATIENT_COUNT = case_when(PATIENT_IDENTIFIED == "Y" ~ 1,
                                             TRUE ~ 0)) |>
@@ -1224,7 +1224,7 @@ imd_category_extract <- function(con,
                                  schema = "GRPLA",
                                  table = "DFM_FACT_CATEGORY_202308") {
   fact <- dplyr::tbl(src = con,
-                     dbplyr::in_schema("GRPLA", "DFM_FACT_CATEGORY_202308")) |>
+                     dbplyr::in_schema(schema, table)) |>
     dplyr::mutate(
       PATIENT_COUNT = case_when(PATIENT_IDENTIFIED == "Y" ~ 1,
                                 TRUE ~ 0),
@@ -1277,7 +1277,7 @@ imd_extract <- function(con,
                         schema = "GRPLA",
                         table = "DFM_FACT_CATEGORY_202308") {
   fact <- dplyr::tbl(src = con,
-                     dbplyr::in_schema("GRPLA", "DFM_FACT_CATEGORY_202308")) |>
+                     dbplyr::in_schema(schema, table)) |>
     dplyr::mutate(
       PATIENT_COUNT = case_when(PATIENT_IDENTIFIED == "Y" ~ 1,
                                 TRUE ~ 0),
@@ -1326,7 +1326,7 @@ national_extract <- function(con,
                              schema = "GRPLA",
                              table = "DFM_FACT_CATEGORY_202308") {
   fact <- dplyr::tbl(src = con,
-                     dbplyr::in_schema("GRPLA", "DFM_FACT_CATEGORY_202308")) |>
+                     dbplyr::in_schema(schema, table)) |>
     dplyr::filter(CATEGORY != "ANTIDEPRESSANTS") |>
     dplyr::mutate(PATIENT_COUNT = case_when(PATIENT_IDENTIFIED == "Y" ~ 1,
                                             TRUE ~ 0)) |>
@@ -1357,4 +1357,53 @@ national_extract <- function(con,
   
   return(fact_national)
   
+}
+
+capture_rate_extract <- function(con,
+                                 schema = "GRPLA",
+                                 table = "DFM_FACT_CATEGORY_202308") {
+  fact <- dplyr::tbl(src = con,
+                     dbplyr::in_schema(schema, table))  |>
+    dplyr::group_by(
+      `Financial Year` = FINANCIAL_YEAR,
+      `Drug Category` = CATEGORY,
+      PATIENT_IDENTIFIED
+    ) |>
+    dplyr::summarise(ITEM_COUNT = sum(ITEM_COUNT, na.rm = T),
+                     .groups = "drop") |>
+    dplyr::arrange(`Financial Year`) |>
+    collect() |>
+    tidyr::pivot_wider(names_from = PATIENT_IDENTIFIED,
+                       values_from = ITEM_COUNT) |>
+    mutate(
+      `Identified Patient Rate` = Y / (Y + N) * 100
+    ) |>
+    dplyr::select(-Y,-N) |>
+    dplyr::arrange(`Financial Year`, `Drug Category`)
+  return(fact)
+}
+
+capture_rate_extract_dt <- function(con,
+                                    schema = "GRPLA",
+                                    table = "DFM_FACT_CATEGORY_202308") {
+  fact <- dplyr::tbl(src = con,
+                     dbplyr::in_schema(schema, table))|>
+    dplyr::group_by(
+      FINANCIAL_YEAR,
+      `Drug Category` = CATEGORY,
+      PATIENT_IDENTIFIED
+    ) |>
+    dplyr::summarise(ITEM_COUNT = sum(ITEM_COUNT, na.rm = T),
+                     .groups = "drop") |>
+    dplyr::arrange(FINANCIAL_YEAR) |>
+    collect() |>
+    tidyr::pivot_wider(names_from = PATIENT_IDENTIFIED,
+                       values_from = ITEM_COUNT) |>
+    mutate(`Identified Patient Rate` = Y / (Y + N) * 100) |>
+    dplyr::select(-Y,-N) |>
+    tidyr::pivot_wider(names_from = FINANCIAL_YEAR,
+                       values_from = `Identified Patient Rate`) |>
+    dplyr::arrange(`Drug Category`)
+  
+  return(fact)
 }
