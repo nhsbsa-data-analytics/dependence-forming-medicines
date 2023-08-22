@@ -106,6 +106,9 @@ ageband_data <- ageband_extract(con = con) |>
 category_data <- category_extract(con = con) |>
   apply_sdc(rounding = F)
 
+coprescribing_data <- coprescribing_extract(con = con) 
+  
+
 # 7. create markdowns -------
 
 # rmarkdown::render("pfd-narrative.Rmd",

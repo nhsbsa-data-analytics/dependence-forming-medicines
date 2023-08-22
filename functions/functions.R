@@ -7,7 +7,7 @@
 #     select(FINANCIAL_YEAR, YEAR_MONTH) |>
 #     filter(YEAR_MONTH >= from,
 #            YEAR_MONTH <= to)
-#   
+#
 #   # Build porg ---------------------------------------------------------
 #   porg <- dplyr::tbl(con,
 #                      from = dbplyr::in_schema("DIM", "CUR_EP_LEVEL_5_FLAT_DIM")) |>
@@ -56,7 +56,7 @@
 #            ICB_CODE,
 #            REGION_NAME,
 #            REGION_CODE)
-#   
+#
 #   # Build drug ---------------------------------------------------------
 #   drug <- dplyr::tbl(con,
 #                      from = dbplyr::in_schema("DIM", "CDR_EP_DRUG_BNF_DIM")) |>
@@ -135,7 +135,7 @@
 #         "0403010R0",
 #         "0403030X0",
 #         "0403040Z0"
-#         
+#
 #       )
 #     ) |>
 #     mutate(
@@ -237,13 +237,13 @@
 #       SECTION_CODE = BNF_SECTION,
 #       UNIT_OF_MEASURE = VMPP_UOM
 #     )
-#   
+#
 #   # Build age ---------------------------------------------------------
 #   age <- dplyr::tbl(con,
 #                     from = dbplyr::in_schema("DIM", "AGE_DIM")) |>
 #     select(AGE,
 #            DALL_5YR_BAND)
-#   
+#
 #   # Build imd ---------------------------------------------------------
 #   imd <- dplyr::tbl(con,
 #                     from = dbplyr::in_schema("KIGRA", "ONS_NSPL_MAY_2022")) |>
@@ -252,7 +252,7 @@
 #            IMD_RANK) |>
 #     #using distinct to remove duplicate rows
 #     distinct()
-#   
+#
 #   # Build fact ---------------------------------------------------------
 #   fact <- dplyr::tbl(con,
 #                      from = dbplyr::in_schema("AML", "PX_FORM_ITEM_ELEM_COMB_FACT_AV")) |>
@@ -305,7 +305,7 @@
 #       ITEM_PAY_DR_NIC = sum(ITEM_PAY_DR_NIC, na.rm = T),
 #       .groups = "drop"
 #     )
-#   
+#
 #   query <- fact |>
 #     inner_join(tdim,
 #                by = c("YEAR_MONTH" = "YEAR_MONTH")) |>
@@ -325,11 +325,11 @@
 #     ) |>
 #     # create identified flag using pds
 #     mutate(PATIENT_IDENTIFIED = sql("case when	pds_dob	is	null	and	pds_gender	=	0	then	'N'	else	'Y'	end")) |>
-#     
-#     
-#     
-#     
-#     
+#
+#
+#
+#
+#
 #     inner_join(age,
 #                by = c("CALC_AGE" = "AGE")) |>
 #     #pull forward last observation of PATIENT_LSOA_CODE to account for null data
@@ -338,7 +338,7 @@
 #         "last_value(PATIENT_LSOA_CODE ignore nulls) over (partition by PATIENT_ID order by YEAR_MONTH, EPS_PART_DATE, PATIENT_LSOA_CODE NULLS last rows between unbounded preceding and current row)"
 #       )
 #     ) |>
-#     
+#
 #     left_join(imd,
 #               by = c("PATIENT_LSOA_CODE" = "LSOA11")) |>
 #     select(
@@ -397,7 +397,7 @@
 #       ITEM_PAY_DR_NIC = sum(ITEM_PAY_DR_NIC, na.rm = T),
 #       .groups = "drop"
 #     )
-#   
+#
 #   # drop time dimension if exists
 #   exists <- con |>
 #     DBI::dbExistsTable(name = "DFM_FACT_CAT_DIM")
@@ -406,13 +406,13 @@
 #     con |>
 #       DBI::dbRemoveTable(name = "DFM_FACT_CAT_DIM")
 #   }
-#   
+#
 #   #build table
 #   query |>
 #     compute("DFM_FACT_CAT_DIM",
 #             analyze = FALSE,
 #             temporary = FALSE)
-#   
+#
 #
 
 
@@ -424,8 +424,6 @@ apply_sdc <-
            rounding = TRUE,
            round_val = 5,
            mask = "") {
-    `|>` <- magrittr::`|>`
-    
     rnd <- round_val
     
     if (is.character(mask)) {
@@ -839,11 +837,13 @@ ageband_extract <- function(con,
     dplyr::inner_join(dplyr::tbl(con,
                                  from = dbplyr::in_schema("DIM", "AGE_DIM")),
                       by = c("CALC_AGE" = "AGE")) |>
-    dplyr::group_by(FINANCIAL_YEAR,
-                    IDENTIFIED_PATIENT_ID,
-                    PATIENT_IDENTIFIED,
-                    DALL_5YR_BAND,
-                    PATIENT_COUNT) |>
+    dplyr::group_by(
+      FINANCIAL_YEAR,
+      IDENTIFIED_PATIENT_ID,
+      PATIENT_IDENTIFIED,
+      DALL_5YR_BAND,
+      PATIENT_COUNT
+    ) |>
     dplyr::summarise(
       ITEM_COUNT = sum(ITEM_COUNT, na.rm = T),
       ITEM_PAY_DR_NIC = sum(ITEM_PAY_DR_NIC, na.rm = T),
@@ -879,12 +879,8 @@ category_extract <- function(con,
                              table = "DFM_FACT_CATEGORY_202308") {
   fact <- dplyr::tbl(src = con,
                      dbplyr::in_schema("GRPLA", "DFM_FACT_CATEGORY_202308")) |>
-    dplyr::mutate(
-      PATIENT_COUNT = case_when(
-        PATIENT_IDENTIFIED == "Y" ~ 1,
-        TRUE ~ 0
-      )
-    ) |>
+    dplyr::mutate(PATIENT_COUNT = case_when(PATIENT_IDENTIFIED == "Y" ~ 1,
+                                            TRUE ~ 0)) |>
     dplyr::group_by(
       FINANCIAL_YEAR,
       IDENTIFIED_PATIENT_ID,
@@ -911,9 +907,10 @@ category_extract <- function(con,
     dplyr::summarise(
       `Total Identified Patients` = sum(PATIENT_COUNT, na.rm = T),
       `Total Items` = sum(ITEM_COUNT, na.rm = T),
-      `Total Net Ingredient Cost (GBP)` = sum(ITEM_PAY_DR_NIC, na.rm = T)/100,
+      `Total Net Ingredient Cost (GBP)` = sum(ITEM_PAY_DR_NIC, na.rm = T) /
+        100,
       .groups = "drop"
-      ) |>
+    ) |>
     dplyr::arrange(
       `Financial Year`,
       `BNF Section Code`,
@@ -928,4 +925,25 @@ category_extract <- function(con,
   
   return(fact_category)
   
+}
+
+coprescribing_extract <-  function(con,
+                                   schema = "GRPLA",
+                                   table = "DFM_FACT_CATEGORY_202308") {
+  fact <- dplyr::tbl(src = con,
+                     dbplyr::in_schema("GRPLA", "DFM_FACT_CATEGORY_202308")) |>
+    dplyr::filter(PATIENT_IDENTIFIED == "Y") |>
+    dplyr::group_by(IDENTIFIED_PATIENT_ID, YEAR_MONTH) |>
+    dplyr::summarise(cat_count = n_distinct(CATEGORY), groups = "drop")
+  
+  
+  
+  fact_coprescribing <- fact |>
+    dplyr::group_by(`Year Month` = YEAR_MONTH,
+                    `Number of Categories` = cat_count) |>
+    dplyr::summarise(`Total Identified Patients` = count(IDENTIFIED_PATIENT_ID), groups = "drop") |>
+    dplyr::arrange(`Year Month`,
+                   `Number of Categories`) |>
+    collect()
+  return(fact_coprescribing)
 }
