@@ -186,7 +186,7 @@ patient_identification_dt <- capture_rate_extract_dt(con = con) |>
 patient_identification <- capture_rate_extract(con = con)
 
 
-# 4. Build Excel tables ------------------------------------------------------
+# 4. Build costs and items Excel tables ------------------------------------------------------
 sheetNames <- c(
   "Patient_Identification",
   "Table_1",
@@ -253,19 +253,18 @@ write_sheet(
 #left align columns A to C
 format_data(wb,
             "Patient_Identification",
-            c("A", "B", "C"),
+            c("A", "B"),
             "left",
             "")
 #right align columns and round to 2 DP - D (if using long data not pivoting wider) (!!NEED TO UPDATE AS DATA EXPANDS!!)
 format_data(wb,
             "Patient_Identification",
-            c("D"),
+            c("C"),
             "right",
             "0.00")
 
-#### Total items data
+#### national data
 # write data to sheet
-#suggest note 3. could be condensed to something like "Total costs and items may not match those in our Prescription Cost Analysis (PCA) publication, as they are based on a prescribing view while PCA uses a dispensing view instead."
 write_sheet(
   wb,
   "Table_1",
@@ -304,10 +303,229 @@ format_data(wb,
             "right",
             "#,##0.00")
 
+#### category data
+# write data to sheet
+write_sheet(
+  wb,
+  "Table_2",
+  paste0(
+    "Table 2: Dependency Forming Medicines - England 2015/16 to ",
+    config$fy,
+    " - Yearly totals split by Drug Category and identified patients"
+  ),
+  c(
+    "1. Field definitions can be found on the 'Metadata' tab.",
+    "2. The patient counts shown in these statistics should only be analysed at the level at which they are presented. Adding together any patient counts is likely to result in an overestimate of the number of patients."  ),
+  category_data |> select(-`BNF Section Name`, -`BNF Section Code`),
+  14
+)
+
+#left align columns A to C
+format_data(wb,
+            "Table_2",
+            c("A", "B", "C"),
+            "left",
+            "")
+
+#right align columns D and E and round to whole numbers with thousand separator
+format_data(wb,
+            "Table_2",
+            c("D", "E"),
+            "right",
+            "#,##0")
+
+#right align column F and round to 2dp with thousand separator
+format_data(wb,
+            "Table_2",
+            c("F"),
+            "right",
+            "#,##0.00")
+
+#### ICB data
+# write data to sheet
+write_sheet(
+  wb,
+  "Table_3",
+  paste0(
+    "Table 3: Dependency Forming Medicines - England 2015/16 to ",
+    config$fy,
+    " - Yearly totals split by Integrated Care Board and identified patients"
+  ),
+  c(
+    "1. Field definitions can be found on the 'Metadata' tab.",
+    "2. The patient counts shown in these statistics should only be analysed at the level at which they are presented. Adding together any patient counts is likely to result in an overestimate of the number of patients.",
+    "3. Integrated Care Boards (ICBs) succeeded sustainability and transformation plans (STPs) and replaced the functions of clinical commissioning groups (CCGs) in July 2022 with ICB sub locations replacing CCGs during the transition period of 2022/23."),
+  icb_data,
+  14
+)
+
+#left align columns A to C
+format_data(wb,
+            "Table_3",
+            c("A", "B", "C", "D"),
+            "left",
+            "")
+
+#right align columns D and E and round to whole numbers with thousand separator
+format_data(wb,
+            "Table_3",
+            c("E", "F"),
+            "right",
+            "#,##0")
+
+#right align column F and round to 2dp with thousand separator
+format_data(wb,
+            "Table_3",
+            c("G"),
+            "right",
+            "#,##0.00")
+
+#### ICB category data
+# write data to sheet
+write_sheet(
+  wb,
+  "Table_4",
+  paste0(
+    "Table 4: Dependency Forming Medicines - England 2015/16 to ",
+    config$fy,
+    " - Yearly totals split by Integrated Care Board, Drug Category and identified patients"
+  ),
+  c(
+    "1. Field definitions can be found on the 'Metadata' tab.",
+    "2. The patient counts shown in these statistics should only be analysed at the level at which they are presented. Adding together any patient counts is likely to result in an overestimate of the number of patients.",
+    "3. Integrated Care Boards (ICBs) succeeded sustainability and transformation plans (STPs) and replaced the functions of clinical commissioning groups (CCGs) in July 2022 with ICB sub locations replacing CCGs during the transition period of 2022/23."),
+  icb_category_data,
+  14
+)
+
+#left align columns A to C
+format_data(wb,
+            "Table_4",
+            c("A", "B", "C", "D", "E"),
+            "left",
+            "")
+
+#right align columns D and E and round to whole numbers with thousand separator
+format_data(wb,
+            "Table_4",
+            c("F", "G"),
+            "right",
+            "#,##0")
+
+#right align column F and round to 2dp with thousand separator
+format_data(wb,
+            "Table_4",
+            c("H"),
+            "right",
+            "#,##0.00")
+
+#### National population data
+# write data to sheet
+write_sheet(
+  wb,
+  "Table_5",
+  paste0(
+    "Table 5: Dependency Forming Medicines - England 2015/16 to ",
+    config$fy,
+    " - Population totals split by financial year"
+  ),
+  c(
+    "1. Field definitions can be found on the 'Metadata' tab.",
+    "2. ONS population estimates taken from https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates.",
+    "3. ONS population estimates for 2022/2023 were not available prior to publication."),
+  population_data,
+  14
+)
+
+#left align columns A to C
+format_data(wb,
+            "Table_5",
+            c("A", "B"),
+            "left",
+            "")
+
+#right align columns D and E and round to whole numbers with thousand separator
+format_data(wb,
+            "Table_5",
+            c("C", "D"),
+            "right",
+            "#,##0")
+
+#right align column F and round to 2dp with thousand separator
+format_data(wb,
+            "Table_5",
+            c("E"),
+            "right",
+            "#,##0.00")
+
+#### National population category data
+# write data to sheet
+write_sheet(
+  wb,
+  "Table_6",
+  paste0(
+    "Table 6: Dependency Forming Medicines - England 2015/16 to ",
+    config$fy,
+    " - Population totals split by financial year and Drug Category"
+  ),
+  c(
+    "1. Field definitions can be found on the 'Metadata' tab.",
+    "2. ONS population estimates taken from https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates.",
+    "3. ONS population estimates for 2022/2023 were not available prior to publication."),
+  population_category_data,
+  14
+)
+
+#left align columns A to C
+format_data(wb,
+            "Table_6",
+            c("A", "B", "C"),
+            "left",
+            "")
+
+#right align columns D and E and round to whole numbers with thousand separator
+format_data(wb,
+            "Table_6",
+            c("D", "E"),
+            "right",
+            "#,##0")
+
+#right align column F and round to 2dp with thousand separator
+format_data(wb,
+            "Table_6",
+            c("F"),
+            "right",
+            "#,##0.00")
+
+# build cover sheet
+accessibleTables::makeCoverSheet(
+  paste0("Dependency Forming Medicines - England 2015/16 - ", config$fy),
+  "Costs and Items",
+  "Publication date: 7 September 2023",
+  wb,
+  sheetNames,
+  c(
+    "Metadata",
+    "Patient Identification Rates",
+    "Table 1: Total items",
+    "Table 2:  Items by category",
+    "Table 3:  Items by Integrated Care Board (ICB)",
+    "Table 4:  Items by ICB and category",
+    "Table 5:  National Population",
+    "Table 6:  Population by category"
+  ),
+  c("Metadata", sheetNames)
+)
+
 #save file into outputs folder
 openxlsx::saveWorkbook(wb,
                        "outputs/dfm_2022_2023_costs_and_items_v001.xlsx",
                        overwrite = TRUE)
+
+
+# 5. Build demographics Excel file -------------------------------------------
+
+
 
 
 
