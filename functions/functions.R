@@ -740,7 +740,7 @@ age_gender_cat_extract <- function(con,
       `Financial Year` = FINANCIAL_YEAR,
       `Drug Category` = stringr::str_to_title(CATEGORY),
       `Age Band` = AGE_BAND,
-      `Patient Sex` = PDS_GENDER,
+      `Patient Gender` = PDS_GENDER,
       `Identified Patient Flag` = PATIENT_IDENTIFIED
     ) |>
     dplyr::summarise(
@@ -754,7 +754,7 @@ age_gender_cat_extract <- function(con,
       `Financial Year`,
       `Age Band`,
       `Drug Category`,
-      `Patient Sex`,
+      `Patient Gender`,
       desc(`Identified Patient Flag`)
     ) |>
     collect()
@@ -803,7 +803,7 @@ age_gender_extract <-  function(con,
     dplyr::group_by(
       `Financial Year` = FINANCIAL_YEAR,
       `Age Band` = AGE_BAND,
-      `Patient Sex` = PDS_GENDER,
+      `Patient Gender` = PDS_GENDER,
       `Identified Patient Flag` = PATIENT_IDENTIFIED
     ) |>
     dplyr::summarise(
@@ -816,7 +816,7 @@ age_gender_extract <-  function(con,
     ) |>
     dplyr::arrange(`Financial Year`,
                    `Age Band`,
-                   `Patient Sex`,
+                   `Patient Gender`,
                    desc(`Identified Patient Flag`)) |>
     collect()
   
@@ -932,7 +932,7 @@ coprescribing_extract <-  function(con,
                      dbplyr::in_schema(schema, table)) |>
     dplyr::filter(PATIENT_IDENTIFIED == "Y") |>
     dplyr::group_by(IDENTIFIED_PATIENT_ID, YEAR_MONTH) |>
-    dplyr::summarise(cat_count = n_distinct(CATEGORY), groups = "drop")
+    dplyr::summarise(cat_count = n_distinct(CATEGORY), .groups = "drop")
   
   
   
@@ -941,7 +941,7 @@ coprescribing_extract <-  function(con,
                     `Number of Categories` = cat_count) |>
     dplyr::summarise(
       `Total Identified Patients` = count(IDENTIFIED_PATIENT_ID),
-      groups = "drop"
+      .groups = "drop"
     ) |>
     dplyr::arrange(`Year Month`,
                    `Number of Categories`) |>
@@ -1053,7 +1053,7 @@ gender_category_extract <- function(con,
     dplyr::group_by(
       `Financial Year` = FINANCIAL_YEAR,
       `Drug Category` = stringr::str_to_title(CATEGORY),
-      `Patient Sex` = PDS_GENDER,
+      `Patient Gender` = PDS_GENDER,
       `Identified Patient Flag` = PATIENT_IDENTIFIED
     ) |>
     dplyr::summarise(
@@ -1065,7 +1065,7 @@ gender_category_extract <- function(con,
     ) |>
     dplyr::arrange(`Financial Year`,
                    `Drug Category`,
-                   `Patient Sex`,
+                   `Patient Gender`,
                    desc(`Identified Patient Flag`)) |>
     
     collect()
@@ -1104,7 +1104,7 @@ gender_extract <- function(con,
     )) |>
     dplyr::group_by(
       `Financial Year` = FINANCIAL_YEAR,
-      `Patient Sex` = PDS_GENDER,
+      `Patient Gender` = PDS_GENDER,
       `Identified Patient Flag` = PATIENT_IDENTIFIED
     ) |>
     dplyr::summarise(
@@ -1115,7 +1115,7 @@ gender_extract <- function(con,
       .groups = "drop"
     ) |>
     dplyr::arrange(`Financial Year`,
-                   `Patient Sex`,
+                   `Patient Gender`,
                    desc(`Identified Patient Flag`)) |>
     collect()
   return(fact_gender)
