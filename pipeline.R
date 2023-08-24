@@ -1312,6 +1312,30 @@ figure_9 <- basic_chart_hc(
   title = ""
 )
 
+figure_10_data <- coprescribing_data |>
+  filter(`Year Month` == max(`Year Month`),
+         `Number of Categories` > 1) |>
+  arrange(`Number of Categories`) |>
+  pivot_longer(
+    cols = c(`Total Identified Patients`),
+    names_to = "measure",
+    values_to = "value"
+  ) |>
+  rename_with(~ gsub(" ", "_", toupper(gsub(
+    "[^[:alnum:] ]", "", .
+  ))), everything())
+
+figure_10 <-
+  basic_chart_hc(
+    data = figure_10_data,
+    x = NUMBER_OF_CATEGORIES,
+    y = VALUE,
+    type = "column",
+    xLab = "Number of Categories",
+    yLab = "Number of identified patients",
+    title = ""
+  )
+
 
 # 7. create markdowns -------
 

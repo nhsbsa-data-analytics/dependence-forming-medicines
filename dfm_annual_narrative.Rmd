@@ -318,30 +318,16 @@ The English Indices of Deprivation have been used to provide a measure of patien
 
 ### 2.3. Co-prescribing of drug categories
 
-#### **`r paste0("Figure ",10,": Number of identified patients receiving more than one category of dependency forming medicines prescribing by number of categories March 2022")`** 
+#### **`r paste0("Figure ",10,": Number of identified patients receiving more than one category of dependency forming medicines prescribing by number of categories March 2023")`** 
 
 ```{r patients_by_no_cat, out.width="100%"}
 
-# coprescribing_extract %>%
-#  filter(`Year Month` == max(`Year Month`),
-#         `Number of Categories`>1 ) %>%
-#   
-#   arrange(`Number of Categories`) %>%
-#   
-#   
-#   pivot_longer(cols = c(`Total Identified Patients`),
-#                names_to = "measure",
-#                values_to = "value") %>% 
-#   basic_chart_hc(
-#     x = `Number of Categories`,
-#     y = value,
-#     type = "column",
-#     xLab = "No of Categories",
-#     yLab = "Number of identified patients",
-#     title = ""
-#   )
+figure_10
 
 ```
+
+`r get_download_button(title = "Download chart data", data = figure_10_data, filename = "figure_10")`
+
 Source: [Dependency forming medicines summary tables - Patient demographics (Table 10)](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/dfm/dfm_2021_2022_patient_demographics_v001.xlsx)
 
 Co-prescribing is where a patient is receiving drugs from more than one category of dependency forming medicine. Antidepressants which have been excluded from the previous sections have been included here because of the increased risk factors when combined with dependency forming medicines. It is not possible to distinguish whether multiple prescriptions have been reported for the same month are given consecutively or concurrently. As such, some activity will show as co-prescribing when in fact the individual was prescribed one medicine and then separately the other, where both were reported in the same month. March 2022 has been used for this analysis as the most recent month and as it was representative of the recent trends in co-prescribing.
