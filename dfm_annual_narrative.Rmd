@@ -334,45 +334,16 @@ Co-prescribing is where a patient is receiving drugs from more than one category
 
 In total, an estimated 6.49 million identified patients received a prescription in March 2022 in at least one of the classes. Of these 1.61 million were receiving prescriptions in 2 or more classes, representing 24.9% of patients. Less than a tenth of a percent of patients received a drug from all 5 categories of dependency forming medication. These proportions were consistent across 2021/22.
 
-#### **`r paste0("Figure ",11,": Number of identified patients receiving prescribing of a combination of two dependency forming medicines in March 2022")`** 
+#### **`r paste0("Figure ",11,": Number of identified patients receiving prescribing of a combination of two dependency forming medicines in March 2023")`** 
 
 ```{r combins_by_no_cat, out.width="100%"}
 
-# coprescribing_matrix_extract %>%
-#  filter(`Year Month` == max(`Year Month`) ) %>%
-#   arrange(desc(`Total Identified Patients`)) %>% 
-#   
-#   pivot_longer(cols = c(`Total Identified Patients`),
-#                names_to = "measure",
-#                values_to = "value") %>% 
-#   basic_chart_hc(
-#     x = COMBINATION,
-#     y = value,
-#     type = "column",
-#     xLab = "Drug Combination",
-#     yLab = "Number of identified patients",
-#     title = ""
-#   )%>% 
-#   hc_tooltip(enabled = T,
-#              shared = T,
-#              sort = T) %>% 
-# hc_xAxis(
-#     categories = list(
-#       "Opioids and <br>Antidepressants",
-# "Gabapentinoids and <br>Antidepressants",
-# "Opioids and <br>Gabapentinoids",
-# "Benzodiazepines and <br>Antidepressants",
-# "Z-Drugs and <br>Antidepressants",
-# "Opioids and <br>Benzodiazepines",
-# "Opioids and <br>Z-Drugs",
-# "Benzodiazepines and <br>Gabapentinoids",
-# "Benzodiazepines and <br>Z-Drugs",
-# "Z-Drugs and <br>Gabapentinoids")
-# 
-#     )
-
+figure_11
 
 ```
+
+`r get_download_button(title = "Download chart data", data = figure_11_data, filename = "figure_11")`
+
 Source: [Dependency forming medicines summary tables - Patient demographics (Table 11)](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/dfm/dfm_2021_2022_patient_demographics_v001.xlsx)
 
 The most popular combination of drugs in March 2022 for those patients receiving items from 2 categories of dependency forming medicines was opioids and antidepressants, with 633,000 (51.9%) of patients. This was followed by gabapentinoids and antidepressants with 205,000 patients (16.8%) and opioids and gabapentinoids with 150,000 patients (12.3%) These proportions were consistent across 2021/22.

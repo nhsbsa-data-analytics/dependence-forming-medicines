@@ -317,7 +317,7 @@ write_sheet(
     "1. Field definitions can be found on the 'Metadata' tab.",
     "2. The patient counts shown in these statistics should only be analysed at the level at which they are presented. Adding together any patient counts is likely to result in an overestimate of the number of patients."
   ),
-  category_data |> select(-`BNF Section Name`,-`BNF Section Code`),
+  category_data |> select(-`BNF Section Name`, -`BNF Section Code`),
   14
 )
 
@@ -1066,7 +1066,7 @@ openxlsx::saveWorkbook(wb_dem,
 # 6. Create charts/tables and data ----------------------------------------
 
 table_1_data <- patient_identification |>
-  rename_with(~ gsub(" ", "_", toupper(gsub(
+  rename_with( ~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything())
 
@@ -1094,7 +1094,7 @@ figure_1_data <- national_data |>
     names_to = "measure",
     values_to = "value"
   ) |>
-  rename_with(~ gsub(" ", "_", toupper(gsub(
+  rename_with( ~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything())
 
@@ -1119,7 +1119,7 @@ figure_2_data <- national_data |>
     names_to = "measure",
     values_to = "value"
   ) |>
-  rename_with(~ gsub(" ", "_", toupper(gsub(
+  rename_with( ~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything())
 
@@ -1144,7 +1144,7 @@ figure_3_data <- category_data |>
     names_to = "measure",
     values_to = "value"
   ) |>
-  rename_with(~ gsub(" ", "_", toupper(gsub(
+  rename_with( ~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything())
 
@@ -1174,7 +1174,7 @@ figure_4_data <- population_category_data |>
     names_to = "measure",
     values_to = "value"
   ) |>
-  rename_with(~ gsub(" ", "_", toupper(gsub(
+  rename_with( ~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything()) |>
   na.omit()
@@ -1203,7 +1203,7 @@ figure_5_data <- category_data |>
     names_to = "measure",
     values_to = "value"
   ) |>
-  rename_with(~ gsub(" ", "_", toupper(gsub(
+  rename_with( ~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything()) |>
   na.omit()
@@ -1231,7 +1231,7 @@ figure_6_data <- national_data |>
          `Total Items`,
          `Total Identified Patients`,
          `Items Per Patient`) |>
-  rename_with(~ gsub(" ", "_", toupper(gsub(
+  rename_with( ~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything())
 
@@ -1255,7 +1255,7 @@ figure_7_data <- gender_data |>
     names_to = "measure",
     values_to = "value"
   ) |>
-  rename_with(~ gsub(" ", "_", toupper(gsub(
+  rename_with( ~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything())
 
@@ -1280,7 +1280,7 @@ figure_8_data <- age_gender_data |>
          `Patient Gender`,
          `Total Identified Patients`) |>
   filter(`Financial Year` == max(`Financial Year`)) |>
-  rename_with(~ gsub(" ", "_", toupper(gsub(
+  rename_with( ~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything())
 
@@ -1289,7 +1289,7 @@ figure_8 <-  age_gender_chart(figure_8_data,
                               labels = FALSE)
 
 figure_9_data <- imd_data |>
-  select(-`Total Items`,-`Total Net Ingredient Cost (GBP)`) |>
+  select(-`Total Items`, -`Total Net Ingredient Cost (GBP)`) |>
   filter(`Financial Year` == max(`Financial Year`),
          `IMD Quintile` != "Unknown") |>
   arrange(`IMD Quintile`) |>
@@ -1298,7 +1298,7 @@ figure_9_data <- imd_data |>
     names_to = "measure",
     values_to = "value"
   ) |>
-  rename_with(~ gsub(" ", "_", toupper(gsub(
+  rename_with( ~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything())
 
@@ -1321,7 +1321,7 @@ figure_10_data <- coprescribing_data |>
     names_to = "measure",
     values_to = "value"
   ) |>
-  rename_with(~ gsub(" ", "_", toupper(gsub(
+  rename_with( ~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything())
 
@@ -1334,6 +1334,39 @@ figure_10 <-
     xLab = "Number of Categories",
     yLab = "Number of identified patients",
     title = ""
+  )
+
+figure_11_data <- coprescribing_matrix_data |>
+  filter(`Year Month` == max(`Year Month`)) |>
+  arrange(desc(`Total Identified Patients`)) |>
+  
+  pivot_longer(
+    cols = c(`Total Identified Patients`),
+    names_to = "measure",
+    values_to = "value"
+  ) |>
+  rename_with( ~ gsub(" ", "_", toupper(gsub(
+    "[^[:alnum:] ]", "", .
+  ))), everything()) |>
+  mutate(DRUG_COMBINATION = str_replace(DRUG_COMBINATION, "and ", "and <br>"))
+
+
+figure_11 <- basic_chart_hc(
+  data = figure_11_data,
+  x = DRUG_COMBINATION,
+  y = VALUE,
+  type = "column",
+  xLab = "Drug Combination",
+  yLab = "Number of identified patients",
+  title = ""
+) |>
+  hc_tooltip(enabled = T,
+             shared = T,
+             sort = T) |>
+  hc_xAxis(
+    labels = list(
+      rotation = 45
+    )
   )
 
 
