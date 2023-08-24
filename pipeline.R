@@ -317,7 +317,7 @@ write_sheet(
     "1. Field definitions can be found on the 'Metadata' tab.",
     "2. The patient counts shown in these statistics should only be analysed at the level at which they are presented. Adding together any patient counts is likely to result in an overestimate of the number of patients."
   ),
-  category_data |> select(-`BNF Section Name`, -`BNF Section Code`),
+  category_data |> select(-`BNF Section Name`,-`BNF Section Code`),
   14
 )
 
@@ -1066,7 +1066,7 @@ openxlsx::saveWorkbook(wb_dem,
 # 6. Create charts/tables and data ----------------------------------------
 
 table_1_data <- patient_identification |>
-  rename_with( ~ gsub(" ", "_", toupper(gsub(
+  rename_with(~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything())
 
@@ -1094,7 +1094,7 @@ figure_1_data <- national_data |>
     names_to = "measure",
     values_to = "value"
   ) |>
-  rename_with( ~ gsub(" ", "_", toupper(gsub(
+  rename_with(~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything())
 
@@ -1119,7 +1119,7 @@ figure_2_data <- national_data |>
     names_to = "measure",
     values_to = "value"
   ) |>
-  rename_with( ~ gsub(" ", "_", toupper(gsub(
+  rename_with(~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything())
 
@@ -1138,14 +1138,13 @@ figure_2 <- group_chart_hc(
 
 figure_3_data <- category_data |>
   group_by(`Financial Year`, `Drug Category`) |>
-  summarise(`Total Items` = signif(sum(`Total Items`)
-                                   , 3)) |>
+  summarise(`Total Items` = sum(`Total Items`)) |>
   pivot_longer(
     cols = c(`Total Items`),
     names_to = "measure",
     values_to = "value"
   ) |>
-  rename_with( ~ gsub(" ", "_", toupper(gsub(
+  rename_with(~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything())
 
@@ -1175,26 +1174,105 @@ figure_4_data <- population_category_data |>
     names_to = "measure",
     values_to = "value"
   ) |>
-  rename_with( ~ gsub(" ", "_", toupper(gsub(
+  rename_with(~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything()) |>
   na.omit()
 
 figure_4 <- group_chart_hc(
-    data = figure_4_data,
-    x = FINANCIAL_YEAR,
-    y = VALUE,
-    group = DRUG_CATEGORY,
-    type = "line",
-    xLab = "Financial year",
-    yLab = "Patients per 1,000 Population",
-    title = "",
-    dlOn = F
-  ) |>
+  data = figure_4_data,
+  x = FINANCIAL_YEAR,
+  y = VALUE,
+  group = DRUG_CATEGORY,
+  type = "line",
+  xLab = "Financial year",
+  yLab = "Patients per 1,000 Population",
+  title = "",
+  dlOn = F
+) |>
   hc_tooltip(enabled = TRUE,
              shared = TRUE,
              sort = TRUE) |>
   hc_legend(enabled = TRUE)
+
+figure_5_data <- category_data |>
+  group_by(`Financial Year`, `Drug Category`) |>
+  summarise(`Total Net Ingredient Cost (GBP)` = sum(`Total Net Ingredient Cost (GBP)`)) |>
+  pivot_longer(
+    cols = c(`Total Net Ingredient Cost (GBP)`),
+    names_to = "measure",
+    values_to = "value"
+  ) |>
+  rename_with(~ gsub(" ", "_", toupper(gsub(
+    "[^[:alnum:] ]", "", .
+  ))), everything()) |>
+  na.omit()
+
+figure_5 <- group_chart_hc(
+  data = figure_5_data,
+  x = FINANCIAL_YEAR,
+  y = VALUE,
+  group = DRUG_CATEGORY,
+  type = "line",
+  xLab = "Financial year",
+  yLab = "Cost (GBP)",
+  title = "",
+  dlOn = F
+) |>
+  hc_tooltip(enabled = TRUE,
+             shared = TRUE,
+             sort = TRUE) |>
+  hc_legend(enabled = TRUE)
+
+figure_6_data <- national_data |>
+  filter(`Identified Patient Flag` == "Y") |>
+  mutate(`Items Per Patient` = `Total Items`  / `Total Identified Patients`) |>
+  select(`Financial Year`,
+         `Total Items`,
+         `Total Identified Patients`,
+         `Items Per Patient`) |>
+  rename_with(~ gsub(" ", "_", toupper(gsub(
+    "[^[:alnum:] ]", "", .
+  ))), everything())
+
+figure_6 <- basic_chart_hc(
+  data = figure_6_data,
+  x = FINANCIAL_YEAR,
+  y = ITEMS_PER_PATIENT,
+  type = "line",
+  xLab = "Financial year",
+  yLab = "Prescription items per patient",
+  title = ""
+)
+
+figure_7_data <- gender_data |>
+  filter(`Patient Gender` != "Unknown") |>
+  group_by(`Financial Year`, `Patient Gender`) |>
+  summarise(`Total Identified Patients` =
+              sum(`Total Identified Patients`)) |>
+  pivot_longer(
+    cols = c(`Total Identified Patients`),
+    names_to = "measure",
+    values_to = "value"
+  ) |>
+  rename_with(~ gsub(" ", "_", toupper(gsub(
+    "[^[:alnum:] ]", "", .
+  ))), everything())
+
+figure_7 <-  group_chart_hc(
+  data = figure_7_data,
+  x = FINANCIAL_YEAR,
+  y = VALUE,
+  group = PATIENT_GENDER,
+  type = "column",
+  xLab = "Financial year",
+  yLab = "Number of identified patients",
+  title = "",
+  dlOn = F
+) |>
+  hc_tooltip(enabled = T,
+             shared = T,
+             sort = T)
 
 # 7. create markdowns -------
 

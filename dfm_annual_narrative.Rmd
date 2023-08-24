@@ -90,16 +90,14 @@ Antidepressants are not included in the volume and cost or demographics measures
 
 This publication aims to describe the prescribing of dependency forming medications in England that are dispensed in the community. This does not include data on medicines prescribed and dispensed in secondary care, prisons, or issued by a private prescriber as this is not held by the NHSBSA.
 
-
-
 These statistics detail:
 
 * the total number of prescription items issued for dependency forming medication
 * the total cost of prescription items issued for these drugs
 * the number of identified patients that have received prescribing for these drugs
 * the number of identified patients receiving more than one dependency forming medication
-* demographic breakdowns of prescribing by age group and sex
-* demographic breakdowns by sex
+* demographic breakdowns of prescribing by age group and gender
+* demographic breakdowns by gender
 * demographic breakdowns by a measure of deprivation.
 
 These statistics use the BNF therapeutic classifications defined in the British National Formulary (BNF) using the classification system prior to BNF edition 70. Each January the NHSBSA updates the classification of drugs within the BNF hierarchy which may involve some drugs changing classification between years of this publication. The categories of dependency forming drugs do not align to specific sections of the BNF and have been filtered on chemical substance. A complete list can be found in appendix A of the background and methodology note that accompany this release.
@@ -134,7 +132,7 @@ In this release the term 'patient/s' is used to mean a unique, valid NHS number 
 
 Where patients are identified, their age is calculated on 30 September of the given financial year to assign them to a single age band. For patients where date of birth has not been captured, they have been included in a category of unknown.
 
-Sex information was not available from PDS for a small number of patients in each year, typically fewer than 100. This may be because it was not disclosed by the patient or not recorded by the organisation that collected the data. These patients have been omitted from the respective figures but can be found in the Statistical Summary Tables for the respective BNF Chapter.
+Gender information was not available from PDS for a small number of patients in each year, typically fewer than 100. This may be because it was not disclosed by the patient or not recorded by the organisation that collected the data. These patients have been omitted from the respective figures but can be found in the Statistical Summary Tables for the respective BNF Chapter.
 
 The [English Indices of Deprivation 2019](https://www.gov.uk/government/statistics/english-indices-of-deprivation-2019) have been used to provide a measure of patient deprivation. This provides an Index of Multiple Deprivation (IMD) looking at different factors such as income, employment and health deprivation and ranks areas of England in deciles based on their score, where 1 is the most deprived and 10 the least deprived. For our publication, the IMD is derived from the address of the patient.
 
@@ -146,7 +144,7 @@ These statistics do not contain any personally identifiable data. More details o
 
 Where data is provided "per patient", this refers to only costs or items attributable to identified patients. Therefore, these will not total overall costs or items which refer to all known costs or items.
 
-#### **`r paste0("Table 1: The proportion of items for which an NHS number was recorded for listed Drug Categories 2018/19 to 2022/23")`**
+#### **`r paste0("Table 1: The proportion of items for which an NHS number was recorded for listed Drug Categories per financial year")`**
 
 ```{r capture_rates, out.width = "100%"}
 
@@ -238,32 +236,11 @@ The patients per 1000 population are calculated using the [ONS population estima
 
 ```{r cost_per_drug, out.width = "100%"}
 
-# category_extract %>%
-#   group_by(`Financial Year`,`Drug Category`) %>% 
-#   summarise(`Total Net Ingredient Cost (GBP)` = signif(
-#     sum(
-#       `Total Net Ingredient Cost (GBP)`
-#       )
-#     ,3)) %>% 
-#   pivot_longer(cols = c(`Total Net Ingredient Cost (GBP)`),
-#                names_to = "measure",
-#                values_to = "value") %>% 
-#   group_chart_hc(
-#     x = `Financial Year`,
-#     y = value,
-#     group = `Drug Category`,
-#     type = "line",
-#     xLab = "Financial year",
-#     yLab = "Cost (GBP)",
-#     title = "",
-#     dlOn = F
-#   ) %>% 
-#   hc_tooltip(enabled = TRUE,
-#              shared = TRUE,
-#              sort = TRUE) %>% 
-#   hc_legend(enabled = TRUE)
+figure_5
 
 ```
+
+`r get_download_button(title = "Download chart data", data = figure_5_data, filename = "figure_5")`
 
 Source: [Dependency forming medicines summary tables - Costs and items (Table 2)](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/dfm/dfm_2021_2022_costs_and_items_v001.xlsx)
 
@@ -277,21 +254,11 @@ For the remaining two drug categories, Benzodiapezines increased in cost by 4.22
 
 ```{r items_per_pat, out.width = "100%"}
 
-# national_extract %>%
-#   filter(`Identified Patient Flag` == "Y") %>%
-#   
-#   mutate(ITEMS_PER_PAT = signif(`Total Items`  / `Total Identified Patients`, 3)) %>%
-# 
-#   basic_chart_hc(
-#     x = `Financial Year`,
-#     y = ITEMS_PER_PAT,
-#     type = "line",
-#     xLab = "Financial year",
-#     yLab = "Prescription items per patient",
-#     title = ""
-#   )
+figure_6
 
 ```
+
+`r get_download_button(title = "Download chart data", data = figure_6_data, filename = "figure_6")`
 
 Source: [Dependency forming medicines summary tables - Costs and items (Table 1)](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/dfm/dfm_2021_2022_costs_and_items_v001.xlsx)
 
@@ -302,45 +269,23 @@ This measure only includes prescribing of dependency forming medicines and does 
 
 ### 2.2. Patient demographics
 
-#### **`r paste0("Figure ",7,": Number of identified patients receiving dependency forming medicine prescribing by sex per financial year")`** 
+#### **`r paste0("Figure ",7,": Number of identified patients receiving dependency forming medicine prescribing by gender per financial year")`** 
 
-```{r patients_by_sex, out.width = "100%"}
+```{r patients_by_gender, out.width = "100%"}
 
-# gender_extract %>%
-#   filter(`Patient Sex` != "Unknown") %>%
-#   summarise(`Total Identified Patients` = signif(
-#     sum(
-#       `Total Identified Patients`
-#       )
-#     ,3)) %>%
-#   
-#   pivot_longer(cols = c(`Total Identified Patients`),
-#                names_to = "measure",
-#                values_to = "value") %>% 
-#   group_chart_hc(
-#     x = `Financial Year`,
-#     y = value,
-#     group = `Patient Sex`,
-#     type = "column",
-#     xLab = "Financial year",
-#     yLab = "Number of identified patients",
-#     title = "",
-#     dlOn = F
-#   )%>% 
-#   hc_tooltip(enabled = T,
-#              shared = T,
-#              sort = T)
-
+figure_7
 
 ```
+
+`r get_download_button(title = "Download chart data", data = figure_7_data, filename = "figure_7")`
 
 Source: [Dependency forming medicines summary tables - Patient demographics (Table 2)](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/dfm/dfm_2021_2022_patient_demographics_v001.xlsx)
 
 While the overall number of identified patients receiving dependency forming medicines prescribing has decreased year-on-year, the overall split of male and female patients has remained consistent. In 2015/16, 60.6% of identified patients were female and 39.4% were male. This is a similar proportion to 2021/22 where 61.3% of identified patients were female and 38.7% were male. However, there are 527,000 fewer female identified patients than there were in 2015/16, and 421,000 fewer male identified patients.
 
-Identified patients where their sex was unknown or indeterminate have been grouped together and can be found in the summary tables that accompany this release.
+Identified patients where their gender was unknown or indeterminate have been grouped together and can be found in the summary tables that accompany this release.
 
-#### **`r paste0("Figure ",8,": Number of identified patients receiving dependency forming medicine prescribing by age and sex 2021/22")`** 
+#### **`r paste0("Figure ",8,": Number of identified patients receiving dependency forming medicine prescribing by age and gender", config$fy)`** 
 ```{r patients_by_age, out.width = "100%"}
 
 
@@ -543,9 +488,9 @@ Further information on the methodology used in this publication and further back
 
 The patient counts shown in these statistics should only be analysed at the level at which they are presented. Adding together any patient counts is likely to result in an overestimate of the number of patients. A person will be included, or counted, in each category or time period in which they received relevant prescriptions. For example, if a patient received a prescription item for a dependency forming medicines product in 2018/19 and another in 2019/20, then adding together those totals would count that patient twice. For the same reason, data on patient counts for different Drug Categories should not be added together.
 
-### 4.2. Patient age and sex {.toc-ignore}
+### 4.2. Patient age and gender {.toc-ignore}
 
-The age and sex of patients used in these statistics is derived from data provided by the NHS Personal Demographics Service (PDS) for NHS numbers that have been successfully verified by them. A patient's age, used to assign them to an age group, has been calculated on 30 September for the given financial year. It is possible that a patient's PDS information may change over the course of the year, in these cases patients may be subject to multiple counting in these analyses.
+The age and gender of patients used in these statistics is derived from data provided by the NHS Personal Demographics Service (PDS) for NHS numbers that have been successfully verified by them. A patient's age, used to assign them to an age group, has been calculated on 30 September for the given financial year. It is possible that a patient's PDS information may change over the course of the year, in these cases patients may be subject to multiple counting in these analyses.
 
 ### 4.3. Index of deprivation {.toc-ignore}
 
