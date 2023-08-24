@@ -1082,6 +1082,31 @@ table_1 <- patient_identification_dt |>
                                      list(className = "dt-left", targets = 0:0),
                                      list(className = "dt-right", targets = 1:5)))
   )
+
+figure_1_data <- national_data |>
+  group_by(`Financial Year`) |>
+  summarise(`Prescription items` = sum(`Total Items`),
+            `Identified patients` = sum(`Total Identified Patients`)) |>
+  pivot_longer(cols = c(`Prescription items`, `Identified patients`),
+               names_to = "measure",
+               values_to = "value")|>
+  rename_with(~ gsub(" ", "_", toupper(gsub(
+    "[^[:alnum:] ]", "", .
+  ))), everything())
+
+
+  figure_1 <- group_chart_hc(
+    data = figure_1_data,
+    x = FINANCIAL_YEAR,
+    y = VALUE,
+    group = MEASURE,
+    type = "line",
+    xLab = "Financial year",
+    yLab = "Number of prescription items/identified patients",
+    title = ""
+
+  )
+
 # 7. create markdowns -------
 
 rmarkdown::render("dfm_annual_narrative.Rmd",

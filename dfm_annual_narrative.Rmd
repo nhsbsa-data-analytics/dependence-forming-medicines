@@ -146,7 +146,7 @@ These statistics do not contain any personally identifiable data. More details o
 
 Where data is provided "per patient", this refers to only costs or items attributable to identified patients. Therefore, these will not total overall costs or items which refer to all known costs or items.
 
-**` r paste0(Table 1: The proportion of items for which an NHS number was recorded for listed Drug Categories 2018/19 to 2022/23)`**
+#### **`r paste0("Table 1: The proportion of items for which an NHS number was recorded for listed Drug Categories 2018/19 to 2022/23")`**
 
 ```{r capture_rates, out.width = "100%"}
 
@@ -164,31 +164,16 @@ Source: [Dependency forming medicines summary tables - Costs and items (Patient 
 
 ### 2.1. Volume and cost
   
-#### **`r paste0("Figure ",1,": Number of dependency forming medicine items and patients prescribed per financial year")`**
+#### **`r paste0("Figure ",1,": Number of dependency forming medicine items prescribed and patients identified by financial year")`**
 
 
 ```{r total_items, out.width = "100%"}
 
-# national_extract %>%
-#   group_by(`Financial Year`) %>% 
-#   summarise(`Prescription items` = sum(`Total Items`),
-#             `Identified patients` = sum(`Total Identified Patients`)) %>% 
-#   pivot_longer(cols = c(`Prescription items`, `Identified patients`),
-#                names_to = "measure",
-#                values_to = "value") %>% 
-#   
-#   group_chart_hc(
-#     x = `Financial Year`,
-#     y = value,
-#     group = measure,
-#     type = "line",
-#     xLab = "Financial year",
-#     yLab = "Number of prescription items/identified patients",
-#     title = ""
-#     
-#   )
+figure_1
 
 ```
+
+`r get_download_button(title = "Download chart data", data = figure_1_data, filename = "figure_1")`
 
 Source: [Dependency forming medicines summary tables - Costs and items (Table 1)](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/dfm/dfm_2021_2022_costs_and_items_v001.xlsx)
 
