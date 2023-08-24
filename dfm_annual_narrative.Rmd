@@ -185,24 +185,11 @@ The number of identified patients that received prescribing for a dependency for
 
 ```{r total_costs, out.width = "100%"}
 
-# national_extract %>%
-#   group_by(`Financial Year`) %>% 
-#   summarise(`Total Net Ingredient Cost (GBP)` = sum(`Total Net Ingredient Cost (GBP)`)) %>% 
-#   pivot_longer(cols = c(`Total Net Ingredient Cost (GBP)`),
-#                names_to = "measure",
-#                values_to = "value") %>% 
-#   group_chart_hc(
-#     x = `Financial Year`,
-#     y = value,
-#     group = measure,
-#     type = "line",
-#     xLab = "Financial year",
-#     yLab = "Cost (GBP)",
-#     title = "",
-#     currency = TRUE
-#   )
+figure_2
 
 ```
+
+`r get_download_button(title = "Download chart data", data = figure_2_data, filename = "figure_2")`
 
 Source: [Dependency forming medicines summary tables - Costs and items (Table 1)](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/dfm/dfm_2021_2022_costs_and_items_v001.xlsx)
 
