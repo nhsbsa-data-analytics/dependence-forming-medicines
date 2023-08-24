@@ -181,7 +181,7 @@ population_data <- national_data |>
   )
 
 patient_identification_dt <- capture_rate_extract_dt(con = con) |>
-  select(1, 2, last_col(4):last_col())
+  select(1, last_col(4):last_col())
 
 patient_identification <- capture_rate_extract(con = con)
 
@@ -1063,12 +1063,31 @@ openxlsx::saveWorkbook(wb_dem,
                        overwrite = TRUE)
 
 
+# 6. Create charts/tables and data ----------------------------------------
+
+table_1_data <- patient_identification |>
+  rename_with(~ gsub(" ", "_", toupper(gsub(
+    "[^[:alnum:] ]", "", .
+  ))), everything())
+
+table_1 <- patient_identification_dt |> 
+  mutate(across(where(is.numeric), round, 2))|>
+  mutate(across(where(is.numeric), format, nsmall = 2)) |>
+  mutate(across(contains("20"), ~ paste0(.x, "%"))) |> 
+  DT::datatable(
+    rownames = FALSE,
+    options = list(dom = "t",
+                   columnDefs = list(list(orderable = FALSE,
+                                          targets = "_all"),
+                                     list(className = "dt-left", targets = 0:0),
+                                     list(className = "dt-right", targets = 1:5)))
+  )
 # 7. create markdowns -------
 
-# rmarkdown::render("pfd-narrative.Rmd",
-#                   output_format = "html_document",
-#                   output_file = "outputs/pfd_summary_narrative_2022_23_v001.html")
-#
+rmarkdown::render("dfm_annual_narrative.Rmd",
+                  output_format = "html_document",
+                  output_file = "outputs/dfm_summary_narrative_2022_23_v001.html")
+
 # rmarkdown::render("pfd-narrative.Rmd",
 #                   output_format = "word_document",
 #                   output_file = "outputs/pfd_summary_narrative_2022_23_v001.docx")

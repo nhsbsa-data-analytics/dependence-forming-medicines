@@ -146,24 +146,15 @@ These statistics do not contain any personally identifiable data. More details o
 
 Where data is provided "per patient", this refers to only costs or items attributable to identified patients. Therefore, these will not total overall costs or items which refer to all known costs or items.
 
-**Table 1: The proportion of items for which an NHS number was recorded for listed Drug Categories 2017/18 to 2021/22**
+**` r paste0(Table 1: The proportion of items for which an NHS number was recorded for listed Drug Categories 2018/19 to 2022/23)`**
 
 ```{r capture_rates, out.width = "100%"}
 
-capture_rate_data %>%
-    mutate(across(where(is.numeric), round, 2))%>%
-   mutate(across(where(is.numeric), format, nsmall = 2)) %>%
-   mutate(across(contains("20"), ~ paste0(.x, "%"))) %>% 
-  DT::datatable(
-    rownames = FALSE,
-    options = list(dom = "t",
-                   columnDefs = list(list(orderable = FALSE,
-                                          targets = "_all"),
-                                     list(className = "dt-left", targets = 0:0),
-                                     list(className = "dt-right", targets = 1:5)))
-  )
+table_1
 
 ```
+
+`r get_download_button(title = "Download table data", data = table_1_data, filename = "table_1")`
 
 Source: [Dependency forming medicines summary tables - Costs and items (Patient identification rates)](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/dfm/dfm_2021_2022_costs_and_items_v001.xlsx)
 
@@ -178,24 +169,24 @@ Source: [Dependency forming medicines summary tables - Costs and items (Patient 
 
 ```{r total_items, out.width = "100%"}
 
-national_extract %>%
-  group_by(`Financial Year`) %>% 
-  summarise(`Prescription items` = sum(`Total Items`),
-            `Identified patients` = sum(`Total Identified Patients`)) %>% 
-  pivot_longer(cols = c(`Prescription items`, `Identified patients`),
-               names_to = "measure",
-               values_to = "value") %>% 
-  
-  group_chart_hc(
-    x = `Financial Year`,
-    y = value,
-    group = measure,
-    type = "line",
-    xLab = "Financial year",
-    yLab = "Number of prescription items/identified patients",
-    title = ""
-    
-  )
+# national_extract %>%
+#   group_by(`Financial Year`) %>% 
+#   summarise(`Prescription items` = sum(`Total Items`),
+#             `Identified patients` = sum(`Total Identified Patients`)) %>% 
+#   pivot_longer(cols = c(`Prescription items`, `Identified patients`),
+#                names_to = "measure",
+#                values_to = "value") %>% 
+#   
+#   group_chart_hc(
+#     x = `Financial Year`,
+#     y = value,
+#     group = measure,
+#     type = "line",
+#     xLab = "Financial year",
+#     yLab = "Number of prescription items/identified patients",
+#     title = ""
+#     
+#   )
 
 ```
 
@@ -209,22 +200,22 @@ The number of identified patients that received prescribing for a dependency for
 
 ```{r total_costs, out.width = "100%"}
 
-national_extract %>%
-  group_by(`Financial Year`) %>% 
-  summarise(`Total Net Ingredient Cost (GBP)` = sum(`Total Net Ingredient Cost (GBP)`)) %>% 
-  pivot_longer(cols = c(`Total Net Ingredient Cost (GBP)`),
-               names_to = "measure",
-               values_to = "value") %>% 
-  group_chart_hc(
-    x = `Financial Year`,
-    y = value,
-    group = measure,
-    type = "line",
-    xLab = "Financial year",
-    yLab = "Cost (GBP)",
-    title = "",
-    currency = TRUE
-  )
+# national_extract %>%
+#   group_by(`Financial Year`) %>% 
+#   summarise(`Total Net Ingredient Cost (GBP)` = sum(`Total Net Ingredient Cost (GBP)`)) %>% 
+#   pivot_longer(cols = c(`Total Net Ingredient Cost (GBP)`),
+#                names_to = "measure",
+#                values_to = "value") %>% 
+#   group_chart_hc(
+#     x = `Financial Year`,
+#     y = value,
+#     group = measure,
+#     type = "line",
+#     xLab = "Financial year",
+#     yLab = "Cost (GBP)",
+#     title = "",
+#     currency = TRUE
+#   )
 
 ```
 
@@ -238,28 +229,28 @@ The changes from 2016/17 to 2018/19 were due to Pregabalin, a gabapenintoid comi
 
 ```{r items_per_drug, out.width = "100%"}
 
-category_extract %>% 
-  group_by(`Financial Year`,`Drug Category`) %>%
-  summarise(`Total Items` = signif(
-    sum(`Total Items` )
-    ,3)) %>%
-  pivot_longer(cols = c(`Total Items`),
-               names_to = "measure",
-               values_to = "value") %>% 
-  group_chart_hc(
-    x = `Financial Year`,
-    y = value,
-    group = `Drug Category`,
-    type = "line",
-    xLab = "Financial year",
-    yLab = "Number of prescribed items",
-    title = "",
-    dlOn = F
-  ) %>% 
-  hc_tooltip(enabled = TRUE,
-             shared = TRUE,
-             sort = TRUE) %>% 
-  hc_legend(enabled = TRUE)
+# category_extract %>% 
+#   group_by(`Financial Year`,`Drug Category`) %>%
+#   summarise(`Total Items` = signif(
+#     sum(`Total Items` )
+#     ,3)) %>%
+#   pivot_longer(cols = c(`Total Items`),
+#                names_to = "measure",
+#                values_to = "value") %>% 
+#   group_chart_hc(
+#     x = `Financial Year`,
+#     y = value,
+#     group = `Drug Category`,
+#     type = "line",
+#     xLab = "Financial year",
+#     yLab = "Number of prescribed items",
+#     title = "",
+#     dlOn = F
+#   ) %>% 
+#   hc_tooltip(enabled = TRUE,
+#              shared = TRUE,
+#              sort = TRUE) %>% 
+#   hc_legend(enabled = TRUE)
 
 ```
 
@@ -274,27 +265,27 @@ Prescribing of gabapenintoids increased by 3.32% from 15.3 million items in 2020
 
 ```{r pats_per_drug, out.width = "100%"}
 
-population_category_extract %>% 
-  group_by(`Financial Year`,`Drug Category`) %>%
-  summarise(`Patients per 1000 Population` = round(`Patients per 1000 Population` )
-    ,0) %>%
-   pivot_longer(cols = c(`Patients per 1000 Population`),
-               names_to = "measure",
-               values_to = "value") %>% 
-  group_chart_hc(
-    x = `Financial Year`,
-    y = value,
-    group = `Drug Category`,
-      type = "line",
-    xLab = "Financial year",
-    yLab = "Patients per 1000 Population",
-    title = "",
-    dlOn = F
-  ) %>% 
-  hc_tooltip(enabled = TRUE,
-             shared = TRUE,
-             sort = TRUE) %>% 
-  hc_legend(enabled = TRUE)
+# population_category_extract %>% 
+#   group_by(`Financial Year`,`Drug Category`) %>%
+#   summarise(`Patients per 1000 Population` = round(`Patients per 1000 Population` )
+#     ,0) %>%
+#    pivot_longer(cols = c(`Patients per 1000 Population`),
+#                names_to = "measure",
+#                values_to = "value") %>% 
+#   group_chart_hc(
+#     x = `Financial Year`,
+#     y = value,
+#     group = `Drug Category`,
+#       type = "line",
+#     xLab = "Financial year",
+#     yLab = "Patients per 1000 Population",
+#     title = "",
+#     dlOn = F
+#   ) %>% 
+#   hc_tooltip(enabled = TRUE,
+#              shared = TRUE,
+#              sort = TRUE) %>% 
+#   hc_legend(enabled = TRUE)
 
 ```
 Source: [Dependency forming medicines summary tables - Costs and items (Table 4)](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/dfm/dfm_2021_2022_costs_and_items_v001.xlsx)
@@ -313,30 +304,30 @@ The patients per 1000 population are calculated using the [ONS population estima
 
 ```{r cost_per_drug, out.width = "100%"}
 
-category_extract %>%
-  group_by(`Financial Year`,`Drug Category`) %>% 
-  summarise(`Total Net Ingredient Cost (GBP)` = signif(
-    sum(
-      `Total Net Ingredient Cost (GBP)`
-      )
-    ,3)) %>% 
-  pivot_longer(cols = c(`Total Net Ingredient Cost (GBP)`),
-               names_to = "measure",
-               values_to = "value") %>% 
-  group_chart_hc(
-    x = `Financial Year`,
-    y = value,
-    group = `Drug Category`,
-    type = "line",
-    xLab = "Financial year",
-    yLab = "Cost (GBP)",
-    title = "",
-    dlOn = F
-  ) %>% 
-  hc_tooltip(enabled = TRUE,
-             shared = TRUE,
-             sort = TRUE) %>% 
-  hc_legend(enabled = TRUE)
+# category_extract %>%
+#   group_by(`Financial Year`,`Drug Category`) %>% 
+#   summarise(`Total Net Ingredient Cost (GBP)` = signif(
+#     sum(
+#       `Total Net Ingredient Cost (GBP)`
+#       )
+#     ,3)) %>% 
+#   pivot_longer(cols = c(`Total Net Ingredient Cost (GBP)`),
+#                names_to = "measure",
+#                values_to = "value") %>% 
+#   group_chart_hc(
+#     x = `Financial Year`,
+#     y = value,
+#     group = `Drug Category`,
+#     type = "line",
+#     xLab = "Financial year",
+#     yLab = "Cost (GBP)",
+#     title = "",
+#     dlOn = F
+#   ) %>% 
+#   hc_tooltip(enabled = TRUE,
+#              shared = TRUE,
+#              sort = TRUE) %>% 
+#   hc_legend(enabled = TRUE)
 
 ```
 
@@ -352,19 +343,19 @@ For the remaining two drug categories, Benzodiapezines increased in cost by 4.22
 
 ```{r items_per_pat, out.width = "100%"}
 
-national_extract %>%
-  filter(`Identified Patient Flag` == "Y") %>%
-  
-  mutate(ITEMS_PER_PAT = signif(`Total Items`  / `Total Identified Patients`, 3)) %>%
-
-  basic_chart_hc(
-    x = `Financial Year`,
-    y = ITEMS_PER_PAT,
-    type = "line",
-    xLab = "Financial year",
-    yLab = "Prescription items per patient",
-    title = ""
-  )
+# national_extract %>%
+#   filter(`Identified Patient Flag` == "Y") %>%
+#   
+#   mutate(ITEMS_PER_PAT = signif(`Total Items`  / `Total Identified Patients`, 3)) %>%
+# 
+#   basic_chart_hc(
+#     x = `Financial Year`,
+#     y = ITEMS_PER_PAT,
+#     type = "line",
+#     xLab = "Financial year",
+#     yLab = "Prescription items per patient",
+#     title = ""
+#   )
 
 ```
 
@@ -381,30 +372,30 @@ This measure only includes prescribing of dependency forming medicines and does 
 
 ```{r patients_by_sex, out.width = "100%"}
 
-gender_extract %>%
-  filter(`Patient Sex` != "Unknown") %>%
-  summarise(`Total Identified Patients` = signif(
-    sum(
-      `Total Identified Patients`
-      )
-    ,3)) %>%
-  
-  pivot_longer(cols = c(`Total Identified Patients`),
-               names_to = "measure",
-               values_to = "value") %>% 
-  group_chart_hc(
-    x = `Financial Year`,
-    y = value,
-    group = `Patient Sex`,
-    type = "column",
-    xLab = "Financial year",
-    yLab = "Number of identified patients",
-    title = "",
-    dlOn = F
-  )%>% 
-  hc_tooltip(enabled = T,
-             shared = T,
-             sort = T)
+# gender_extract %>%
+#   filter(`Patient Sex` != "Unknown") %>%
+#   summarise(`Total Identified Patients` = signif(
+#     sum(
+#       `Total Identified Patients`
+#       )
+#     ,3)) %>%
+#   
+#   pivot_longer(cols = c(`Total Identified Patients`),
+#                names_to = "measure",
+#                values_to = "value") %>% 
+#   group_chart_hc(
+#     x = `Financial Year`,
+#     y = value,
+#     group = `Patient Sex`,
+#     type = "column",
+#     xLab = "Financial year",
+#     yLab = "Number of identified patients",
+#     title = "",
+#     dlOn = F
+#   )%>% 
+#   hc_tooltip(enabled = T,
+#              shared = T,
+#              sort = T)
 
 
 ```
@@ -419,11 +410,11 @@ Identified patients where their sex was unknown or indeterminate have been group
 ```{r patients_by_age, out.width = "100%"}
 
 
-age_gender_data %>% 
-   filter(`Financial Year` == max(`Financial Year`)) %>% 
-  age_gender_chart(
-    labels = FALSE
-  )
+# age_gender_data %>% 
+#    filter(`Financial Year` == max(`Financial Year`)) %>% 
+#   age_gender_chart(
+#     labels = FALSE
+#   )
 
 
 ```
@@ -438,25 +429,25 @@ More information on how we calculate a patient's age can be found in section 4 o
 
 ```{r patients_by_imd,out.width = "100%"}
 
-imd_extract %>%
-  ungroup() %>% 
-  filter(`Financial Year` == max(`Financial Year`),
-         `IMD Quintile` != "Unknown") %>%
-
-  arrange(`IMD Quintile`) %>%
- 
-  
-  pivot_longer(cols = c(`Total Identified Patients`),
-               names_to = "measure",
-               values_to = "value") %>% 
-    basic_chart_hc(
-    x = `IMD Quintile`,
-    y = value,
-    type = "column",
-    xLab = "IMD quintile",
-    yLab = "Number of identified patients",
-    title = ""
-  )
+# imd_extract %>%
+#   ungroup() %>% 
+#   filter(`Financial Year` == max(`Financial Year`),
+#          `IMD Quintile` != "Unknown") %>%
+# 
+#   arrange(`IMD Quintile`) %>%
+#  
+#   
+#   pivot_longer(cols = c(`Total Identified Patients`),
+#                names_to = "measure",
+#                values_to = "value") %>% 
+#     basic_chart_hc(
+#     x = `IMD Quintile`,
+#     y = value,
+#     type = "column",
+#     xLab = "IMD quintile",
+#     yLab = "Number of identified patients",
+#     title = ""
+#   )
 
 ```
 
@@ -472,24 +463,24 @@ The English Indices of Deprivation have been used to provide a measure of patien
 
 ```{r patients_by_no_cat, out.width="100%"}
 
-coprescribing_extract %>%
- filter(`Year Month` == max(`Year Month`),
-        `Number of Categories`>1 ) %>%
-  
-  arrange(`Number of Categories`) %>%
-  
-  
-  pivot_longer(cols = c(`Total Identified Patients`),
-               names_to = "measure",
-               values_to = "value") %>% 
-  basic_chart_hc(
-    x = `Number of Categories`,
-    y = value,
-    type = "column",
-    xLab = "No of Categories",
-    yLab = "Number of identified patients",
-    title = ""
-  )
+# coprescribing_extract %>%
+#  filter(`Year Month` == max(`Year Month`),
+#         `Number of Categories`>1 ) %>%
+#   
+#   arrange(`Number of Categories`) %>%
+#   
+#   
+#   pivot_longer(cols = c(`Total Identified Patients`),
+#                names_to = "measure",
+#                values_to = "value") %>% 
+#   basic_chart_hc(
+#     x = `Number of Categories`,
+#     y = value,
+#     type = "column",
+#     xLab = "No of Categories",
+#     yLab = "Number of identified patients",
+#     title = ""
+#   )
 
 ```
 Source: [Dependency forming medicines summary tables - Patient demographics (Table 10)](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/dfm/dfm_2021_2022_patient_demographics_v001.xlsx)
@@ -502,45 +493,44 @@ In total, an estimated 6.49 million identified patients received a prescription 
 
 ```{r combins_by_no_cat, out.width="100%"}
 
-coprescribing_matrix_extract %>%
- filter(`Year Month` == max(`Year Month`) ) %>%
-  arrange(desc(`Total Identified Patients`)) %>% 
-  
-  pivot_longer(cols = c(`Total Identified Patients`),
-               names_to = "measure",
-               values_to = "value") %>% 
-  basic_chart_hc(
-    x = COMBINATION,
-    y = value,
-    type = "column",
-    xLab = "Drug Combination",
-    yLab = "Number of identified patients",
-    title = ""
-  )%>% 
-  hc_tooltip(enabled = T,
-             shared = T,
-             sort = T) %>% 
-hc_xAxis(
-    categories = list(
-      "Opioids and <br>Antidepressants",
-"Gabapentinoids and <br>Antidepressants",
-"Opioids and <br>Gabapentinoids",
-"Benzodiazepines and <br>Antidepressants",
-"Z-Drugs and <br>Antidepressants",
-"Opioids and <br>Benzodiazepines",
-"Opioids and <br>Z-Drugs",
-"Benzodiazepines and <br>Gabapentinoids",
-"Benzodiazepines and <br>Z-Drugs",
-"Z-Drugs and <br>Gabapentinoids")
-
-    )
+# coprescribing_matrix_extract %>%
+#  filter(`Year Month` == max(`Year Month`) ) %>%
+#   arrange(desc(`Total Identified Patients`)) %>% 
+#   
+#   pivot_longer(cols = c(`Total Identified Patients`),
+#                names_to = "measure",
+#                values_to = "value") %>% 
+#   basic_chart_hc(
+#     x = COMBINATION,
+#     y = value,
+#     type = "column",
+#     xLab = "Drug Combination",
+#     yLab = "Number of identified patients",
+#     title = ""
+#   )%>% 
+#   hc_tooltip(enabled = T,
+#              shared = T,
+#              sort = T) %>% 
+# hc_xAxis(
+#     categories = list(
+#       "Opioids and <br>Antidepressants",
+# "Gabapentinoids and <br>Antidepressants",
+# "Opioids and <br>Gabapentinoids",
+# "Benzodiazepines and <br>Antidepressants",
+# "Z-Drugs and <br>Antidepressants",
+# "Opioids and <br>Benzodiazepines",
+# "Opioids and <br>Z-Drugs",
+# "Benzodiazepines and <br>Gabapentinoids",
+# "Benzodiazepines and <br>Z-Drugs",
+# "Z-Drugs and <br>Gabapentinoids")
+# 
+#     )
 
 
 ```
 Source: [Dependency forming medicines summary tables - Patient demographics (Table 11)](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/dfm/dfm_2021_2022_patient_demographics_v001.xlsx)
 
 The most popular combination of drugs in March 2022 for those patients receiving items from 2 categories of dependency forming medicines was opioids and antidepressants, with 633,000 (51.9%) of patients. This was followed by gabapentinoids and antidepressants with 205,000 patients (16.8%) and opioids and gabapentinoids with 150,000 patients (12.3%) These proportions were consistent across 2021/22.
-
 
 ---
 
