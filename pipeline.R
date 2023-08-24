@@ -1136,6 +1136,36 @@ figure_2 <- group_chart_hc(
   currency = TRUE
 )
 
+figure_3_data <- category_data |>
+  group_by(`Financial Year`, `Drug Category`) |>
+  summarise(`Total Items` = signif(sum(`Total Items`)
+                                   , 3)) |>
+  pivot_longer(
+    cols = c(`Total Items`),
+    names_to = "measure",
+    values_to = "value"
+  ) |>
+  rename_with(~ gsub(" ", "_", toupper(gsub(
+    "[^[:alnum:] ]", "", .
+  ))), everything())
+
+
+figure_3 <- group_chart_hc(
+  data = figure_3_data,
+  x = FINANCIAL_YEAR,
+  y = VALUE,
+  group = DRUG_CATEGORY,
+  type = "line",
+  xLab = "Financial year",
+  yLab = "Number of prescribed items",
+  title = "",
+  dlOn = F
+) |>
+  hc_tooltip(enabled = TRUE,
+             shared = TRUE,
+             sort = TRUE) |>
+  hc_legend(enabled = TRUE)
+
 # 7. create markdowns -------
 
 rmarkdown::render("dfm_annual_narrative.Rmd",

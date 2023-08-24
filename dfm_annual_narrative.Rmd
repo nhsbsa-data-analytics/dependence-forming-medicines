@@ -201,30 +201,11 @@ The changes from 2016/17 to 2018/19 were due to Pregabalin, a gabapenintoid comi
 
 ```{r items_per_drug, out.width = "100%"}
 
-# category_extract %>% 
-#   group_by(`Financial Year`,`Drug Category`) %>%
-#   summarise(`Total Items` = signif(
-#     sum(`Total Items` )
-#     ,3)) %>%
-#   pivot_longer(cols = c(`Total Items`),
-#                names_to = "measure",
-#                values_to = "value") %>% 
-#   group_chart_hc(
-#     x = `Financial Year`,
-#     y = value,
-#     group = `Drug Category`,
-#     type = "line",
-#     xLab = "Financial year",
-#     yLab = "Number of prescribed items",
-#     title = "",
-#     dlOn = F
-#   ) %>% 
-#   hc_tooltip(enabled = TRUE,
-#              shared = TRUE,
-#              sort = TRUE) %>% 
-#   hc_legend(enabled = TRUE)
+figure_3
 
 ```
+
+`r get_download_button(title = "Download chart data", data = figure_3_data, filename = "figure_3")`
 
 Source: [Dependency forming medicines summary tables - Costs and items (Table 2)](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/dfm/dfm_2021_2022_costs_and_items_v001.xlsx)
 
