@@ -317,7 +317,7 @@ write_sheet(
     "1. Field definitions can be found on the 'Metadata' tab.",
     "2. The patient counts shown in these statistics should only be analysed at the level at which they are presented. Adding together any patient counts is likely to result in an overestimate of the number of patients."
   ),
-  category_data |> select(-`BNF Section Name`,-`BNF Section Code`),
+  category_data |> select(-`BNF Section Name`, -`BNF Section Code`),
   14
 )
 
@@ -1066,7 +1066,7 @@ openxlsx::saveWorkbook(wb_dem,
 # 6. Create charts/tables and data ----------------------------------------
 
 table_1_data <- patient_identification |>
-  rename_with(~ gsub(" ", "_", toupper(gsub(
+  rename_with( ~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything())
 
@@ -1094,7 +1094,7 @@ figure_1_data <- national_data |>
     names_to = "measure",
     values_to = "value"
   ) |>
-  rename_with(~ gsub(" ", "_", toupper(gsub(
+  rename_with( ~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything())
 
@@ -1119,7 +1119,7 @@ figure_2_data <- national_data |>
     names_to = "measure",
     values_to = "value"
   ) |>
-  rename_with(~ gsub(" ", "_", toupper(gsub(
+  rename_with( ~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything())
 
@@ -1145,7 +1145,7 @@ figure_3_data <- category_data |>
     names_to = "measure",
     values_to = "value"
   ) |>
-  rename_with(~ gsub(" ", "_", toupper(gsub(
+  rename_with( ~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything())
 
@@ -1161,6 +1161,36 @@ figure_3 <- group_chart_hc(
   title = "",
   dlOn = F
 ) |>
+  hc_tooltip(enabled = TRUE,
+             shared = TRUE,
+             sort = TRUE) |>
+  hc_legend(enabled = TRUE)
+
+
+figure_4_data <- population_category_data |>
+  group_by(`Financial Year`, `Drug Category`) |>
+  summarise(`Patients per 1,000 Population` = `Patients per 1,000 Population`) |>
+  pivot_longer(
+    cols = c(`Patients per 1,000 Population`),
+    names_to = "measure",
+    values_to = "value"
+  ) |>
+  rename_with( ~ gsub(" ", "_", toupper(gsub(
+    "[^[:alnum:] ]", "", .
+  ))), everything()) |>
+  na.omit()
+
+figure_4 <- group_chart_hc(
+    data = figure_4_data,
+    x = FINANCIAL_YEAR,
+    y = VALUE,
+    group = DRUG_CATEGORY,
+    type = "line",
+    xLab = "Financial year",
+    yLab = "Patients per 1,000 Population",
+    title = "",
+    dlOn = F
+  ) |>
   hc_tooltip(enabled = TRUE,
              shared = TRUE,
              sort = TRUE) |>

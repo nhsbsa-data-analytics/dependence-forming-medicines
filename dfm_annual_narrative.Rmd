@@ -218,32 +218,13 @@ Prescribing of gabapenintoids increased by 3.32% from 15.3 million items in 2020
 
 ```{r pats_per_drug, out.width = "100%"}
 
-# population_category_extract %>% 
-#   group_by(`Financial Year`,`Drug Category`) %>%
-#   summarise(`Patients per 1000 Population` = round(`Patients per 1000 Population` )
-#     ,0) %>%
-#    pivot_longer(cols = c(`Patients per 1000 Population`),
-#                names_to = "measure",
-#                values_to = "value") %>% 
-#   group_chart_hc(
-#     x = `Financial Year`,
-#     y = value,
-#     group = `Drug Category`,
-#       type = "line",
-#     xLab = "Financial year",
-#     yLab = "Patients per 1000 Population",
-#     title = "",
-#     dlOn = F
-#   ) %>% 
-#   hc_tooltip(enabled = TRUE,
-#              shared = TRUE,
-#              sort = TRUE) %>% 
-#   hc_legend(enabled = TRUE)
+figure_4
 
 ```
+
+`r get_download_button(title = "Download chart data", data = figure_4_data, filename = "figure_4")`
+
 Source: [Dependency forming medicines summary tables - Costs and items (Table 4)](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/dfm/dfm_2021_2022_costs_and_items_v001.xlsx)
-
-
 
 There were 99 patients per 1000 population receiving opioid drugs, approximately 9.9% of the population of England in 2021/22, an increase of 1.2 patients per 1000 population from the 98 per 1000 population in 2020/21. This was the first increase after five years of consecutive decreases from 117 patients per 1000 population in 2015/16.
 
