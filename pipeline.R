@@ -1288,6 +1288,31 @@ figure_8_data <- age_gender_data |>
 figure_8 <-  age_gender_chart(figure_8_data,
                               labels = FALSE)
 
+figure_9_data <- imd_data |>
+  select(-`Total Items`,-`Total Net Ingredient Cost (GBP)`) |>
+  filter(`Financial Year` == max(`Financial Year`),
+         `IMD Quintile` != "Unknown") |>
+  arrange(`IMD Quintile`) |>
+  pivot_longer(
+    cols = c(`Total Identified Patients`),
+    names_to = "measure",
+    values_to = "value"
+  ) |>
+  rename_with(~ gsub(" ", "_", toupper(gsub(
+    "[^[:alnum:] ]", "", .
+  ))), everything())
+
+figure_9 <- basic_chart_hc(
+  data = figure_9_data,
+  x = IMD_QUINTILE,
+  y = VALUE,
+  type = "column",
+  xLab = "IMD quintile",
+  yLab = "Number of identified patients",
+  title = ""
+)
+
+
 # 7. create markdowns -------
 
 rmarkdown::render("dfm_annual_narrative.Rmd",

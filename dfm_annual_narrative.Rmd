@@ -300,31 +300,15 @@ The most common group to receive prescribing for dependency forming medicines in
 
 More information on how we calculate a patient's age can be found in section 4 of this summary.
 
-#### **`r paste0("Figure ",9,": Number of identified patients receiving dependency forming medicines prescribing by IMD quintile 2021/22")`** 
+#### **`r paste0("Figure ",9,": Number of identified patients receiving dependency forming medicines prescribing by IMD quintile ", config$fy)`** 
 
 ```{r patients_by_imd,out.width = "100%"}
 
-# imd_extract %>%
-#   ungroup() %>% 
-#   filter(`Financial Year` == max(`Financial Year`),
-#          `IMD Quintile` != "Unknown") %>%
-# 
-#   arrange(`IMD Quintile`) %>%
-#  
-#   
-#   pivot_longer(cols = c(`Total Identified Patients`),
-#                names_to = "measure",
-#                values_to = "value") %>% 
-#     basic_chart_hc(
-#     x = `IMD Quintile`,
-#     y = value,
-#     type = "column",
-#     xLab = "IMD quintile",
-#     yLab = "Number of identified patients",
-#     title = ""
-#   )
+figure_9
 
 ```
+
+`r get_download_button(title = "Download chart data", data = figure_9_data, filename = "figure_9")`
 
 Source: [Dependency forming medicines summary tables - Patient demographics (Table 8)](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/dfm/dfm_2021_2022_patient_demographics_v001.xlsx)
 
