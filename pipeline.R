@@ -1274,6 +1274,20 @@ figure_7 <-  group_chart_hc(
              shared = T,
              sort = T)
 
+figure_8_data <- age_gender_data |>
+  select(`Financial Year`,
+         `Age Band`,
+         `Patient Gender`,
+         `Total Identified Patients`) |>
+  filter(`Financial Year` == max(`Financial Year`)) |>
+  rename_with(~ gsub(" ", "_", toupper(gsub(
+    "[^[:alnum:] ]", "", .
+  ))), everything())
+
+
+figure_8 <-  age_gender_chart(figure_8_data,
+                              labels = FALSE)
+
 # 7. create markdowns -------
 
 rmarkdown::render("dfm_annual_narrative.Rmd",
