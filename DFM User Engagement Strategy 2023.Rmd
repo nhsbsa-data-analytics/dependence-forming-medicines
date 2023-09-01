@@ -38,11 +38,12 @@ knitr::opts_chunk$set(echo = FALSE,
 
 <main>
 
-# Background Information and Methodology {.toc-ignore}
+# User Engagement Strategy {.toc-ignore}
   
 ## September 2023 {.toc-ignore}
 
 ## About this document
+
 This is the NHS Business Services Authority’s (NHSBSA) policy and procedure on user engagement in relation to the production of the Dependency Forming Medicines (DFM) – England publications.
 This document will be reviewed and refreshed annually to ensure that it remains current and relevant. Additional updates will be made following significant developments of relevance to the DFM England statistics, including following public consultations, amendments to relevant internal and external guidance, or regulations. 
 
