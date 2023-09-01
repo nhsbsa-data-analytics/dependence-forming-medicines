@@ -55,7 +55,7 @@ colors <- c("#005EB8","#768692")
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-12} 
-`r infoBox_border(header = "Feedback", text = paste0("We are interested in any feedback about the publication, which you can send by using our ", htmltools::HTML(paste("<a href='",config$stats_survey_link,"'>Official Statistics feedback survey</a>")),"."), width = "100%")` 
+`r infoBox_border(header = "Changes to these statistics", text = paste0("We have made changes to how we count patients and assign them to an Index of Multiple Deprivation (IMD) quintile. Some historical figures may have changed from previous releases. You can read more about these changes in section 4.<br><br>Tapentadol phosphate has been added to the opioid drug category. Levomilnacipran and other antidepressant preparations have been removed from the antidpressant drug category.<br><br>We are interested in any feedback about the publication, which you can send by using our ", htmltools::HTML(paste("<a href='",config$stats_survey_link,"'>Official Statistics feedback survey</a>")),"."), width = "100%")` 
 ::: 
 ::::
 

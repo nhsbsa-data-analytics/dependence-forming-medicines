@@ -1377,6 +1377,8 @@ figure_11 <- basic_chart_hc(
 
 # 7. create markdowns -------
 
+# narrative 
+
 rmarkdown::render("dfm_annual_narrative.Rmd",
                   output_format = "html_document",
                   output_file = "outputs/dfm_summary_narrative_2022_23_v001.html")
@@ -1384,6 +1386,22 @@ rmarkdown::render("dfm_annual_narrative.Rmd",
 rmarkdown::render("dfm_annual_narrative.Rmd",
                    output_format = "word_document",
                   output_file = "outputs/dfm_summary_narrative_2022_23_v001.docx")
+
+# user engagement
+
+# rmarkdown::render("dfm_user_engagement_2223.Rmd",
+#                   output_format = "html_document",
+#                   output_file = "outputs/dfm_user_engagement_2022_23_v001.html")
+
+# background
+
+rmarkdown::render("dfm-background-september-2023.Rmd",
+                  output_format = "html_document",
+                  output_file = "outputs/dfm_background_info_methodology_v001.html")
+
+rmarkdown::render("dfm-background-september-2023.Rmd",
+                  output_format = "word_document",
+                  output_file = "outputs/dfm_background_info_methodology_v001.docx")
 
 # 8. disconnect from DWH  ---------
 DBI::dbDisconnect(con)
