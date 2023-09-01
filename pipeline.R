@@ -1389,9 +1389,9 @@ rmarkdown::render("dfm_annual_narrative.Rmd",
 
 # user engagement
 
-# rmarkdown::render("dfm_user_engagement_2223.Rmd",
-#                   output_format = "html_document",
-#                   output_file = "outputs/dfm_user_engagement_2022_23_v001.html")
+rmarkdown::render("dfm_user_engagement_2223.Rmd",
+                  output_format = "html_document",
+                  output_file = "outputs/dfm_user_engagement_2022_23_v001.html")
 
 # background
 
