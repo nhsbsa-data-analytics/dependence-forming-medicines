@@ -919,7 +919,7 @@ category_extract <- function(con,
   
   #remove antidepressants from final table using not in function
   fact_category <- fact_category |>
-    dplyr::filter(`Drug Category` %!in% c("Antidepressants"))
+    dplyr::filter(`Drug Category` != "Antidepressants")
   
   return(fact_category)
   

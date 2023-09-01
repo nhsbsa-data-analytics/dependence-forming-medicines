@@ -52,6 +52,7 @@ req_pkgs <-
     "htmltools",
     "geojsonsf",
     "readxl",
+    "kableExtra",
     "nhsbsa-data-analytics/nhsbsaR",
     "nhsbsa-data-analytics/nhsbsaExternalData",
     "nhsbsa-data-analytics/accessibleTables",
@@ -1071,6 +1072,7 @@ table_1_data <- patient_identification |>
   ))), everything())
 
 table_1 <- patient_identification_dt |>
+  filter(`Drug Category` != "ANTIDEPRESSANTS") |>
   mutate(across(where(is.numeric), round, 2)) |>
   mutate(across(where(is.numeric), format, nsmall = 2)) |>
   mutate(across(contains("20"), ~ paste0(.x, "%"))) |>
@@ -1146,13 +1148,14 @@ figure_3_data <- category_data |>
   ) |>
   rename_with( ~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
-  ))), everything())
+  ))), everything())|>
+  mutate(ROUNDED_VALUE = signif(VALUE, 3))
 
 
 figure_3 <- group_chart_hc(
   data = figure_3_data,
   x = FINANCIAL_YEAR,
-  y = VALUE,
+  y = ROUNDED_VALUE,
   group = DRUG_CATEGORY,
   type = "line",
   xLab = "Financial year",
@@ -1177,12 +1180,13 @@ figure_4_data <- population_category_data |>
   rename_with( ~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything()) |>
-  na.omit()
+  na.omit()|>
+  mutate(ROUNDED_VALUE = signif(VALUE, 3))
 
 figure_4 <- group_chart_hc(
   data = figure_4_data,
   x = FINANCIAL_YEAR,
-  y = VALUE,
+  y = ROUNDED_VALUE,
   group = DRUG_CATEGORY,
   type = "line",
   xLab = "Financial year",
@@ -1206,12 +1210,13 @@ figure_5_data <- category_data |>
   rename_with( ~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything()) |>
-  na.omit()
+  na.omit()|>
+  mutate(ROUNDED_VALUE = signif(VALUE, 3))
 
 figure_5 <- group_chart_hc(
   data = figure_5_data,
   x = FINANCIAL_YEAR,
-  y = VALUE,
+  y = ROUNDED_VALUE,
   group = DRUG_CATEGORY,
   type = "line",
   xLab = "Financial year",
@@ -1376,9 +1381,9 @@ rmarkdown::render("dfm_annual_narrative.Rmd",
                   output_format = "html_document",
                   output_file = "outputs/dfm_summary_narrative_2022_23_v001.html")
 
-# rmarkdown::render("pfd-narrative.Rmd",
-#                   output_format = "word_document",
-#                   output_file = "outputs/pfd_summary_narrative_2022_23_v001.docx")
+rmarkdown::render("dfm_annual_narrative.Rmd",
+                   output_format = "word_document",
+                  output_file = "outputs/dfm_summary_narrative_2022_23_v001.docx")
 
 # 8. disconnect from DWH  ---------
 DBI::dbDisconnect(con)
