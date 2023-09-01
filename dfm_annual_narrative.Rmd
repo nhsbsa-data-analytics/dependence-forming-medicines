@@ -69,7 +69,7 @@ colors <- c("#005EB8","#768692")
 `r infoBox_no_border(header = "", text = "<b>There was a 51% decrease in costs for dependency forming medicines prescribed in England between 2015/16 and 2022/23.</b>", width = "100%")` 
 :::
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "<b>In 2022/23 7.1 million identified patients were prescribed dependency forming medications in England.</b>", width = "100%")` 
+`r infoBox_no_border(header = "", text = "<b>In 2022/23 7.1 million identified patients were prescribed dependency forming medicines in England.</b>", width = "100%")` 
 :::
 ::::
 
@@ -77,11 +77,11 @@ In 2022/23, there were 67 million items for dependency forming medicines prescri
 
 In 2022/23, the cost of dependency forming medicines prescribed in England was £380 million. This was a 51% decrease from 2015/16 when the cost was £780 million.
 
-Opioid drugs were the most prescribed dependency forming medications in England in 2022/23 with 39 million items at a cost of £280 million. The total cost of opioid drugs has decreased by 33% since 2015/16 from £420 million.
+Opioid drugs were the most prescribed dependency forming medicines in England in 2022/23 with 39 million items at a cost of £280 million. The total cost of opioid drugs has decreased by 33% since 2015/16 from £420 million.
 
-There were 7.1 million identified patients that were prescribed dependency forming medications in England in 2022/23. This was a 12% decrease from 8.1 million identified patients in 2015/16.
+There were 7.1 million identified patients that were prescribed dependency forming medicines in England in 2022/23. This was a 12% decrease from 8.1 million identified patients in 2015/16.
 
-The most common group to receive prescribing for dependency forming medications in 2022/23 was female patients aged 55 to 59 with 410,000 identified patients.
+The most common group to receive prescribing for dependency forming medicines in 2022/23 was female patients aged 55 to 59 with 410,000 identified patients.
 
 Areas of greater deprivation had the highest number of identified patients who were being prescribed dependency forming medication in 2022/23, with 36% more patients receiving prescribing in the most deprived areas of the country compared to the least deprived.
 
@@ -103,7 +103,7 @@ This publication includes data on 5 categories of medicines overall:
 
 Antidepressants are not included in the volume and cost or demographics measures. The current National Institute for Health and Care Excellence (NICE) [guidance](https://www.nice.org.uk/guidance/ng215) makes the distinction that antidepressants can cause withdrawal symptoms but are historically not dependency forming. Additionally, the statistics for antidepressants can be found in the [Medicines Used in Mental Health publication](https://www.nhsbsa.nhs.uk/statistical-collections/medicines-used-mental-health-england). Antidepressants are included in the co-prescribing measures in this publication.
 
-This publication aims to describe the prescribing of dependency forming medications in England that are dispensed in the community. This does not include data on medicines prescribed and dispensed in secondary care, prisons, or issued by a private prescriber as this is not held by the NHSBSA.
+This publication aims to describe the prescribing of dependency forming medicines in England that are dispensed in the community. This does not include data on medicines prescribed and dispensed in secondary care, prisons, or issued by a private prescriber as this is not held by the NHSBSA.
 
 These statistics detail:
 
@@ -226,7 +226,7 @@ Source: [Dependency forming medicines summary tables - Costs and items (Table 1)
 
 There were 67 million items for drugs classed as dependency forming prescribed in 2022/23. This was a 1% decrease from 2015/16. The number of items of dependency forming medicines has been slowly decreasing since 2016/17.
 
-The number of identified patients that received prescribing for a dependency forming medication was 7.1 million in 2022/23. This was an 12% decrease from 8.1 million identified patients in 2015/16, and a 1% decrease from 7.2 million in 2021/22. 
+The number of identified patients that received prescribing for a dependency forming medication was 7.1 million in 2022/23. This was a 12% decrease from 8.1 million identified patients in 2015/16, and a 1% decrease from 7.2 million in 2021/22. 
 
 #### **`r paste0("Figure ",2,": Cost of dependency forming medicines per financial year")`**
 
@@ -249,7 +249,7 @@ Source: [Dependency forming medicines summary tables - Costs and items (Table 1)
 :::
 ::::
 
-The costs for dependency forming medications was £380 million in 2022/23. This was a 51% decrease from £780 million in 2015/16, and a 5% decrease from £400 million in 2021/22.
+The costs for dependency forming medicines was £380 million in 2022/23. This was a 51% decrease from £780 million in 2015/16, and a 5% decrease from £400 million in 2021/22.
 
 The changes from 2016/17 to 2018/19 were due to pregabalin, a gabapenintoid coming off patent and entering Category M of the drug tariff, meaning cheaper generic equivalents could be prescribed from August 2017. This can be seen more clearly in figure 5.
 
@@ -306,13 +306,15 @@ Source: [Dependency forming medicines summary tables - Costs and items (Table 4)
 :::
 ::::
 
+Data for this per population metric has been limited to financial year 2021/22 due mid year population estimates from ONS for 2022/23 not being available prior to release.
+
 There were 100 patients per 1,000 population receiving opioid drugs, approximately 10% of the population of England in 2021/22. This was an increase of 1 patient per 1,000 population from the 99 per 1,000 population in 2020/21. This was the first increase after five years of consecutive decreases from 118 patients per 1,000 population in 2015/16.
 
 Both benzodiazepines and Z-Drugs have decreased the number of patients per 1,000 population for 6 consecutive years. Benzodiazepines dropped from 27 patients per 1,000 population in 2015/16 to 19 patients per 1,000 population in 2021/22. Z-Drugs dropped from 19 patients per 1,000 population in 2015/16 to 15 patients per 1,000 population in 2021/22.
 
 The patients per 1,000 population receiving gabapenintoids increased in 2021/22 to 27 patients per 1,000 population from 23 per 1,000 patients per 1,000 population in 2015/16.
 
-The patients per 1,000 population are calculated using the [ONS population estimates](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates) for mid-year 2021 as ONS population estimates for 2022/2023 were not available prior to publication.
+The patients per 1,000 population are calculated using the [ONS population estimates](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates) for mid-year 2021.
   
 #### **`r paste0("Figure ",5,": Cost of dependency forming medicines prescribed by Drug Category per financial year")`**
 
