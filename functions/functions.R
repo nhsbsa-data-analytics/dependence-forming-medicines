@@ -934,8 +934,6 @@ coprescribing_extract <-  function(con,
     dplyr::group_by(IDENTIFIED_PATIENT_ID, YEAR_MONTH) |>
     dplyr::summarise(cat_count = n_distinct(CATEGORY), .groups = "drop")
   
-  
-  
   fact_coprescribing <- fact |>
     dplyr::group_by(`Year Month` = YEAR_MONTH,
                     `Number of Categories` = cat_count) |>

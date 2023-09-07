@@ -73,7 +73,7 @@ colors <- c("#005EB8","#768692")
 :::
 ::::
 
-In 2022/23, there were 67 million items for dependency forming medicines prescribed in England a 1% decrease from 2015/16.
+In 2022/23, there were 67 million items for dependency forming medicines prescribed in England, a 1% decrease from 2015/16.
 
 In 2022/23, the cost of dependency forming medicines prescribed in England was £380 million. This was a 51% decrease from 2015/16 when the cost was £780 million.
 
@@ -83,7 +83,7 @@ There were 7.1 million identified patients that were prescribed dependency formi
 
 The most common group to receive prescribing for dependency forming medicines in 2022/23 was female patients aged 55 to 59 with 410,000 identified patients.
 
-Areas of greater deprivation had the highest number of identified patients who were being prescribed dependency forming medication in 2022/23, with 36% more patients receiving prescribing in the most deprived areas of the country compared to the least deprived.
+Areas of greater deprivation had the highest number of identified patients who were being prescribed dependency forming medication in 2022/23, with 56% more patients receiving prescribing in the most deprived areas of the country compared to the least deprived.
 
 ---
 
@@ -99,7 +99,7 @@ This publication includes data on 5 categories of medicines overall:
 *	Opioid pain medicine
 *	Gabapentinoids
 *	Benzodiazepines
-*	‘Z’ drugs
+*	Z-drugs
 
 Antidepressants are not included in the volume and cost or demographics measures. The current National Institute for Health and Care Excellence (NICE) [guidance](https://www.nice.org.uk/guidance/ng215) makes the distinction that antidepressants can cause withdrawal symptoms but are historically not dependency forming. Additionally, the statistics for antidepressants can be found in the [Medicines Used in Mental Health publication](https://www.nhsbsa.nhs.uk/statistical-collections/medicines-used-mental-health-england). Antidepressants are included in the co-prescribing measures in this publication.
 
@@ -306,11 +306,11 @@ Source: [Dependency forming medicines summary tables - Costs and items (Table 4)
 :::
 ::::
 
-Data for this per population metric has been limited to financial year 2021/22 due mid year population estimates from ONS for 2022/23 not being available prior to release.
+Data for this per population metric has been limited to financial year 2021/22 due to mid year population estimates from ONS for 2022/23 not being available prior to release.
 
 There were 100 patients per 1,000 population receiving opioid drugs, approximately 10% of the population of England in 2021/22. This was an increase of 1 patient per 1,000 population from the 99 per 1,000 population in 2020/21. This was the first increase after five years of consecutive decreases from 118 patients per 1,000 population in 2015/16.
 
-Both benzodiazepines and Z-Drugs have decreased the number of patients per 1,000 population for 6 consecutive years. Benzodiazepines dropped from 27 patients per 1,000 population in 2015/16 to 19 patients per 1,000 population in 2021/22. Z-Drugs dropped from 19 patients per 1,000 population in 2015/16 to 15 patients per 1,000 population in 2021/22.
+Both benzodiazepines and Z-drugs have decreased the number of patients per 1,000 population for 6 consecutive years. Benzodiazepines dropped from 27 patients per 1,000 population in 2015/16 to 19 patients per 1,000 population in 2021/22. Z-drugs dropped from 19 patients per 1,000 population in 2015/16 to 15 patients per 1,000 population in 2021/22.
 
 The patients per 1,000 population receiving gabapenintoids increased in 2021/22 to 27 patients per 1,000 population from 23 per 1,000 patients per 1,000 population in 2015/16.
 
@@ -434,7 +434,7 @@ Source: [Dependency forming medicines summary tables - Patient demographics (Tab
 :::
 ::::
 
-In 2022/23, there were 1.8 million identified patients prescribed dependency forming medicines in the most deprived areas in England, 36% more than the 1.2 million identified patients that received prescribing in the least deprived areas. In general, more people were prescribed dependency forming medicines in more deprived areas in 2022/23. This pattern has remained consistent since 2015/16.
+In 2022/23, there were 1.8 million identified patients prescribed dependency forming medicines in the most deprived areas in England, 56% more than the 1.2 million identified patients that received prescribing in the least deprived areas. In general, more people were prescribed dependency forming medicines in more deprived areas in 2022/23. This pattern has remained consistent since 2015/16.
 
 The English Indices of Deprivation have been used to provide a measure of patient deprivation. The deprivation quintiles reported are those of the patient. More information on this measure can be found in section 4 of this summary.
 
@@ -454,7 +454,7 @@ Source: [Dependency forming medicines summary tables - Patient demographics (Tab
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-6} 
-`r infoBox_no_border(header = "", text = "<b>In March 2023, 19% of patients who received a prescription for dependency forming medicines were prescribed drugs from more than one category.</b>", width = "100%")` 
+`r infoBox_no_border(header = "", text = "<b>In March 2023, 24% of patients who received a prescription for dependency forming medicines were prescribed drugs from more than one category.</b>", width = "100%")` 
 ::: 
 :::{.col-md-6} 
 `r infoBox_no_border(header = "", text = "<b>In March 2023, less than 0.1% of patients who received a prescription for dependency forming medicines were prescribed drugs from all 5 categories.</b>", width = "100%")` 
@@ -463,7 +463,7 @@ Source: [Dependency forming medicines summary tables - Patient demographics (Tab
 
 Co-prescribing is where a patient is receiving drugs from more than one category of dependency forming medicine. Antidepressants which have been excluded from the previous sections have been included here because of the increased risk factors when combined with dependency forming medicines. It is not possible to distinguish whether multiple prescriptions which have been reported for the same month were given consecutively or concurrently. As such, some activity will show as co-prescribing when in fact the individual was prescribed one medicine and another separately, and both were reported in the same month. March 2023 has been used for this analysis as the most recent month of available data and as it was representative of the recent trends in co-prescribing.
 
-In total, an estimated 6.6 million identified patients received a prescription in March 2023 in at least one of the categories. Of these 1.2 million were receiving prescriptions in 2 or more categories, representing 19% of patients. Less than a tenth of a percent of patients received a drug from all 5 categories of dependency forming medication. 
+In total, an estimated 6.6 million identified patients received a prescription in March 2023 in at least one of the categories. Of these 1.2 million were receiving prescriptions in 2 categories, representing 19% of patients. Less than a tenth of a percent of patients received a drug from all 5 categories of dependency forming medication. 
 
 #### **`r paste0("Figure ",11,": Number of identified patients receiving prescribing of a combination of two dependency forming medicines in March 2023")`** 
 
@@ -518,7 +518,7 @@ Benzodiazepines are indicated for the short-term relief of severe anxiety; long-
 
 The majority of benzodiazepines are schedule 4 controlled drugs with some belonging to schedule 3 and are available as capsules, tablets, injectables, suppositories or a liquid.
 
-Insomnia is difficulty getting to sleep or staying asleep for long enough to feel refreshed in the morning, despite there being enough opportunity to sleep. The most common problem with insomnia is difficult falling asleep (sleep-onset insomnia). An insomniac may also experience:
+Insomnia is difficulty getting to sleep or staying asleep for long enough to feel refreshed in the morning, despite there being enough opportunity to sleep. An insomniac may also experience:
 
 * waking in the night
 * not feeling refreshed after sleep and not being able to function normally during the day

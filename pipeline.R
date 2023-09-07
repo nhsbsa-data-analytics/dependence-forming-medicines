@@ -318,7 +318,7 @@ write_sheet(
     "1. Field definitions can be found on the 'Metadata' tab.",
     "2. The patient counts shown in these statistics should only be analysed at the level at which they are presented. Adding together any patient counts is likely to result in an overestimate of the number of patients."
   ),
-  category_data |> select(-`BNF Section Name`, -`BNF Section Code`),
+  category_data |> select(-`BNF Section Name`,-`BNF Section Code`),
   14
 )
 
@@ -1067,12 +1067,17 @@ openxlsx::saveWorkbook(wb_dem,
 # 6. Create charts/tables and data ----------------------------------------
 
 table_1_data <- patient_identification |>
-  rename_with( ~ gsub(" ", "_", toupper(gsub(
+  filter(`Drug Category` != "ANTIDEPRESSANTS") |>
+  rename_with(~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything())
 
+
 table_1 <- patient_identification_dt |>
   filter(`Drug Category` != "ANTIDEPRESSANTS") |>
+  mutate(`Drug Category` = str_to_title(`Drug Category`)) |>
+  mutate(`Drug Category` = case_when(`Drug Category` == "Z-Drugs" ~ "Z-drugs",
+                                     TRUE ~ `Drug Category`)) |>
   mutate(across(where(is.numeric), round, 2)) |>
   mutate(across(where(is.numeric), format, nsmall = 2)) |>
   mutate(across(contains("20"), ~ paste0(.x, "%"))) |>
@@ -1096,7 +1101,7 @@ figure_1_data <- national_data |>
     names_to = "measure",
     values_to = "value"
   ) |>
-  rename_with( ~ gsub(" ", "_", toupper(gsub(
+  rename_with(~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything())
 
@@ -1121,7 +1126,7 @@ figure_2_data <- national_data |>
     names_to = "measure",
     values_to = "value"
   ) |>
-  rename_with( ~ gsub(" ", "_", toupper(gsub(
+  rename_with(~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything())
 
@@ -1139,6 +1144,8 @@ figure_2 <- group_chart_hc(
 )
 
 figure_3_data <- category_data |>
+  mutate(`Drug Category` = case_when(`Drug Category` == "Z-Drugs" ~ "Z-drugs",
+                                     TRUE ~ `Drug Category`)) |>
   group_by(`Financial Year`, `Drug Category`) |>
   summarise(`Total Items` = sum(`Total Items`)) |>
   pivot_longer(
@@ -1146,9 +1153,9 @@ figure_3_data <- category_data |>
     names_to = "measure",
     values_to = "value"
   ) |>
-  rename_with( ~ gsub(" ", "_", toupper(gsub(
+  rename_with(~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
-  ))), everything())|>
+  ))), everything()) |>
   mutate(ROUNDED_VALUE = signif(VALUE, 3))
 
 
@@ -1170,6 +1177,8 @@ figure_3 <- group_chart_hc(
 
 
 figure_4_data <- population_category_data |>
+  mutate(`Drug Category` = case_when(`Drug Category` == "Z-Drugs" ~ "Z-drugs",
+                                     TRUE ~ `Drug Category`)) |>
   group_by(`Financial Year`, `Drug Category`) |>
   summarise(`Patients per 1,000 Population` = `Patients per 1,000 Population`) |>
   pivot_longer(
@@ -1177,10 +1186,10 @@ figure_4_data <- population_category_data |>
     names_to = "measure",
     values_to = "value"
   ) |>
-  rename_with( ~ gsub(" ", "_", toupper(gsub(
+  rename_with(~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything()) |>
-  na.omit()|>
+  na.omit() |>
   mutate(ROUNDED_VALUE = signif(VALUE, 3))
 
 figure_4 <- group_chart_hc(
@@ -1200,6 +1209,8 @@ figure_4 <- group_chart_hc(
   hc_legend(enabled = TRUE)
 
 figure_5_data <- category_data |>
+  mutate(`Drug Category` = case_when(`Drug Category` == "Z-Drugs" ~ "Z-drugs",
+                                     TRUE ~ `Drug Category`)) |>
   group_by(`Financial Year`, `Drug Category`) |>
   summarise(`Total Net Ingredient Cost (GBP)` = sum(`Total Net Ingredient Cost (GBP)`)) |>
   pivot_longer(
@@ -1207,10 +1218,10 @@ figure_5_data <- category_data |>
     names_to = "measure",
     values_to = "value"
   ) |>
-  rename_with( ~ gsub(" ", "_", toupper(gsub(
+  rename_with(~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything()) |>
-  na.omit()|>
+  na.omit() |>
   mutate(ROUNDED_VALUE = signif(VALUE, 3))
 
 figure_5 <- group_chart_hc(
@@ -1236,7 +1247,7 @@ figure_6_data <- national_data |>
          `Total Items`,
          `Total Identified Patients`,
          `Items Per Patient`) |>
-  rename_with( ~ gsub(" ", "_", toupper(gsub(
+  rename_with(~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything())
 
@@ -1260,14 +1271,15 @@ figure_7_data <- gender_data |>
     names_to = "measure",
     values_to = "value"
   ) |>
-  rename_with( ~ gsub(" ", "_", toupper(gsub(
+  rename_with(~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
-  ))), everything())
+  ))), everything()) |>
+  mutate(ROUNDED_VALUE = signif(VALUE, 3))
 
 figure_7 <-  group_chart_hc(
   data = figure_7_data,
   x = FINANCIAL_YEAR,
-  y = VALUE,
+  y = ROUNDED_VALUE,
   group = PATIENT_GENDER,
   type = "column",
   xLab = "Financial year",
@@ -1285,7 +1297,7 @@ figure_8_data <- age_gender_data |>
          `Patient Gender`,
          `Total Identified Patients`) |>
   filter(`Financial Year` == max(`Financial Year`)) |>
-  rename_with( ~ gsub(" ", "_", toupper(gsub(
+  rename_with(~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything())
 
@@ -1294,7 +1306,7 @@ figure_8 <-  age_gender_chart(figure_8_data,
                               labels = FALSE)
 
 figure_9_data <- imd_data |>
-  select(-`Total Items`, -`Total Net Ingredient Cost (GBP)`) |>
+  select(-`Total Items`,-`Total Net Ingredient Cost (GBP)`) |>
   filter(`Financial Year` == max(`Financial Year`),
          `IMD Quintile` != "Unknown") |>
   arrange(`IMD Quintile`) |>
@@ -1303,7 +1315,7 @@ figure_9_data <- imd_data |>
     names_to = "measure",
     values_to = "value"
   ) |>
-  rename_with( ~ gsub(" ", "_", toupper(gsub(
+  rename_with(~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything())
 
@@ -1326,7 +1338,7 @@ figure_10_data <- coprescribing_data |>
     names_to = "measure",
     values_to = "value"
   ) |>
-  rename_with( ~ gsub(" ", "_", toupper(gsub(
+  rename_with(~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything())
 
@@ -1350,7 +1362,7 @@ figure_11_data <- coprescribing_matrix_data |>
     names_to = "measure",
     values_to = "value"
   ) |>
-  rename_with( ~ gsub(" ", "_", toupper(gsub(
+  rename_with(~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything()) |>
   mutate(DRUG_COMBINATION = str_replace(DRUG_COMBINATION, "and ", "and <br>"))
@@ -1368,23 +1380,19 @@ figure_11 <- basic_chart_hc(
   hc_tooltip(enabled = T,
              shared = T,
              sort = T) |>
-  hc_xAxis(
-    labels = list(
-      rotation = 45
-    )
-  )
+  hc_xAxis(labels = list(rotation = 45))
 
 
 # 7. create markdowns -------
 
-# narrative 
+# narrative
 
 rmarkdown::render("dfm_annual_narrative.Rmd",
                   output_format = "html_document",
                   output_file = "outputs/dfm_summary_narrative_2022_23_v001.html")
 
 rmarkdown::render("dfm_annual_narrative.Rmd",
-                   output_format = "word_document",
+                  output_format = "word_document",
                   output_file = "outputs/dfm_summary_narrative_2022_23_v001.docx")
 
 # user engagement
@@ -1395,13 +1403,17 @@ rmarkdown::render("dfm_user_engagement_2223.Rmd",
 
 # background
 
-rmarkdown::render("dfm-background-september-2023.Rmd",
-                  output_format = "html_document",
-                  output_file = "outputs/dfm_background_info_methodology_v001.html")
+rmarkdown::render(
+  "dfm-background-september-2023.Rmd",
+  output_format = "html_document",
+  output_file = "outputs/dfm_background_info_methodology_v001.html"
+)
 
-rmarkdown::render("dfm-background-september-2023.Rmd",
-                  output_format = "word_document",
-                  output_file = "outputs/dfm_background_info_methodology_v001.docx")
+rmarkdown::render(
+  "dfm-background-september-2023.Rmd",
+  output_format = "word_document",
+  output_file = "outputs/dfm_background_info_methodology_v001.docx"
+)
 
 # 8. disconnect from DWH  ---------
 DBI::dbDisconnect(con)
