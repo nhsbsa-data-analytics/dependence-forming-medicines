@@ -3,8 +3,13 @@
 rm(list = ls())
 
 # source functions
-# this is only a temporary step until all functions are built into packages
-source("./functions/functions.R")
+# get all .R files in the functions sub-folder
+function_files <- list.files(path = "functions", pattern = "\\.R$")
+
+# loop over function_files to source them all
+for (file in function_files) {
+  source(file.path("functions", file))
+}
 
 # 1. Setup --------------------------------------------
 # load GITHUB_KEY if available in environment or enter if not
@@ -25,9 +30,14 @@ if (Sys.getenv("DB_DWCP_USERNAME") == "") {
   )
 }
 
+#install and library devtools
+install.packages("devtools")
+library(devtools)
+
 #install nhsbsaUtils package first as need check_and_install_packages()
 devtools::install_github("nhsbsa-data-analytics/nhsbsaUtils",
-                         auth_token = Sys.getenv("GITHUB_PAT"))
+                         auth_token = Sys.getenv("GITHUB_PAT"),
+                         dependencies = TRUE)
 
 library(nhsbsaUtils)
 
