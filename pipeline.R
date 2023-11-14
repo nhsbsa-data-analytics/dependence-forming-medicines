@@ -65,6 +65,7 @@ req_pkgs <-
     "geojsonsf",
     "readxl",
     "kableExtra",
+    "svDialogs",
     "nhsbsa-data-analytics/nhsbsaR",
     "nhsbsa-data-analytics/nhsbsaExternalData",
     "nhsbsa-data-analytics/accessibleTables",
@@ -98,50 +99,97 @@ con <- nhsbsaR::con_nhsbsa(dsn = "FBS_8192k",
                            driver = "Oracle in OraClient19Home1",
                            "DWCP")
 
+schema <-
+  as.character(svDialogs::dlgInput("Enter scheme name: ")$res)
 
 # 3. Extract data required ------------------------------------------------
 
-age_category_data <- age_category_extract(con = con) |>
+age_category_data <-
+  age_category_extract(con = con,
+                       schema = schema,
+                       table = config$sql_table_name) |>
   apply_sdc(rounding = F)
 
-age_data <- age_extract(con = con) |>
+age_data <-
+  age_extract(con = con,
+              schema = schema,
+              table = config$sql_table_name) |>
   apply_sdc(rounding = F)
 
-age_gender_cat_data <- age_gender_cat_extract(con = con) |>
+age_gender_cat_data <-
+  age_gender_cat_extract(con = con,
+                         schema = schema,
+                         table = config$sql_table_name) |>
   apply_sdc(rounding = F)
 
-age_gender_data <- age_gender_extract(con = con) |>
+age_gender_data <-
+  age_gender_extract(con = con,
+                     schema = schema,
+                     table = config$sql_table_name) |>
   apply_sdc(rounding = F)
 
-ageband_data <- ageband_extract(con = con) |>
+ageband_data <-
+  ageband_extract(con = con,
+                  schema = schema,
+                  table = config$sql_table_name) |>
   apply_sdc(rounding = F)
 
-category_data <- category_extract(con = con) |>
+category_data <-
+  category_extract(con = con,
+                   schema = schema,
+                   table = config$sql_table_name) |>
   apply_sdc(rounding = F)
 
-coprescribing_data <- coprescribing_extract(con = con)
+coprescribing_data <-
+  coprescribing_extract(con = con,
+                        schema = schema,
+                        table = config$sql_table_name)
 
-coprescribing_matrix_data <- coprescribing_matrix_extract(con = con)
+coprescribing_matrix_data <-
+  coprescribing_matrix_extract(con = con,
+                               schema = schema,
+                               table = config$sql_table_name)
 
-gender_category_data <- gender_category_extract(con = con) |>
+gender_category_data <-
+  gender_category_extract(con = con,
+                          schema = schema,
+                          table = config$sql_table_name) |>
   apply_sdc(rounding = F)
 
-gender_data <- gender_extract(con = con) |>
+gender_data <-
+  gender_extract(con = con,
+                 schema = schema,
+                 table = config$sql_table_name) |>
   apply_sdc(rounding = F)
 
-icb_category_data <- icb_category_extract(con = con) |>
+icb_category_data <-
+  icb_category_extract(con = con,
+                       schema = schema,
+                       table = config$sql_table_name) |>
   apply_sdc(rounding = F)
 
-icb_data <- icb_extract(con = con) |>
+icb_data <-
+  icb_extract(con = con,
+              schema = schema,
+              table = config$sql_table_name) |>
   apply_sdc(rounding = F)
 
-imd_category_data <- imd_category_extract(con = con) |>
+imd_category_data <-
+  imd_category_extract(con = con,
+                       schema = schema,
+                       table = config$sql_table_name) |>
   apply_sdc(rounding = F)
 
-imd_data <- imd_extract(con = con) |>
+imd_data <-
+  imd_extract(con = con,
+              schema = schema,
+              table = config$sql_table_name) |>
   apply_sdc(rounding = F)
 
-national_data <- national_extract(con = con) |>
+national_data <-
+  national_extract(con = con,
+                   schema = schema,
+                   table = config$sql_table_name) |>
   apply_sdc(rounding = F)
 
 national_pop <- ons_national_pop(year = c(2015:2021),
@@ -193,10 +241,16 @@ population_data <- national_data |>
     `Patients per 1,000 Population`
   )
 
-patient_identification_dt <- capture_rate_extract_dt(con = con) |>
+patient_identification_dt <-
+  capture_rate_extract_dt(con = con,
+                          schema = schema,
+                          table = config$sql_table_name) |>
   select(1, last_col(4):last_col())
 
-patient_identification <- capture_rate_extract(con = con)
+patient_identification <-
+  capture_rate_extract(con = con,
+                       schema = schema,
+                       table = config$sql_table_name)
 
 
 # 4. Build costs and items Excel tables ------------------------------------------------------

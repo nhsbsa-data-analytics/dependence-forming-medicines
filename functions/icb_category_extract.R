@@ -1,6 +1,6 @@
 icb_category_extract <- function(con,
-                                 schema = "GRPLA",
-                                 table = "DFM_FACT_CATEGORY_202308") {
+                                 schema,
+                                 table) {
   fact <- dplyr::tbl(src = con,
                      dbplyr::in_schema(schema, table)) |>
     dplyr::filter(CATEGORY != "ANTIDEPRESSANTS") |>
