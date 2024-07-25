@@ -63,27 +63,27 @@ colors <- c("#005EB8","#768692")
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "<b>In 2022/23 67 million items for dependency forming medicines were prescribed in England.</b>", width = "100%")` 
+`r infoBox_no_border(header = "", text = "<b>In 2022/23 67 million items for dependency-forming medicines were prescribed in England.</b>", width = "100%")` 
 ::: 
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "<b>There was a 51% decrease in costs for dependency forming medicines prescribed in England between 2015/16 and 2022/23.</b>", width = "100%")` 
+`r infoBox_no_border(header = "", text = "<b>There was a 51% decrease in costs for dependency-forming medicines prescribed in England between 2015/16 and 2022/23.</b>", width = "100%")` 
 :::
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "<b>In 2022/23 7.1 million identified patients were prescribed dependency forming medicines in England.</b>", width = "100%")` 
+`r infoBox_no_border(header = "", text = "<b>In 2022/23 7.1 million identified patients were prescribed dependency-forming medicines in England.</b>", width = "100%")` 
 :::
 ::::
 
-In 2022/23, there were 67 million items for dependency forming medicines prescribed in England, a 1% decrease from 2015/16.
+In 2022/23, there were 67 million items for dependency-forming medicines prescribed in England, a 1% decrease from 2015/16.
 
-In 2022/23, the cost of dependency forming medicines prescribed in England was £380 million. This was a 51% decrease from 2015/16 when the cost was £780 million.
+In 2022/23, the cost of dependency-forming medicines prescribed in England was £380 million. This was a 51% decrease from 2015/16 when the cost was £780 million.
 
-Opioid drugs were the most prescribed dependency forming medicines in England in 2022/23 with 39 million items at a cost of £280 million. The total cost of opioid drugs has decreased by 33% since 2015/16 from £420 million.
+Opioid drugs were the most prescribed dependency-forming medicines in England in 2022/23 with 39 million items at a cost of £280 million. The total cost of opioid drugs has decreased by 33% since 2015/16 from £420 million.
 
-There were 7.1 million identified patients that were prescribed dependency forming medicines in England in 2022/23. This was a 12% decrease from 8.1 million identified patients in 2015/16.
+There were 7.1 million identified patients that were prescribed dependency-forming medicines in England in 2022/23. This was a 12% decrease from 8.1 million identified patients in 2015/16.
 
-The most common group to receive prescribing for dependency forming medicines in 2022/23 was female patients aged 55 to 59 with 410,000 identified patients.
+The most common group to receive prescribing for dependency-forming medicines in 2022/23 was female patients aged 55 to 59 with 410,000 identified patients.
 
-Areas of greater deprivation had the highest number of identified patients who were being prescribed dependency forming medication in 2022/23, with 56% more patients receiving prescribing in the most deprived areas of the country compared to the least deprived.
+Areas of greater deprivation had the highest number of identified patients who were being prescribed dependency-forming medication in 2022/23, with 56% more patients receiving prescribing in the most deprived areas of the country compared to the least deprived.
 
 ---
 
@@ -101,21 +101,21 @@ This publication includes data on 5 categories of medicines overall:
 *	Benzodiazepines
 *	Z-drugs
 
-Antidepressants are not included in the volume and cost or demographics measures. The current National Institute for Health and Care Excellence (NICE) [guidance](https://www.nice.org.uk/guidance/ng215) makes the distinction that antidepressants can cause withdrawal symptoms but are historically not dependency forming. Additionally, the statistics for antidepressants can be found in the [Medicines Used in Mental Health publication](https://www.nhsbsa.nhs.uk/statistical-collections/medicines-used-mental-health-england). Antidepressants are included in the co-prescribing measures in this publication.
+Antidepressants are not included in the volume and cost or demographics measures. The current National Institute for Health and Care Excellence (NICE) [guidance](https://www.nice.org.uk/guidance/ng215) makes the distinction that antidepressants can cause withdrawal symptoms but are historically not dependency-forming. Additionally, the statistics for antidepressants can be found in the [Medicines Used in Mental Health publication](https://www.nhsbsa.nhs.uk/statistical-collections/medicines-used-mental-health-england). Antidepressants are included in the co-prescribing measures in this publication.
 
-This publication aims to describe the prescribing of dependency forming medicines in England that are dispensed in the community. This does not include data on medicines prescribed and dispensed in secondary care, prisons, or issued by a private prescriber as this is not held by the NHSBSA.
+This publication aims to describe the prescribing of dependency-forming medicines in England that are dispensed in the community. This does not include data on medicines prescribed and dispensed in secondary care, prisons, or issued by a private prescriber as this is not held by the NHSBSA.
 
 These statistics detail:
 
-* the total number of prescription items issued for dependency forming medication
+* the total number of prescription items issued for dependency-forming medication
 * the total cost of prescription items issued for these drugs
 * the number of identified patients that have received prescribing for these drugs
-* the number of identified patients receiving more than one dependency forming medication
+* the number of identified patients receiving more than one dependency-forming medication
 * demographic breakdowns of prescribing by age group and gender
 * demographic breakdowns by gender
 * demographic breakdowns by a measure of deprivation.
 
-These statistics use the BNF therapeutic classifications defined in the British National Formulary (BNF) using the classification system prior to BNF edition 70. Each January the NHSBSA updates the classification of drugs within the BNF hierarchy which may involve some drugs changing classification between years of this publication. The categories of dependency forming drugs do not align to specific sections of the BNF and have been filtered on chemical substance. A complete list can be found in appendix A of the background and methodology note that accompanies this release.
+These statistics use the BNF therapeutic classifications defined in the British National Formulary (BNF) using the classification system prior to BNF edition 70. Each January the NHSBSA updates the classification of drugs within the BNF hierarchy which may involve some drugs changing classification between years of this publication. The categories of dependency-forming drugs do not align to specific sections of the BNF and have been filtered on chemical substance. A complete list can be found in appendix A of the background and methodology note that accompanies this release.
 
 Many drugs have multiple uses, and although classified in the BNF by their primary therapeutic use may be issued to treat a condition outside of this. Due to this, these statistics may not give accurate estimations of prescribing to treat specific conditions. This also means that unlike the PMR which excluded opioids prescribed for cancer, using patient details from the PHE cancer registry, these statistics do not exclude patients diagnosed with cancer and who are using an opioid to manage the pain that can be associated with malignant diseases, especially as part of end-of-life care. This means that some measures and the data for opioid pain medicines include more patients than the PMR analysis.
 
@@ -191,7 +191,7 @@ table_1
 
 `r get_download_button(title = "Download table data", data = table_1_data, filename = "table_1")`
 
-Source: [Dependency forming medicines summary tables - Costs and items (Patient identification rates)](`r config$costs_items_excel`)
+Source: [Dependency-forming medicines summary tables - Costs and items (Patient identification rates)](`r config$costs_items_excel`)
 
 ---
 
@@ -199,7 +199,7 @@ Source: [Dependency forming medicines summary tables - Costs and items (Patient 
 
 ### 2.1. Volume and cost
   
-#### **`r paste0("Figure ",1,": Number of dependency forming medicine items prescribed and patients identified by financial year")`**
+#### **`r paste0("Figure ",1,": Number of dependency-forming medicine items prescribed and patients identified by financial year")`**
 
 
 ```{r total_items, out.width = "100%"}
@@ -210,25 +210,25 @@ figure_1
 
 `r get_download_button(title = "Download chart data", data = figure_1_data, filename = "figure_1")`
 
-Source: [Dependency forming medicines summary tables - Costs and items (Table 1)](`r config$costs_items_excel`)
+Source: [Dependency-forming medicines summary tables - Costs and items (Table 1)](`r config$costs_items_excel`)
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "<b>67 million items for drugs classed as dependency forming prescribed in 2022/23.</b>", width = "100%")` 
+`r infoBox_no_border(header = "", text = "<b>67 million items for drugs classed as dependency-forming prescribed in 2022/23.</b>", width = "100%")` 
 ::: 
 :::{.col-md-4} 
 `r infoBox_no_border(header = "", text = "<b>1% decrease in items from 2015/16 to 2022/23.</b>", width = "100%")` 
 :::
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "<b>7.1 million identified patients were prescribed a dependency forming item in 2022/23.</b>", width = "100%")` 
+`r infoBox_no_border(header = "", text = "<b>7.1 million identified patients were prescribed a dependency-forming item in 2022/23.</b>", width = "100%")` 
 :::
 ::::
 
-There were 67 million items for drugs classed as dependency forming prescribed in 2022/23. This was a 1% decrease from 2015/16. The number of items of dependency forming medicines has been slowly decreasing since 2016/17.
+There were 67 million items for drugs classed as dependency-forming prescribed in 2022/23. This was a 1% decrease from 2015/16. The number of items of dependency-forming medicines has been slowly decreasing since 2016/17.
 
-The number of identified patients that received prescribing for a dependency forming medication was 7.1 million in 2022/23. This was a 12% decrease from 8.1 million identified patients in 2015/16, and a 1% decrease from 7.2 million in 2021/22. 
+The number of identified patients that received prescribing for a dependency-forming medication was 7.1 million in 2022/23. This was a 12% decrease from 8.1 million identified patients in 2015/16, and a 1% decrease from 7.2 million in 2021/22. 
 
-#### **`r paste0("Figure ",2,": Cost of dependency forming medicines per financial year")`**
+#### **`r paste0("Figure ",2,": Cost of dependency-forming medicines per financial year")`**
 
 ```{r total_costs, out.width = "100%"}
 
@@ -238,22 +238,22 @@ figure_2
 
 `r get_download_button(title = "Download chart data", data = figure_2_data, filename = "figure_2")`
 
-Source: [Dependency forming medicines summary tables - Costs and items (Table 1)](`r config$costs_items_excel`)
+Source: [Dependency-forming medicines summary tables - Costs and items (Table 1)](`r config$costs_items_excel`)
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-6} 
-`r infoBox_no_border(header = "", text = "<b>In 2022/23 the costs of prescribed drugs classed as dependency forming was £380 million.</b>", width = "100%")` 
+`r infoBox_no_border(header = "", text = "<b>In 2022/23 the costs of prescribed drugs classed as dependency-forming was £380 million.</b>", width = "100%")` 
 ::: 
 :::{.col-md-6} 
 `r infoBox_no_border(header = "", text = "<b>There was a 5% decrease in costs from 2021/22 to 2022/23.</b>", width = "100%")` 
 :::
 ::::
 
-The costs for dependency forming medicines was £380 million in 2022/23. This was a 51% decrease from £780 million in 2015/16, and a 5% decrease from £400 million in 2021/22.
+The costs for dependency-forming medicines was £380 million in 2022/23. This was a 51% decrease from £780 million in 2015/16, and a 5% decrease from £400 million in 2021/22.
 
 The changes from 2016/17 to 2018/19 were due to pregabalin, a gabapenintoid coming off patent and entering Category M of the drug tariff, meaning cheaper generic equivalents could be prescribed from August 2017. This can be seen more clearly in figure 5.
 
-#### **`r paste0("Figure ",3,": Number of dependency forming medicine items prescribed by Drug Category per financial year")`**
+#### **`r paste0("Figure ",3,": Number of dependency-forming medicine items prescribed by Drug Category per financial year")`**
 
 ```{r items_per_drug, out.width = "100%"}
 
@@ -263,7 +263,7 @@ figure_3
 
 `r get_download_button(title = "Download chart data", data = figure_3_data, filename = "figure_3")`
 
-Source: [Dependency forming medicines summary tables - Costs and items (Table 2)](`r config$costs_items_excel`)
+Source: [Dependency-forming medicines summary tables - Costs and items (Table 2)](`r config$costs_items_excel`)
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-4} 
@@ -277,7 +277,7 @@ Source: [Dependency forming medicines summary tables - Costs and items (Table 2)
 :::
 ::::
 
-Opioid drugs remain the most prescribed dependency forming medicine with 39 million items in 2022/23. This was a 6% decrease from 42 million items in 2015/16, and a 1% decrease from 40 million items in 2021/22. The number of opioid items prescribed has decreased every year since 2016/17.
+Opioid drugs remain the most prescribed dependency-forming medicine with 39 million items in 2022/23. This was a 6% decrease from 42 million items in 2015/16, and a 1% decrease from 40 million items in 2021/22. The number of opioid items prescribed has decreased every year since 2016/17.
 
 Prescribing of gabapenintoids increased by 49% from 11 million items in 2015/16 to 16 million in 2022/23. The two remaining drug categories decreased in prescribing between 2015/16 and 2022/23. Benzodiazepine items decreased by 26% from 8.7 million to 6.4 million. Finally, Z-drugs decreased by 17% from 6.4 million items in 2015/16 to 5.3 million in 2022/23.
 
@@ -292,7 +292,7 @@ figure_4
 
 `r get_download_button(title = "Download chart data", data = figure_4_data, filename = "figure_4")`
 
-Source: [Dependency forming medicines summary tables - Costs and items (Table 4)](`r config$costs_items_excel`)
+Source: [Dependency-forming medicines summary tables - Costs and items (Table 4)](`r config$costs_items_excel`)
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-4} 
@@ -316,7 +316,7 @@ The patients per 1,000 population receiving gabapenintoids increased in 2021/22 
 
 The patients per 1,000 population are calculated using the [ONS population estimates](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates) for mid-year 2021.
   
-#### **`r paste0("Figure ",5,": Cost of dependency forming medicines prescribed by Drug Category per financial year")`**
+#### **`r paste0("Figure ",5,": Cost of dependency-forming medicines prescribed by Drug Category per financial year")`**
 
 ```{r cost_per_drug, out.width = "100%"}
 
@@ -326,7 +326,7 @@ figure_5
 
 `r get_download_button(title = "Download chart data", data = figure_5_data, filename = "figure_5")`
 
-Source: [Dependency forming medicines summary tables - Costs and items (Table 2)](`r config$costs_items_excel`)
+Source: [Dependency-forming medicines summary tables - Costs and items (Table 2)](`r config$costs_items_excel`)
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-4} 
@@ -346,7 +346,7 @@ Gabapenintoids had a cost of £65 million in 2022/23, a decrease of 80% from the
 
 For the remaining two drug categories, benzodiapezines increased in cost by 25% from £25 million in 2021/22 to £31 million in 2022/23 and Z-drugs decreased in cost by 8% from £4.5 million in 2021/22 to £4.1 million in 2022/23.
 
-#### **`r paste0("Figure ",6,": Average number of dependency forming medicine items per patient per financial year")`**
+#### **`r paste0("Figure ",6,": Average number of dependency-forming medicine items per patient per financial year")`**
 
 ```{r items_per_pat, out.width = "100%"}
 
@@ -356,15 +356,15 @@ figure_6
 
 `r get_download_button(title = "Download chart data", data = figure_6_data, filename = "figure_6")`
 
-Source: [Dependency forming medicines summary tables - Costs and items (Table 1)](`r config$costs_items_excel`)
+Source: [Dependency-forming medicines summary tables - Costs and items (Table 1)](`r config$costs_items_excel`)
 
-The average number of items per patient has increased from 7.8 dependency forming medicine items per patient in 2015/16 to 9.3 per patient in 2022/23.
+The average number of items per patient has increased from 7.8 dependency-forming medicine items per patient in 2015/16 to 9.3 per patient in 2022/23.
 
-This measure only includes prescribing of dependency forming medicines and does not include any items prescribed from other BNF sections.
+This measure only includes prescribing of dependency-forming medicines and does not include any items prescribed from other BNF sections.
 
 ### 2.2. Patient demographics
 
-#### **`r paste0("Figure ",7,": Number of identified patients receiving dependency forming medicine prescribing by gender per financial year")`** 
+#### **`r paste0("Figure ",7,": Number of identified patients receiving dependency-forming medicine prescribing by gender per financial year")`** 
 
 ```{r patients_by_gender, out.width = "100%"}
 
@@ -374,22 +374,22 @@ figure_7
 
 `r get_download_button(title = "Download chart data", data = figure_7_data, filename = "figure_7")`
 
-Source: [Dependency forming medicines summary tables - Patient demographics (Table 2)](`r config$demographics_excel`)
+Source: [Dependency-forming medicines summary tables - Patient demographics (Table 2)](`r config$demographics_excel`)
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-6} 
-`r infoBox_no_border(header = "", text = "<b>In 2022/23 61% of identified patients who were prescribed a dependency forming item were female.</b>", width = "100%")` 
+`r infoBox_no_border(header = "", text = "<b>In 2022/23 61% of identified patients who were prescribed a dependency-forming item were female.</b>", width = "100%")` 
 ::: 
 :::{.col-md-6} 
-`r infoBox_no_border(header = "", text = "<b>In 2022/23 39% of identified patients who were prescribed a dependency forming item were male.</b>", width = "100%")` 
+`r infoBox_no_border(header = "", text = "<b>In 2022/23 39% of identified patients who were prescribed a dependency-forming item were male.</b>", width = "100%")` 
 :::
 ::::
 
-While the overall number of identified patients receiving dependency forming medicines prescribing has decreased year-on-year, the overall split of male and female patients has remained consistent. In 2015/16, 61% of identified patients were female and 39% were male. This is the same proportion as 2022/23. However, there are 550,000 fewer female identified patients than there were in 2015/16, and 440,000 fewer male identified patients.
+While the overall number of identified patients receiving dependency-forming medicines prescribing has decreased year-on-year, the overall split of male and female patients has remained consistent. In 2015/16, 61% of identified patients were female and 39% were male. This is the same proportion as 2022/23. However, there are 550,000 fewer female identified patients than there were in 2015/16, and 440,000 fewer male identified patients.
 
 Identified patients where their gender was unknown or indeterminate have been grouped together and can be found in the summary tables that accompany this release.
 
-#### **`r paste0("Figure ",8,": Number of identified patients receiving dependency forming medicine prescribing by age and gender ", config$fy)`** 
+#### **`r paste0("Figure ",8,": Number of identified patients receiving dependency-forming medicine prescribing by age and gender ", config$fy)`** 
 ```{r patients_by_age, out.width = "100%"}
 
 figure_8
@@ -398,22 +398,22 @@ figure_8
 
 `r get_download_button(title = "Download chart data", data = figure_8_data, filename = "figure_8")`
 
-Source: [Dependency forming medicines summary tables - Patient demographics (Table 6)](`r config$demographics_excel`)
+Source: [Dependency-forming medicines summary tables - Patient demographics (Table 6)](`r config$demographics_excel`)
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-6} 
-`r infoBox_no_border(header = "", text = "<b>In 2022/23 410,000 female patients aged 55 to 59 were prescribed a dependency forming item.</b>", width = "100%")` 
+`r infoBox_no_border(header = "", text = "<b>In 2022/23 410,000 female patients aged 55 to 59 were prescribed a dependency-forming item.</b>", width = "100%")` 
 ::: 
 :::{.col-md-6} 
-`r infoBox_no_border(header = "", text = "<b>In 2022/23 300,000 male patients aged 60 to 64 were prescribed a dependency forming item.</b>", width = "100%")` 
+`r infoBox_no_border(header = "", text = "<b>In 2022/23 300,000 male patients aged 60 to 64 were prescribed a dependency-forming item.</b>", width = "100%")` 
 :::
 ::::
 
-The most common group to receive prescribing for dependency forming medicines in 2022/23 was female patients aged 55 to 59 with 410,000 identified patients, 6% of all patients who received a dependency forming item. The most common age group for male patients was 60 to 64 with 300,000 identified patients, 4% of all patients who received a dependency forming item.
+The most common group to receive prescribing for dependency-forming medicines in 2022/23 was female patients aged 55 to 59 with 410,000 identified patients, 6% of all patients who received a dependency-forming item. The most common age group for male patients was 60 to 64 with 300,000 identified patients, 4% of all patients who received a dependency-forming item.
 
 More information on how we calculate a patient's age can be found in section 4 of this summary.
 
-#### **`r paste0("Figure ",9,": Number of identified patients receiving dependency forming medicines prescribing by IMD quintile ", config$fy)`** 
+#### **`r paste0("Figure ",9,": Number of identified patients receiving dependency-forming medicines prescribing by IMD quintile ", config$fy)`** 
 
 ```{r patients_by_imd,out.width = "100%"}
 
@@ -423,24 +423,24 @@ figure_9
 
 `r get_download_button(title = "Download chart data", data = figure_9_data, filename = "figure_9")`
 
-Source: [Dependency forming medicines summary tables - Patient demographics (Table 8)](`r config$demographics_excel`)
+Source: [Dependency-forming medicines summary tables - Patient demographics (Table 8)](`r config$demographics_excel`)
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-6} 
-`r infoBox_no_border(header = "", text = "<b>In 2022/23 1.8 million patients who were prescribed a dependency forming item were from the most deprived areas in England.</b>", width = "100%")` 
+`r infoBox_no_border(header = "", text = "<b>In 2022/23 1.8 million patients who were prescribed a dependency-forming item were from the most deprived areas in England.</b>", width = "100%")` 
 ::: 
 :::{.col-md-6} 
-`r infoBox_no_border(header = "", text = "<b>In 2022/23 1.2 million patients who were prescribed a dependency forming item were from the least deprived areas in England.</b>", width = "100%")` 
+`r infoBox_no_border(header = "", text = "<b>In 2022/23 1.2 million patients who were prescribed a dependency-forming item were from the least deprived areas in England.</b>", width = "100%")` 
 :::
 ::::
 
-In 2022/23, there were 1.8 million identified patients prescribed dependency forming medicines in the most deprived areas in England, 56% more than the 1.2 million identified patients that received prescribing in the least deprived areas. In general, more people were prescribed dependency forming medicines in more deprived areas in 2022/23. This pattern has remained consistent since 2015/16.
+In 2022/23, there were 1.8 million identified patients prescribed dependency-forming medicines in the most deprived areas in England, 56% more than the 1.2 million identified patients that received prescribing in the least deprived areas. In general, more people were prescribed dependency-forming medicines in more deprived areas in 2022/23. This pattern has remained consistent since 2015/16.
 
 The English Indices of Deprivation have been used to provide a measure of patient deprivation. The deprivation quintiles reported are those of the patient. More information on this measure can be found in section 4 of this summary.
 
 ### 2.3. Co-prescribing of drug categories
 
-#### **`r paste0("Figure ",10,": Number of identified patients receiving more than one category of dependency forming medicines prescribing by number of categories March 2023")`** 
+#### **`r paste0("Figure ",10,": Number of identified patients receiving more than one category of dependency-forming medicines prescribing by number of categories March 2023")`** 
 
 ```{r patients_by_no_cat, out.width="100%"}
 
@@ -450,22 +450,22 @@ figure_10
 
 `r get_download_button(title = "Download chart data", data = figure_10_data, filename = "figure_10")`
 
-Source: [Dependency forming medicines summary tables - Patient demographics (Table 10)](`r config$demographics_excel`)
+Source: [Dependency-forming medicines summary tables - Patient demographics (Table 10)](`r config$demographics_excel`)
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-6} 
-`r infoBox_no_border(header = "", text = "<b>In March 2023, 24% of patients who received a prescription for dependency forming medicines were prescribed drugs from more than one category.</b>", width = "100%")` 
+`r infoBox_no_border(header = "", text = "<b>In March 2023, 24% of patients who received a prescription for dependency-forming medicines were prescribed drugs from more than one category.</b>", width = "100%")` 
 ::: 
 :::{.col-md-6} 
-`r infoBox_no_border(header = "", text = "<b>In March 2023, less than 0.1% of patients who received a prescription for dependency forming medicines were prescribed drugs from all 5 categories.</b>", width = "100%")` 
+`r infoBox_no_border(header = "", text = "<b>In March 2023, less than 0.1% of patients who received a prescription for dependency-forming medicines were prescribed drugs from all 5 categories.</b>", width = "100%")` 
 :::
 ::::
 
-Co-prescribing is where a patient is receiving drugs from more than one category of dependency forming medicine. Antidepressants which have been excluded from the previous sections have been included here because of the increased risk factors when combined with dependency forming medicines. It is not possible to distinguish whether multiple prescriptions which have been reported for the same month were given consecutively or concurrently. As such, some activity will show as co-prescribing when in fact the individual was prescribed one medicine and another separately, and both were reported in the same month. March 2023 has been used for this analysis as the most recent month of available data and as it was representative of the recent trends in co-prescribing.
+Co-prescribing is where a patient is receiving drugs from more than one category of dependency-forming medicine. Antidepressants which have been excluded from the previous sections have been included here because of the increased risk factors when combined with dependency-forming medicines. It is not possible to distinguish whether multiple prescriptions which have been reported for the same month were given consecutively or concurrently. As such, some activity will show as co-prescribing when in fact the individual was prescribed one medicine and another separately, and both were reported in the same month. March 2023 has been used for this analysis as the most recent month of available data and as it was representative of the recent trends in co-prescribing.
 
-In total, an estimated 6.6 million identified patients received a prescription in March 2023 in at least one of the categories. Of these 1.2 million were receiving prescriptions in 2 categories, representing 19% of patients. Less than a tenth of a percent of patients received a drug from all 5 categories of dependency forming medication. 
+In total, an estimated 6.6 million identified patients received a prescription in March 2023 in at least one of the categories. Of these 1.2 million were receiving prescriptions in 2 categories, representing 19% of patients. Less than a tenth of a percent of patients received a drug from all 5 categories of dependency-forming medication. 
 
-#### **`r paste0("Figure ",11,": Number of identified patients receiving prescribing of a combination of two dependency forming medicines in March 2023")`** 
+#### **`r paste0("Figure ",11,": Number of identified patients receiving prescribing of a combination of two dependency-forming medicines in March 2023")`** 
 
 ```{r combins_by_no_cat, out.width="100%"}
 
@@ -475,9 +475,9 @@ figure_11
 
 `r get_download_button(title = "Download chart data", data = figure_11_data, filename = "figure_11")`
 
-Source: [Dependency forming medicines summary tables - Patient demographics (Table 11)](`r config$demographics_excel`)
+Source: [Dependency-forming medicines summary tables - Patient demographics (Table 11)](`r config$demographics_excel`)
 
-The most popular combination of drugs in March 2023 for those patients receiving items from 2 categories of dependency forming medicines was opioids and antidepressants with 640,000 patients, 52% of patients who received prescribing in two categories of dependency forming medicines. This was followed by gabapentinoids and antidepressants with 220,000 patients, 18% of patients who received prescribing in two categories of dependency forming medicines. These proportions were consistent across 2022/23.
+The most popular combination of drugs in March 2023 for those patients receiving items from 2 categories of dependency-forming medicines was opioids and antidepressants with 640,000 patients, 52% of patients who received prescribing in two categories of dependency-forming medicines. This was followed by gabapentinoids and antidepressants with 220,000 patients, 18% of patients who received prescribing in two categories of dependency-forming medicines. These proportions were consistent across 2022/23.
 
 ---
 
@@ -554,7 +554,7 @@ Further information on the methodology used in this publication and further back
 
 ### 4.1. Patient counts {.toc-ignore}
 
-The patient counts shown in these statistics should only be analysed at the level at which they are presented. Adding together any patient counts is likely to result in an overestimate of the number of patients. A person will be included, or counted, in each category or time period in which they received relevant prescriptions. For example, if a patient received a prescription item for a dependency forming medicine product in 2018/19 and another in 2019/20, then adding together those totals would count that patient twice. For the same reason, data on patient counts for different drug categories should not be added together.
+The patient counts shown in these statistics should only be analysed at the level at which they are presented. Adding together any patient counts is likely to result in an overestimate of the number of patients. A person will be included, or counted, in each category or time period in which they received relevant prescriptions. For example, if a patient received a prescription item for a dependency-forming medicine product in 2018/19 and another in 2019/20, then adding together those totals would count that patient twice. For the same reason, data on patient counts for different drug categories should not be added together.
 
 ### 4.2. Patient age and gender {.toc-ignore}
 
