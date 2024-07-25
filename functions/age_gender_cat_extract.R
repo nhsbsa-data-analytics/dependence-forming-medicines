@@ -9,11 +9,18 @@ age_gender_cat_extract <- function(con,
     dplyr::inner_join(dplyr::tbl(con,
                                  from = dbplyr::in_schema("DIM", "AGE_DIM")),
                       by = c("CALC_AGE" = "AGE")) |>
+    dplyr::mutate(
+      PAT_GENDER = case_when(
+        PAT_GENDER == "Female" ~ "Female",
+        PAT_GENDER == "Male" ~ "Male",
+        TRUE ~ "Unknown"
+      )
+    ) |>
     dplyr::group_by(
       FINANCIAL_YEAR,
       CATEGORY,
       DALL_5YR_BAND,
-      PDS_GENDER,
+      PAT_GENDER,
       IDENTIFIED_PATIENT_ID,
       PATIENT_IDENTIFIED,
       PATIENT_COUNT
@@ -27,20 +34,15 @@ age_gender_cat_extract <- function(con,
   fact_age_gender_cat <- fact |>
     dplyr::mutate(
       AGE_BAND = dplyr::case_when(is.na(DALL_5YR_BAND) ~ "Unknown",
-                                  TRUE ~ DALL_5YR_BAND),
-      PDS_GENDER = case_when(
-        PDS_GENDER == 1 ~ "Male",
-        PDS_GENDER == 2 ~ "Female",
-        TRUE ~ "Unknown"
-      )
+                                  TRUE ~ DALL_5YR_BAND)
     ) |>
     dplyr::filter(AGE_BAND != "Unknown",
-                  PDS_GENDER != "Unknown") |>
+                  PAT_GENDER != "Unknown") |>
     dplyr::group_by(
       `Financial Year` = FINANCIAL_YEAR,
       `Drug Category` = stringr::str_to_title(CATEGORY),
       `Age Band` = AGE_BAND,
-      `Patient Gender` = PDS_GENDER,
+      `Patient Gender` = PAT_GENDER,
       `Identified Patient Flag` = PATIENT_IDENTIFIED
     ) |>
     dplyr::summarise(

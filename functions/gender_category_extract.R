@@ -6,12 +6,19 @@ gender_category_extract <- function(con,
     dplyr::mutate(PATIENT_COUNT = case_when(PATIENT_IDENTIFIED == "Y" ~ 1,
                                             TRUE ~ 0)) |>
     dplyr::filter(CATEGORY != "ANTIDEPRESSANTS") |>
+    dplyr::mutate(
+      PAT_GENDER = case_when(
+        PAT_GENDER == "Female" ~ "Female",
+        PAT_GENDER == "Male" ~ "Male",
+        TRUE ~ "Unknown"
+      )
+    ) |>
     dplyr::group_by(
       FINANCIAL_YEAR,
       IDENTIFIED_PATIENT_ID,
       PATIENT_IDENTIFIED,
       CATEGORY,
-      PDS_GENDER,
+      PAT_GENDER,
       PATIENT_COUNT
     ) |>
     dplyr::summarise(
@@ -21,15 +28,10 @@ gender_category_extract <- function(con,
     )
   
   fact_gender <- fact |>
-    dplyr::mutate(PDS_GENDER = case_when(
-      PDS_GENDER == 1 ~ "Male",
-      PDS_GENDER == 2 ~ "Female",
-      TRUE ~ "Unknown"
-    )) |>
     dplyr::group_by(
       `Financial Year` = FINANCIAL_YEAR,
       `Drug Category` = stringr::str_to_title(CATEGORY),
-      `Patient Gender` = PDS_GENDER,
+      `Patient Gender` = PAT_GENDER,
       `Identified Patient Flag` = PATIENT_IDENTIFIED
     ) |>
     dplyr::summarise(

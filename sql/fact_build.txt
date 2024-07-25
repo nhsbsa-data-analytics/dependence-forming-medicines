@@ -293,6 +293,56 @@ WITH  fact  AS  (
 SELECT * from fact
 ;
 
+--DROP TABLE dfm_patreg_202407 PURGE;
+CREATE TABLE dfm_patreg_202407 COMPRESS FOR QUERY HIGH  AS
+with
+-- get dummy NHS numbers and their attributes
+dpr as (
+    select
+    patient_id
+    ,pds_verified
+    ,0 as pat_gender_code
+    ,'Unknown' as pat_gender
+    ,to_date('01-JAN-1901') as pat_dob
+  from
+    dim.patient_registration_av
+  where 1=1
+    and patient_id in ('5C21EC99BF6FD21D19D57DB71E8D565E37259B802934F748FCE94969D737B279',
+'84D9C4B849506B6D8F8075A9000E7E0A254BE71060EA889FAD3C88395988F4FC',
+'CE3A598687C8D2E5AA6BEDAD20E059B4A78CCA0ADAD7E563B07998D5CD226B8C',
+'D2D02EA74DE2C9FAB1D802DB969C18D409A8663A9697977BB1C98CCDD9DE4372')
+)
+-- get all non-dummy info
+,pr as (
+    select
+    patient_id
+    ,pds_verified
+    ,pat_gender_code
+    ,pat_gender
+    ,pat_dob
+  from
+    dim.patient_registration_av
+    where 1=1
+    and patient_id not in ('5C21EC99BF6FD21D19D57DB71E8D565E37259B802934F748FCE94969D737B279',
+'84D9C4B849506B6D8F8075A9000E7E0A254BE71060EA889FAD3C88395988F4FC',
+'CE3A598687C8D2E5AA6BEDAD20E059B4A78CCA0ADAD7E563B07998D5CD226B8C',
+'D2D02EA74DE2C9FAB1D802DB969C18D409A8663A9697977BB1C98CCDD9DE4372')
+)
+--union data together to give one dimension
+,pat as (
+    select
+    *
+  from
+    dpr
+  union all
+  select
+    *
+  from
+    pr
+)
+
+select * from pat;
+
 --DROP TABLE    dfm_fact_category_202407  PURGE;
 CREATE TABLE  dfm_fact_category_202407  COMPRESS FOR  QUERY HIGH  AS
 
@@ -348,6 +398,6 @@ SELECT
 FROM
   imd
 LEFT JOIN 
-    DIM.PATIENT_REGISTRATION_AV dems
+    dfm_patreg_202407 dems
     on imd.identified_patient_id = dems.patient_id
     ;

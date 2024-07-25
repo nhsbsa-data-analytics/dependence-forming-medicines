@@ -76,22 +76,11 @@ req_pkgs <-
 #library/install packages as required
 nhsbsaUtils::check_and_install_packages(req_pkgs)
 
-# set up logging
-lf <-
-  logr::log_open(paste0(
-    "Y:/Official Stats/DFM/log/dfm_log",
-    format(Sys.time(), "%d%m%y%H%M%S"),
-    ".log"
-  ))
-
 # load config
 config <- yaml::yaml.load_file("config.yml")
-log_print("Config loaded", hide_notes = TRUE)
-log_print(config, hide_notes = TRUE)
 
 # load options
 nhsbsaUtils::publication_options()
-log_print("Options loaded", hide_notes = TRUE)
 
 # 2. connect to DWH  ---------
 #build connection to warehouse
@@ -99,8 +88,7 @@ con <- nhsbsaR::con_nhsbsa(dsn = "FBS_8192k",
                            driver = "Oracle in OraClient19Home1",
                            "DWCP")
 
-schema <-
-  as.character(svDialogs::dlgInput("Enter scheme name: ")$res)
+schema <- config$sql_schema
 
 # 3. Extract data required ------------------------------------------------
 
@@ -1455,17 +1443,17 @@ figure_11 <- basic_chart_hc(
 
 rmarkdown::render("dfm_annual_narrative.Rmd",
                   output_format = "html_document",
-                  output_file = "outputs/dfm_summary_narrative_2022_23_v001.html")
+                  output_file = "outputs/dfm_summary_narrative_2023_24_v001.html")
 
 rmarkdown::render("dfm_annual_narrative.Rmd",
                   output_format = "word_document",
-                  output_file = "outputs/dfm_summary_narrative_2022_23_v001.docx")
+                  output_file = "outputs/dfm_summary_narrative_2023_24_v001.docx")
 
 # user engagement
-
-rmarkdown::render("dfm_user_engagement_2223.Rmd",
-                  output_format = "html_document",
-                  output_file = "outputs/dfm_user_engagement_2022_23_v001.html")
+# 
+# rmarkdown::render("dfm_user_engagement_2223.Rmd",
+#                   output_format = "html_document",
+#                   output_file = "outputs/dfm_user_engagement_2023_24_v001.html")
 
 # background
 
@@ -1483,7 +1471,6 @@ rmarkdown::render(
 
 # 8. disconnect from DWH  ---------
 DBI::dbDisconnect(con)
-log_print("Disconnected from DWH", hide_notes = TRUE)
 
-#close log
-logr::log_close()
+
+

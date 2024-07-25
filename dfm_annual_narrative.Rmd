@@ -8,25 +8,15 @@ output:
     toc_depth: '3'
   html_document:
     anchor_sections: no
-    css: www/style.css
+    css: 
+      - www/style.css
+      - www/nhs-min.css
     toc: yes
     toc_depth: 3
     toc_float:
       collapsed: no
 ---
-<script>
-  $(document).ready(function() {
-    $('#header').prepend('<img src=`r knitr::image_uri("www/bsa_logo.svg")` alt=\"NHSBSA logo\" style=\"position:absolute; top: 0; right: 0; padding: 10px; width: 25%;\">');
-  });
-</script>
 
-<style type="text/css">
-
-body, td {
-   font-size: 16px;
-   font-family: sans-serif;
-}
-</style>
 <html lang="en">
 
 ```{r setup, include=FALSE}
@@ -35,17 +25,51 @@ body, td {
 knitr::opts_chunk$set(echo = FALSE,
                       warning = FALSE,
                       message = FALSE)
-hcoptslang <- getOption("highcharter.lang")
-  hcoptslang$thousandsSep <- ","
-  hcoptslang$numericSymbols <- c("k","M","B","T","P","E")
-  options(highcharter.lang = hcoptslang)
-
-
-font <- "Arial"
-
-colors <- c("#005EB8","#768692")
 
 ```
+
+<div class = "quartoheader", id = "fixed-header">
+  <header class="nhsuk-header" role="banner">
+    <div class="nhsuk-width-container nhsuk-header__container">
+      <div class="nhsuk-header__logo nhsuk-header__logo--only">
+        <a class="nhsuk-header__link" href="https://www.nhsbsa.nhs.uk/" aria-label="NHSBSA home" target="_blank">
+          <img class="nhsuk-logo" src="www/logo-nhsbsa.svg"" name="NHSBSA logo" alt="NHS Business Services Authority">
+        </a>
+      </div>
+    </div>
+</div>
+
+<!-- JS to handle hiding the header on scroll -->
+<script>
+  document.addEventListener("scroll", function() {
+    var header = document.getElementById("fixed-header");
+    var toc = document.getElementById("TOC");
+    var BackTopButton = document.getElementById("backtop-button");
+    var scrollPosition = window.scrollY || document.documentElement.scrollTop;
+  if(scrollPosition > 88) {
+    header.style.top = "-200px";
+    toc.style.setProperty('margin-top', '24px', 'important');
+    BackTopButton.style.setProperty('visibility', 'visible', 'important');
+  } else
+  {
+    header.style.top = "0";
+    toc.style.setProperty('margin-top', '140px', 'important');
+    BackTopButton.style.setProperty('visibility', 'hidden', 'important');
+  }
+}
+);
+</script>
+
+<!-- JS to handle back to top button -->
+<script>
+    
+    function BackTop() {
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
+    }
+</script>
+
+<button onclick="BackTop()" id="backtop-button" style="opacity: 0.7; pointer-events: initial; visibility: visible;"><span aria-hidden="true">▲</span>Back to top</button>
 
 <main>
 
@@ -123,12 +147,11 @@ To exclude items used to treat an existing drug dependence or substance misuse d
 
 ### 1.2. Key events
 
-```{r key events,out.width = "100%", results = TRUE}
+```{r key events, results = TRUE}
 Date  <- c("June 2015","September 2019","August 2021","April 2022","May 2022")
 Event <- c("All Party Parliamentary Group for [Prescribed Drug Dependence](http://prescribeddrug.org/) launched to  address the growing problem of prescribed drug dependence.", "Public Health England (PHE) [prescribed medicines review (PMR)](https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/940255/PHE_PMR_report_Dec2020.pdf) intended to identify the scale, distribution and causes of prescription drug dependence published.", "Updated Opioid medicines and the risk of addiction [Safety leaflet](https://www.gov.uk/guidance/opioid-medicines-and-the-risk-of-addiction) published by Medicines and Healthcare products Regulatory Agency (MHRA)", "Medicines associated with dependence or withdrawal symptoms: safe prescribing and withdrawal management for adults guidance published by [National Institute for Health and Care Excellence (NICE)](https://www.nice.org.uk/guidance/ng215)","[Opioid comparator dashboard](https://www.nhsbsa.nhs.uk/access-our-data-products/epact2/dashboards-and-specifications/opioid-prescribing-comparators-dashboard) to support Primary Care Networks (PCN) and GP practices published by NHSBSA")
 d <- data.frame(Date, Event)
-knitr::kable(d, align = "ll")|>
-  kable_styling(bootstrap_options = c("striped"))
+knitr::kable(d, align = "ll")
 ```
 
 ### 1.3. Definitions {.toc-ignore}
@@ -183,7 +206,7 @@ These statistics do not include any information that is personally identifiable.
 
 #### **`r paste0("Table 1: The proportion of items for which an NHS number was recorded for listed Drug Categories per financial year")`**
 
-```{r capture_rates, out.width = "100%"}
+```{r capture_rates}
 
 table_1
 
@@ -198,18 +221,33 @@ Source: [Dependency-forming medicines summary tables - Costs and items (Patient 
 ## 2. Results and commentary
 
 ### 2.1. Volume and cost
-  
-#### **`r paste0("Figure ",1,": Number of dependency-forming medicine items prescribed and patients identified by financial year")`**
 
+#### Number of dependency-forming medicine items prescribed and patients identified by financial year {.tabset}
 
-```{r total_items, out.width = "100%"}
+<div class = "tabset">
 
+##### Chart
+
+###### Figure 1:
+
+```{r}
 figure_1
 
+get_download_button(title = "Download chart data", data = figure_1_data, filename = "figure_1")
 ```
 
-`r get_download_button(title = "Download chart data", data = figure_1_data, filename = "figure_1")`
+##### Table
 
+###### Table 2:
+
+```{r}
+
+
+get_download_button(title = "Download table data", data = figure_1_data, filename = "table_2")
+```
+
+</div>
+  
 Source: [Dependency-forming medicines summary tables - Costs and items (Table 1)](`r config$costs_items_excel`)
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
@@ -228,15 +266,28 @@ There were 67 million items for drugs classed as dependency-forming prescribed i
 
 The number of identified patients that received prescribing for a dependency-forming medication was 7.1 million in 2022/23. This was a 12% decrease from 8.1 million identified patients in 2015/16, and a 1% decrease from 7.2 million in 2021/22. 
 
-#### **`r paste0("Figure ",2,": Cost of dependency-forming medicines per financial year")`**
+#### Cost of dependency-forming medicines per financial year {.tabset}
 
-```{r total_costs, out.width = "100%"}
-
+<div class = "tabset">
+  
+##### Chart
+  
+###### Figure 2:
+  
+```{r}
 figure_2
 
+get_download_button(title = "Download chart data", data = figure_2_data, filename = "figure_2")
+```
+##### Table
+
+###### Table 3:
+
+```{r}
+get_download_button(title = "Download table data", data = figure_2_data, filename = "table_3")
 ```
 
-`r get_download_button(title = "Download chart data", data = figure_2_data, filename = "figure_2")`
+</div>
 
 Source: [Dependency-forming medicines summary tables - Costs and items (Table 1)](`r config$costs_items_excel`)
 
@@ -253,15 +304,29 @@ The costs for dependency-forming medicines was £380 million in 2022/23. This wa
 
 The changes from 2016/17 to 2018/19 were due to pregabalin, a gabapenintoid coming off patent and entering Category M of the drug tariff, meaning cheaper generic equivalents could be prescribed from August 2017. This can be seen more clearly in figure 5.
 
-#### **`r paste0("Figure ",3,": Number of dependency-forming medicine items prescribed by Drug Category per financial year")`**
+#### Number of dependency-forming medicine items prescribed by Drug Category per financial year {.tabset}
 
-```{r items_per_drug, out.width = "100%"}
-
+<div class = "tabset">
+  
+##### Chart
+  
+###### Figure 3:
+  
+```{r}
 figure_3
 
+get_download_button(title = "Download chart data", data = figure_3_data, filename = "figure_3")
 ```
 
-`r get_download_button(title = "Download chart data", data = figure_3_data, filename = "figure_3")`
+##### Table
+
+###### Table 4:
+
+```{r}
+get_download_button(title = "Download table data", data = figure_3_data, filename = "table_4")
+```
+
+</div>
 
 Source: [Dependency-forming medicines summary tables - Costs and items (Table 2)](`r config$costs_items_excel`)
 
@@ -281,16 +346,29 @@ Opioid drugs remain the most prescribed dependency-forming medicine with 39 mill
 
 Prescribing of gabapenintoids increased by 49% from 11 million items in 2015/16 to 16 million in 2022/23. The two remaining drug categories decreased in prescribing between 2015/16 and 2022/23. Benzodiazepine items decreased by 26% from 8.7 million to 6.4 million. Finally, Z-drugs decreased by 17% from 6.4 million items in 2015/16 to 5.3 million in 2022/23.
 
-#### **`r paste0("Figure ",4,": Number of identified patients per 1,000 population by Drug Category per financial year")`**
+#### Number of identified patients per 1,000 population by Drug Category per financial year {.tabset}
 
-
-```{r pats_per_drug, out.width = "100%"}
-
+<div class = "tabset">
+  
+##### Chart
+  
+###### Figure 4:
+  
+```{r}
 figure_4
 
+get_download_button(title = "Download chart data", data = figure_4_data, filename = "figure_4")
 ```
 
-`r get_download_button(title = "Download chart data", data = figure_4_data, filename = "figure_4")`
+##### Table
+
+###### Table 5:
+
+```{r}
+get_download_button(title = "Download table data", data = figure_4_data, filename = "table_5")
+```
+
+</div>
 
 Source: [Dependency-forming medicines summary tables - Costs and items (Table 4)](`r config$costs_items_excel`)
 
@@ -318,7 +396,7 @@ The patients per 1,000 population are calculated using the [ONS population estim
   
 #### **`r paste0("Figure ",5,": Cost of dependency-forming medicines prescribed by Drug Category per financial year")`**
 
-```{r cost_per_drug, out.width = "100%"}
+```{r cost_per_drug}
 
 figure_5
 
@@ -348,7 +426,7 @@ For the remaining two drug categories, benzodiapezines increased in cost by 25% 
 
 #### **`r paste0("Figure ",6,": Average number of dependency-forming medicine items per patient per financial year")`**
 
-```{r items_per_pat, out.width = "100%"}
+```{r items_per_pat}
 
 figure_6
 
@@ -366,7 +444,7 @@ This measure only includes prescribing of dependency-forming medicines and does 
 
 #### **`r paste0("Figure ",7,": Number of identified patients receiving dependency-forming medicine prescribing by gender per financial year")`** 
 
-```{r patients_by_gender, out.width = "100%"}
+```{r patients_by_gender}
 
 figure_7
 
@@ -390,7 +468,7 @@ While the overall number of identified patients receiving dependency-forming med
 Identified patients where their gender was unknown or indeterminate have been grouped together and can be found in the summary tables that accompany this release.
 
 #### **`r paste0("Figure ",8,": Number of identified patients receiving dependency-forming medicine prescribing by age and gender ", config$fy)`** 
-```{r patients_by_age, out.width = "100%"}
+```{r patients_by_age}
 
 figure_8
 
@@ -586,7 +664,7 @@ This is an experimental official statistic release. Experimental statistics are 
 
 The high-level figures in this statistical summary have been rounded as per the table below:
 
-```{r rounding_table, out.width = "100%"}
+```{r rounding_table}
 rounding_table <- data.table(
   "From" = c("0", "1,001", "10,001", "100,001", "1,000,001", "10,000,001", "100,000,001"),
   "To" = c("1,000", "10,000", "100,000", "1,000,000", "10,000,000", "100,000,000", "100,000,000,000"),
