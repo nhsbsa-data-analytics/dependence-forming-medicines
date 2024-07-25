@@ -180,7 +180,7 @@ national_data <-
                    table = config$sql_table_name) |>
   apply_sdc(rounding = F)
 
-national_pop <- ons_national_pop(year = c(2015:2021),
+national_pop <- ons_national_pop(year = c(2015:2023),
                                  area = "ENPOP")
 
 population_category_data <- category_data |>
