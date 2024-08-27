@@ -1,24 +1,19 @@
-gender_extract <- function(con,
-                           schema,
-                           table) {
+icb_category_extract_fy <- function(con,
+                                 schema,
+                                 table) {
   fact <- dplyr::tbl(src = con,
                      dbplyr::in_schema(schema, table)) |>
+    dplyr::filter(CATEGORY != "ANTIDEPRESSANTS") |>
     dplyr::mutate(PATIENT_COUNT = case_when(PATIENT_IDENTIFIED == "Y" ~ 1,
                                             TRUE ~ 0)) |>
-    dplyr::filter(CATEGORY != "ANTIDEPRESSANTS") |>
-    dplyr::mutate(
-      PAT_GENDER = case_when(
-        PAT_GENDER == "Female" ~ "Female",
-        PAT_GENDER == "Male" ~ "Male",
-        TRUE ~ "Unknown"
-      )
-    ) |>
     dplyr::group_by(
       FINANCIAL_YEAR,
       IDENTIFIED_PATIENT_ID,
       PATIENT_IDENTIFIED,
-      PAT_GENDER,
-      PATIENT_COUNT
+      PATIENT_COUNT,
+      CATEGORY,
+      ICB_NAME,
+      ICB_CODE
     ) |>
     dplyr::summarise(
       ITEM_COUNT = sum(ITEM_COUNT, na.rm = T),
@@ -26,11 +21,14 @@ gender_extract <- function(con,
       .groups = "drop"
     )
   
-  fact_gender <- fact |>
+  fact_icb_cat <- fact |>
     dplyr::group_by(
       `Financial Year` = FINANCIAL_YEAR,
-      `Patient Gender` = PAT_GENDER,
+      `Integrated Care Board Name` = ICB_NAME,
+      `Integrated Care Board Code` = ICB_CODE,
+      `Drug Category` = stringr::str_to_title(CATEGORY),
       `Identified Patient Flag` = PATIENT_IDENTIFIED
+      
     ) |>
     dplyr::summarise(
       `Total Identified Patients` = sum(PATIENT_COUNT, na.rm = T),
@@ -39,10 +37,14 @@ gender_extract <- function(con,
         100,
       .groups = "drop"
     ) |>
-    dplyr::arrange(`Financial Year`,
-                   `Patient Gender`,
-                   desc(`Identified Patient Flag`)) |>
+    dplyr::arrange(
+      `Financial Year`,
+      `Integrated Care Board Name`,
+      `Drug Category`,
+      desc(`Identified Patient Flag`)
+    ) |>
     collect()
-  return(fact_gender)
+  
+  return(fact_icb_cat)
   
 }

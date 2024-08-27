@@ -1,18 +1,18 @@
-category_extract <- function(con,
-                             schema,
-                             table) {
+icb_extract_fy <- function(con,
+                        schema,
+                        table) {
   fact <- dplyr::tbl(src = con,
                      dbplyr::in_schema(schema, table)) |>
+    dplyr::filter(CATEGORY != "ANTIDEPRESSANTS") |>
     dplyr::mutate(PATIENT_COUNT = case_when(PATIENT_IDENTIFIED == "Y" ~ 1,
                                             TRUE ~ 0)) |>
     dplyr::group_by(
       FINANCIAL_YEAR,
       IDENTIFIED_PATIENT_ID,
       PATIENT_IDENTIFIED,
-      SECTION_DESCR,
-      BNF_SECTION,
-      CATEGORY,
-      PATIENT_COUNT
+      PATIENT_COUNT,
+      ICB_NAME,
+      ICB_CODE
     ) |>
     dplyr::summarise(
       ITEM_COUNT = sum(ITEM_COUNT, na.rm = T),
@@ -20,13 +20,13 @@ category_extract <- function(con,
       .groups = "drop"
     )
   
-  fact_category <- fact |>
+  fact_icb <- fact |>
     dplyr::group_by(
       `Financial Year` = FINANCIAL_YEAR,
-      `BNF Section Name` = SECTION_DESCR,
-      `BNF Section Code` = BNF_SECTION,
-      `Drug Category` = stringr::str_to_title(CATEGORY),
+      `Integrated Care Board Name` = ICB_NAME,
+      `Integrated Care Board Code` = ICB_CODE,
       `Identified Patient Flag` = PATIENT_IDENTIFIED
+      
     ) |>
     dplyr::summarise(
       `Total Identified Patients` = sum(PATIENT_COUNT, na.rm = T),
@@ -35,17 +35,11 @@ category_extract <- function(con,
         100,
       .groups = "drop"
     ) |>
-    dplyr::arrange(
-      `Financial Year`,
-      `BNF Section Code`,
-      `Drug Category`,
-      desc(`Identified Patient Flag`)
-    ) |>
+    dplyr::arrange(`Financial Year`,
+                   `Integrated Care Board Name`,
+                   desc(`Identified Patient Flag`)) |>
     collect()
   
-  #remove antidepressants from final table using not in function
-  fact_category <- fact_category |>
-    dplyr::filter(`Drug Category` != "Antidepressants")
+  return(fact_icb)
   
-  return(fact_category)
 }

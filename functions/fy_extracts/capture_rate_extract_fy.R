@@ -1,4 +1,4 @@
-capture_rate_extract <- function(con,
+capture_rate_extract_fy <- function(con,
                                  schema,
                                  table) {
   fact <- dplyr::tbl(src = con,

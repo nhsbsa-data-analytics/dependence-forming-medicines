@@ -62,8 +62,7 @@ knitr::opts_chunk$set(echo = FALSE,
 
 <!-- JS to handle back to top button -->
 <script>
-    
-    function BackTop() {
+       function BackTop() {
         document.body.scrollTop = 0;
         document.documentElement.scrollTop = 0;
     }
@@ -207,12 +206,10 @@ These statistics do not include any information that is personally identifiable.
 #### **`r paste0("Table 1: The proportion of items for which an NHS number was recorded for listed Drug Categories per financial year")`**
 
 ```{r capture_rates}
-
 table_1
 
+get_download_button(title = "Download table data", data = table_1_data, filename = "table_1")
 ```
-
-`r get_download_button(title = "Download table data", data = table_1_data, filename = "table_1")`
 
 Source: [Dependency-forming medicines summary tables - Costs and items (Patient identification rates)](`r config$costs_items_excel`)
 
@@ -393,18 +390,30 @@ Both benzodiazepines and Z-drugs have decreased the number of patients per 1,000
 The patients per 1,000 population receiving gabapenintoids increased in 2021/22 to 27 patients per 1,000 population from 23 per 1,000 patients per 1,000 population in 2015/16.
 
 The patients per 1,000 population are calculated using the [ONS population estimates](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates) for mid-year 2021.
-  
-#### **`r paste0("Figure ",5,": Cost of dependency-forming medicines prescribed by Drug Category per financial year")`**
 
-```{r cost_per_drug}
+#### Cost of dependency-forming medicines prescribed by Drug Category per financial year {.tabset}
 
+<div class = "tabset">
+
+##### Chart
+
+###### Figure 5:
+
+```{r}
 figure_5
 
+get_download_button(title = "Download chart data", data = figure_5_data, filename = "figure_5")
 ```
 
-`r get_download_button(title = "Download chart data", data = figure_5_data, filename = "figure_5")`
+##### Table
 
-Source: [Dependency-forming medicines summary tables - Costs and items (Table 2)](`r config$costs_items_excel`)
+###### Table 6:
+
+```{r}
+get_download_button(title = "Download table data", data = figure_5_data, filename = "table_6")
+```
+
+</div>
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-4} 
@@ -424,15 +433,29 @@ Gabapenintoids had a cost of £65 million in 2022/23, a decrease of 80% from the
 
 For the remaining two drug categories, benzodiapezines increased in cost by 25% from £25 million in 2021/22 to £31 million in 2022/23 and Z-drugs decreased in cost by 8% from £4.5 million in 2021/22 to £4.1 million in 2022/23.
 
-#### **`r paste0("Figure ",6,": Average number of dependency-forming medicine items per patient per financial year")`**
+#### Average number of dependency-forming medicine items per patient by financial year {.tabset}
 
-```{r items_per_pat}
-
+<div class = "tabset">
+  
+##### Chart
+  
+###### Figure 6:
+  
+```{r}
 figure_6
 
+get_download_button(title = "Download chart data", data = figure_6_data, filename = "figure_6")
 ```
 
-`r get_download_button(title = "Download chart data", data = figure_6_data, filename = "figure_6")`
+##### Table
+
+###### Table 7:
+
+```{r}
+get_download_button(title = "Download table data", data = figure_6_data, filename = "table_7")
+```
+
+</div>
 
 Source: [Dependency-forming medicines summary tables - Costs and items (Table 1)](`r config$costs_items_excel`)
 
@@ -442,15 +465,29 @@ This measure only includes prescribing of dependency-forming medicines and does 
 
 ### 2.2. Patient demographics
 
-#### **`r paste0("Figure ",7,": Number of identified patients receiving dependency-forming medicine prescribing by gender per financial year")`** 
+#### Number of identified patients receiving dependency-forming medicine prescribing by gender and financial year {.tabset}
 
-```{r patients_by_gender}
-
+<div class = "tabset">
+  
+##### Chart
+  
+###### Figure 7:
+  
+```{r}
 figure_7
 
+get_download_button(title = "Download chart data", data = figure_7_data, filename = "figure_7")
 ```
 
-`r get_download_button(title = "Download chart data", data = figure_7_data, filename = "figure_7")`
+##### Table
+
+###### Table 8:
+
+```{r}
+get_download_button(title = "Download table data", data = figure_7_data, filename = "table_8")
+```
+
+</div>
 
 Source: [Dependency-forming medicines summary tables - Patient demographics (Table 2)](`r config$demographics_excel`)
 
@@ -467,14 +504,29 @@ While the overall number of identified patients receiving dependency-forming med
 
 Identified patients where their gender was unknown or indeterminate have been grouped together and can be found in the summary tables that accompany this release.
 
-#### **`r paste0("Figure ",8,": Number of identified patients receiving dependency-forming medicine prescribing by age and gender ", config$fy)`** 
-```{r patients_by_age}
+#### Number of identified patients receiving dependency-forming medicine prescribing by age and gender {.tabset}
 
+<div class = "tabset">
+  
+##### Chart
+  
+###### FIGURE TITLE
+  
+```{r}
 figure_8
 
+get_download_button(title = "Download chart data", data = figure_8_data, filename = "figure_8")
 ```
 
-`r get_download_button(title = "Download chart data", data = figure_8_data, filename = "figure_8")`
+##### Table
+
+###### TABLE TITLE
+
+```{r}
+get_download_button(title = "Download table data", data = figure_8_data, filename = "table_9")
+```
+
+</div>
 
 Source: [Dependency-forming medicines summary tables - Patient demographics (Table 6)](`r config$demographics_excel`)
 
@@ -491,15 +543,29 @@ The most common group to receive prescribing for dependency-forming medicines in
 
 More information on how we calculate a patient's age can be found in section 4 of this summary.
 
-#### **`r paste0("Figure ",9,": Number of identified patients receiving dependency-forming medicines prescribing by IMD quintile ", config$fy)`** 
+#### Number of identified patients receiving dependency-forming medicines prescribing by IMD quintile {.tabset}
 
-```{r patients_by_imd,out.width = "100%"}
-
+<div class = "tabset">
+  
+##### Chart
+  
+###### Figure 9:
+  
+```{r}
 figure_9
 
+get_download_button(title = "Download chart data", data = figure_9_data, filename = "figure_9")
 ```
 
-`r get_download_button(title = "Download chart data", data = figure_9_data, filename = "figure_9")`
+##### Table
+
+###### Table 10:
+
+```{r}
+get_download_button(title = "Download table data", data = figure_9_data, filename = "table_10")
+```
+
+</div>
 
 Source: [Dependency-forming medicines summary tables - Patient demographics (Table 8)](`r config$demographics_excel`)
 
@@ -518,15 +584,29 @@ The English Indices of Deprivation have been used to provide a measure of patien
 
 ### 2.3. Co-prescribing of drug categories
 
-#### **`r paste0("Figure ",10,": Number of identified patients receiving more than one category of dependency-forming medicines prescribing by number of categories March 2023")`** 
+#### Number of identified patients receiving more than one category of dependency-forming medicines prescribing by number of categories {.tabset}
 
-```{r patients_by_no_cat, out.width="100%"}
-
+<div class = "tabset">
+  
+##### Chart
+  
+###### Figure 10:
+  
+```{r}
 figure_10
 
+get_download_button(title = "Download chart data", data = figure_10_data, filename = "figure_10")
 ```
 
-`r get_download_button(title = "Download chart data", data = figure_10_data, filename = "figure_10")`
+##### Table
+
+###### Table 11:
+
+```{r}
+get_download_button(title = "Download table data", data = figure_10_data, filename = "table_11")
+```
+
+</div>
 
 Source: [Dependency-forming medicines summary tables - Patient demographics (Table 10)](`r config$demographics_excel`)
 
@@ -543,15 +623,29 @@ Co-prescribing is where a patient is receiving drugs from more than one category
 
 In total, an estimated 6.6 million identified patients received a prescription in March 2023 in at least one of the categories. Of these 1.2 million were receiving prescriptions in 2 categories, representing 19% of patients. Less than a tenth of a percent of patients received a drug from all 5 categories of dependency-forming medication. 
 
-#### **`r paste0("Figure ",11,": Number of identified patients receiving prescribing of a combination of two dependency-forming medicines in March 2023")`** 
+#### Number of identified patients receiving prescribing of a combination of two dependency-forming medicines {.tabset}
 
-```{r combins_by_no_cat, out.width="100%"}
-
+<div class = "tabset">
+  
+##### Chart
+  
+###### Figure 11:
+  
+```{r}
 figure_11
 
+get_download_button(title = "Download chart data", data = figure_11_data, filename = "figure_11")
 ```
 
-`r get_download_button(title = "Download chart data", data = figure_11_data, filename = "figure_11")`
+##### Table
+
+###### Table 12:
+
+```{r}
+get_download_button(title = "Download table data", data = figure_11_data, filename = "table_12")
+```
+
+</div>
 
 Source: [Dependency-forming medicines summary tables - Patient demographics (Table 11)](`r config$demographics_excel`)
 
@@ -562,7 +656,6 @@ The most popular combination of drugs in March 2023 for those patients receiving
 ## 3. Background
 
 ### 3.1. Opioid pain medicine {.toc-ignore}
-
 
 Opioids provide pain relief by acting on areas in the spinal cord and brain to block the transmission of pain signals.
 

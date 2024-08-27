@@ -1,6 +1,6 @@
-age_category_extract <- function(con,
-                                 schema,
-                                 table) {
+age_extract_fy <- function(con,
+                        schema,
+                        table) {
   fact <- dplyr::tbl(src = con,
                      dbplyr::in_schema(schema, table)) |>
     dplyr::mutate(PATIENT_COUNT = case_when(PATIENT_IDENTIFIED == "Y" ~ 1,
@@ -11,10 +11,9 @@ age_category_extract <- function(con,
                       by = c("CALC_AGE" = "AGE")) |>
     dplyr::group_by(
       FINANCIAL_YEAR,
-      CATEGORY,
-      DALL_5YR_BAND,
       IDENTIFIED_PATIENT_ID,
       PATIENT_IDENTIFIED,
+      DALL_5YR_BAND,
       PATIENT_COUNT
     ) |>
     dplyr::summarise(
@@ -23,12 +22,11 @@ age_category_extract <- function(con,
       .groups = "drop"
     )
   
-  fact_age_cat <- fact |>
+  fact_age <- fact |>
     dplyr::mutate(AGE_BAND = dplyr::case_when(is.na(DALL_5YR_BAND) ~ "Unknown",
                                               TRUE ~ DALL_5YR_BAND)) |>
     dplyr::group_by(
       `Financial Year` = FINANCIAL_YEAR,
-      `Drug Category` = stringr::str_to_title(CATEGORY),
       `Age Band` = AGE_BAND,
       `Identified Patient Flag` = PATIENT_IDENTIFIED
     ) |>
@@ -40,10 +38,9 @@ age_category_extract <- function(con,
       .groups = "drop"
     ) |>
     dplyr::arrange(`Financial Year`,
-                   `Drug Category`,
                    `Age Band`,
                    desc(`Identified Patient Flag`)) |>
     collect()
   
-  return(fact_age_cat)
+  return(fact_age)
 }

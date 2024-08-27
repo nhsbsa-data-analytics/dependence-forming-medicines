@@ -1,14 +1,11 @@
-age_gender_extract <-  function(con,
-                                schema,
-                                table) {
+gender_category_extract_fy <- function(con,
+                                    schema,
+                                    table) {
   fact <- dplyr::tbl(src = con,
                      dbplyr::in_schema(schema, table)) |>
     dplyr::mutate(PATIENT_COUNT = case_when(PATIENT_IDENTIFIED == "Y" ~ 1,
                                             TRUE ~ 0)) |>
     dplyr::filter(CATEGORY != "ANTIDEPRESSANTS") |>
-    dplyr::inner_join(dplyr::tbl(con,
-                                 from = dbplyr::in_schema("DIM", "AGE_DIM")),
-                      by = c("CALC_AGE" = "AGE")) |>
     dplyr::mutate(
       PAT_GENDER = case_when(
         PAT_GENDER == "Female" ~ "Female",
@@ -20,7 +17,7 @@ age_gender_extract <-  function(con,
       FINANCIAL_YEAR,
       IDENTIFIED_PATIENT_ID,
       PATIENT_IDENTIFIED,
-      DALL_5YR_BAND,
+      CATEGORY,
       PAT_GENDER,
       PATIENT_COUNT
     ) |>
@@ -30,16 +27,10 @@ age_gender_extract <-  function(con,
       .groups = "drop"
     )
   
-  fact_age_gender <- fact |>
-    dplyr::mutate(
-      AGE_BAND = dplyr::case_when(is.na(DALL_5YR_BAND) ~ "Unknown",
-                                  TRUE ~ DALL_5YR_BAND)
-    ) |>
-    dplyr::filter(AGE_BAND != "Unknown",
-                  PAT_GENDER != "Unknown") |>
+  fact_gender <- fact |>
     dplyr::group_by(
       `Financial Year` = FINANCIAL_YEAR,
-      `Age Band` = AGE_BAND,
+      `Drug Category` = stringr::str_to_title(CATEGORY),
       `Patient Gender` = PAT_GENDER,
       `Identified Patient Flag` = PATIENT_IDENTIFIED
     ) |>
@@ -49,13 +40,14 @@ age_gender_extract <-  function(con,
       `Total Net Ingredient Cost (GBP)` = sum(ITEM_PAY_DR_NIC, na.rm = T) /
         100,
       .groups = "drop"
-      
     ) |>
     dplyr::arrange(`Financial Year`,
-                   `Age Band`,
+                   `Drug Category`,
                    `Patient Gender`,
                    desc(`Identified Patient Flag`)) |>
+    
     collect()
   
-  return(fact_age_gender)
+  
+  return(fact_gender)
 }

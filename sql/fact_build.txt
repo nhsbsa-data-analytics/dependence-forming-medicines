@@ -401,3 +401,5 @@ LEFT JOIN
     dfm_patreg_202407 dems
     on imd.identified_patient_id = dems.patient_id
     ;
+
+GRANT SELECT ON dfm_fact_category_202407  TO grali, kigra, mawil, grpla, asemp;  

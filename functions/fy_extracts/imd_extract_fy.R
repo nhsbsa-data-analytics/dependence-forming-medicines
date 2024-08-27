@@ -1,6 +1,6 @@
-imd_category_extract <- function(con,
-                                 schema = "GRPLA",
-                                 table = "DFM_FACT_CATEGORY_202308") {
+imd_extract_fy <- function(con,
+                        schema,
+                        table) {
   fact <- dplyr::tbl(src = con,
                      dbplyr::in_schema(schema, table)) |>
     dplyr::mutate(
@@ -18,7 +18,6 @@ imd_category_extract <- function(con,
     dplyr::filter(CATEGORY != "ANTIDEPRESSANTS") |>
     dplyr::group_by(
       FINANCIAL_YEAR,
-      CATEGORY,
       IMD_QUINTILE,
       IDENTIFIED_PATIENT_ID,
       PATIENT_IDENTIFIED,
@@ -30,12 +29,9 @@ imd_category_extract <- function(con,
       .groups = "drop"
     )
   
-  fact_imd_cat <- fact |>
-    dplyr::group_by(
-      `Financial Year` = FINANCIAL_YEAR,
-      `Drug Category` = stringr::str_to_title(CATEGORY),
-      `IMD Quintile` = IMD_QUINTILE
-    ) |>
+  fact_imd <- fact |>
+    dplyr::group_by(`Financial Year` = FINANCIAL_YEAR,
+                    `IMD Quintile` = IMD_QUINTILE) |>
     dplyr::summarise(
       `Total Identified Patients` = sum(PATIENT_COUNT, na.rm = T),
       `Total Items` = sum(ITEM_COUNT, na.rm = T),
@@ -44,9 +40,9 @@ imd_category_extract <- function(con,
       .groups = "drop"
     ) |>
     dplyr::arrange(`Financial Year`,
-                   `Drug Category`,
                    `IMD Quintile`) |>
     collect()
   
-  return(fact_imd_cat)
+  
+  return(fact_imd)
 }

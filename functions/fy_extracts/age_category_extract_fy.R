@@ -1,24 +1,20 @@
-gender_category_extract <- function(con,
-                                    schema,
-                                    table) {
+age_category_extract_fy <- function(con,
+                                 schema,
+                                 table) {
   fact <- dplyr::tbl(src = con,
                      dbplyr::in_schema(schema, table)) |>
     dplyr::mutate(PATIENT_COUNT = case_when(PATIENT_IDENTIFIED == "Y" ~ 1,
                                             TRUE ~ 0)) |>
     dplyr::filter(CATEGORY != "ANTIDEPRESSANTS") |>
-    dplyr::mutate(
-      PAT_GENDER = case_when(
-        PAT_GENDER == "Female" ~ "Female",
-        PAT_GENDER == "Male" ~ "Male",
-        TRUE ~ "Unknown"
-      )
-    ) |>
+    dplyr::inner_join(dplyr::tbl(con,
+                                 from = dbplyr::in_schema("DIM", "AGE_DIM")),
+                      by = c("CALC_AGE" = "AGE")) |>
     dplyr::group_by(
       FINANCIAL_YEAR,
+      CATEGORY,
+      DALL_5YR_BAND,
       IDENTIFIED_PATIENT_ID,
       PATIENT_IDENTIFIED,
-      CATEGORY,
-      PAT_GENDER,
       PATIENT_COUNT
     ) |>
     dplyr::summarise(
@@ -27,11 +23,13 @@ gender_category_extract <- function(con,
       .groups = "drop"
     )
   
-  fact_gender <- fact |>
+  fact_age_cat <- fact |>
+    dplyr::mutate(AGE_BAND = dplyr::case_when(is.na(DALL_5YR_BAND) ~ "Unknown",
+                                              TRUE ~ DALL_5YR_BAND)) |>
     dplyr::group_by(
       `Financial Year` = FINANCIAL_YEAR,
       `Drug Category` = stringr::str_to_title(CATEGORY),
-      `Patient Gender` = PAT_GENDER,
+      `Age Band` = AGE_BAND,
       `Identified Patient Flag` = PATIENT_IDENTIFIED
     ) |>
     dplyr::summarise(
@@ -43,11 +41,9 @@ gender_category_extract <- function(con,
     ) |>
     dplyr::arrange(`Financial Year`,
                    `Drug Category`,
-                   `Patient Gender`,
+                   `Age Band`,
                    desc(`Identified Patient Flag`)) |>
-    
     collect()
   
-  
-  return(fact_gender)
+  return(fact_age_cat)
 }

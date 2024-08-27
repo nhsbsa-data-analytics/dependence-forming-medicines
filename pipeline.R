@@ -3,12 +3,12 @@
 rm(list = ls())
 
 # source functions
-# get all .R files in the functions sub-folder
-function_files <- list.files(path = "functions", pattern = "\\.R$")
+# get all .R files in the functions sub-folder and sub-folders of this
+function_files <- list.files(path = "functions", pattern = "\\.R$", recursive = TRUE, full.names = TRUE)
 
 # loop over function_files to source them all
 for (file in function_files) {
-  source(file.path("functions", file))
+  source(file)
 }
 
 # 1. Setup --------------------------------------------
@@ -90,92 +90,84 @@ con <- nhsbsaR::con_nhsbsa(dsn = "FBS_8192k",
 
 schema <- config$sql_schema
 
-# 3. Extract data required ------------------------------------------------
+# 3. Extract FY data required ------------------------------------------------
 
-age_category_data <-
-  age_category_extract(con = con,
+age_category_data_fy <-
+  age_category_extract_fy(con = con,
                        schema = schema,
                        table = config$sql_table_name) |>
-  apply_sdc(rounding = F)
+  apply_sdc(rounding = F) |>
+  filter(`Financial Year` <= config$fy)
+  
 
 age_data <-
-  age_extract(con = con,
+  age_extract_fy(con = con,
               schema = schema,
               table = config$sql_table_name) |>
   apply_sdc(rounding = F)
 
-age_gender_cat_data <-
-  age_gender_cat_extract(con = con,
+age_gender_cat_data_fy <-
+  age_gender_cat_extract_fy(con = con,
                          schema = schema,
                          table = config$sql_table_name) |>
   apply_sdc(rounding = F)
 
-age_gender_data <-
-  age_gender_extract(con = con,
+age_gender_data_fy <-
+  age_gender_extract_fy(con = con,
                      schema = schema,
                      table = config$sql_table_name) |>
   apply_sdc(rounding = F)
 
-ageband_data <-
-  ageband_extract(con = con,
+ageband_data_fy <-
+  ageband_extract_fy(con = con,
                   schema = schema,
                   table = config$sql_table_name) |>
   apply_sdc(rounding = F)
 
-category_data <-
-  category_extract(con = con,
+category_data_fy <-
+  category_extract_fy(con = con,
                    schema = schema,
                    table = config$sql_table_name) |>
   apply_sdc(rounding = F)
 
-coprescribing_data <-
-  coprescribing_extract(con = con,
-                        schema = schema,
-                        table = config$sql_table_name)
-
-coprescribing_matrix_data <-
-  coprescribing_matrix_extract(con = con,
-                               schema = schema,
-                               table = config$sql_table_name)
-
-gender_category_data <-
-  gender_category_extract(con = con,
+gender_category_data_fy <-
+  gender_category_extract_fy(con = con,
                           schema = schema,
                           table = config$sql_table_name) |>
   apply_sdc(rounding = F)
 
-gender_data <-
-  gender_extract(con = con,
+gender_data_fy <-
+  gender_extract_fy(con = con,
                  schema = schema,
                  table = config$sql_table_name) |>
   apply_sdc(rounding = F)
 
-icb_category_data <-
-  icb_category_extract(con = con,
+icb_category_data_fy <-
+  icb_category_extract_fy(con = con,
                        schema = schema,
                        table = config$sql_table_name) |>
   apply_sdc(rounding = F)
 
-icb_data <-
-  icb_extract(con = con,
+icb_data_fy <-
+  icb_extract_fy(con = con,
               schema = schema,
               table = config$sql_table_name) |>
   apply_sdc(rounding = F)
 
-imd_category_data <-
-  imd_category_extract(con = con,
+imd_category_data_fy <-
+  imd_category_extract_fy(con = con,
                        schema = schema,
                        table = config$sql_table_name) |>
   apply_sdc(rounding = F)
 
-imd_data <-
-  imd_extract(con = con,
+imd_data_fy <-
+  imd_extract_fy(con = con,
               schema = schema,
               table = config$sql_table_name) |>
   apply_sdc(rounding = F)
 
-national_data <-
-  national_extract(con = con,
+national_data_fy <-
+  national_extract_fy(con = con,
                    schema = schema,
                    table = config$sql_table_name) |>
   apply_sdc(rounding = F)
@@ -183,7 +175,7 @@ national_data <-
 national_pop <- ons_national_pop(year = c(2015:2023),
                                  area = "ENPOP")
 
-population_category_data <- category_data |>
+population_category_data_fy <- category_data_fy |>
   dplyr::ungroup() |>
   dplyr::select(
     `Financial Year`,
@@ -209,7 +201,7 @@ population_category_data <- category_data |>
     `Patients per 1,000 Population`
   )
 
-population_data <- national_data |>
+population_data_fy <- national_data_fy |>
   dplyr::select(`Financial Year`,
                 `Identified Patient Flag`,
                 `Total Identified Patients`) |>
@@ -229,359 +221,44 @@ population_data <- national_data |>
     `Patients per 1,000 Population`
   )
 
+patient_identification_fy <-
+  capture_rate_extract_fy(con = con,
+                       schema = schema,
+                       table = config$sql_table_name)
+
+
 patient_identification_dt <-
   capture_rate_extract_dt(con = con,
                           schema = schema,
                           table = config$sql_table_name) |>
   select(1, last_col(4):last_col())
 
-patient_identification <-
-  capture_rate_extract(con = con,
-                       schema = schema,
-                       table = config$sql_table_name)
+# 4. Extract CY data required ------------------------------------------------
 
+# 5. Extract quarterly data required ------------------------------------------------
 
-# 4. Build costs and items Excel tables ------------------------------------------------------
-sheetNames <- c(
-  "Patient_Identification",
-  "Table_1",
-  "Table_2",
-  "Table_3",
-  "Table_4",
-  "Table_5",
-  "Table_6"
-)
+# 6. Extract monthly data required ------------------------------------------------
 
-wb <- accessibleTables::create_wb(sheetNames)
+# 7. Extract co-prescribing data required ------------------------------------------------
 
-#create metadata tab (will need to open file and auto row heights once ran)
-meta_fields <- c(
-  "Drug Category",
-  "Financial Year",
-  "Identified Patient",
-  "Integrated Care Board Code",
-  "Integrated Care Board Name",
-  "Mid-Year England Population Estimate",
-  "Mid-Year Population Year",
-  "Patients per 1,000 Population",
-  "Total Items",
-  "Total Net Ingredient Cost (GBP)",
-  "Total Patients"
-)
+coprescribing_data <-
+  coprescribing_extract(con = con,
+                        schema = schema,
+                        table = config$sql_table_name)
 
-meta_descs <-
-  c(
-    "The category of class of drug that can cause dependence.",
-    "The financial year to which the data belongs.",
-    "This shows where an item has been attributed to an NHS number that has been verified by the Personal Demographics Service (PDS).",
-    "The unique code used to refer to an Integrated Care Board (ICB).",
-    "The name given to the Integrated Care Board (ICB) that a prescribing organisation belongs to. This is based upon NHSBSA administrative records, not geographical boundaries and more closely reflect the operational organisation of practices than other geographical data sources.",
-    "The population estimate for the corresponding Mid-Year Population Year.",
-    "The year in which population estimates were taken, required due to the presentation of this data in financial year format.",
-    "(Total Identified Patients / Mid-Year England Population Estimate) * 1000.",
-    "The number of prescription items dispensed. 'Items' is the number of times a product appears on a prescription form. Prescription forms include both paper prescriptions and electronic messages.",
-    "Total Net Ingredient Cost is the amount that would be paid using the basic price of the prescribed drug or appliance and the quantity prescribed. Sometimes called the 'Net Ingredient Cost' (NIC). The basic price is given either in the Drug Tariff or is determined from prices published by manufacturers, wholesalers or suppliers. Basic price is set out in Parts 8 and 9 of the Drug Tariff. For any drugs or appliances not in Part 8, the price is usually taken from the manufacturer, wholesaler or supplier of the product. This is given in GBP (£).",
-    "Where patients are identified via the flag, the number of patients that the data corresponds to. This will always be 0 where 'Identified Patient' = N."
-    
-  )
+coprescribing_matrix_data <-
+  coprescribing_matrix_extract(con = con,
+                               schema = schema,
+                               table = config$sql_table_name)
 
-accessibleTables::create_metadata(wb,
-                                  meta_fields,
-                                  meta_descs)
+# 8. Build fy Excel tables ------------------------------------------------------
+source(file.path("excel_functions", "costs_items_fy.R"))
 
-#### Patient identification
-# write data to sheet
-write_sheet(
-  wb,
-  "Patient_Identification",
-  paste0(
-    "Dependency Forming Medicines - 2015/16 to ",
-    config$fy,
-    " - Proportion of items for which an NHS number was recorded (%)"
-  ),
-  c(
-    "The below proportions reflect the percentage of prescription items where a PDS verified NHS number was recorded."
-  ),
-  patient_identification,
-  42
-)
-#left align columns A to C
-format_data(wb,
-            "Patient_Identification",
-            c("A", "B"),
-            "left",
-            "")
-#right align columns and round to 2 DP - D (if using long data not pivoting wider) (!!NEED TO UPDATE AS DATA EXPANDS!!)
-format_data(wb,
-            "Patient_Identification",
-            c("C"),
-            "right",
-            "0.00")
+# 9. Build cy Excel tables ------------------------------------------------------
 
-#### national data
-# write data to sheet
-write_sheet(
-  wb,
-  "Table_1",
-  paste0(
-    "Table 1: Dependency Forming Medicines - England 2015/16 to ",
-    config$fy,
-    " - Total dispensed items and costs per financial year"
-  ),
-  c(
-    "1. Field definitions can be found on the 'Metadata' tab.",
-    "2. The patient counts shown in these statistics should only be analysed at the level at which they are presented. Adding together any patient counts is likely to result in an overestimate of the number of patients.",
-    "3. Total costs and items may not be reconciled back to Prescribing Cost Analysis (PCA) publication figures as these figures are based around a 'prescribing view' of the data. This is where we use the drug or device that was prescribed to a patient, rather than the drug that was reimbursed to the dispenser to classify a prescription item. PCA uses a dispensing view where the inverse is true."
-  ),
-  national_data,
-  14
-)
+# 10. Build quarterly Excel tables ------------------------------------------------------
 
-#left align columns A to C
-format_data(wb,
-            "Table_1",
-            c("A", "B"),
-            "left",
-            "")
-
-#right align columns D and E and round to whole numbers with thousand separator
-format_data(wb,
-            "Table_1",
-            c("C", "D"),
-            "right",
-            "#,##0")
-
-#right align column F and round to 2dp with thousand separator
-format_data(wb,
-            "Table_1",
-            c("E"),
-            "right",
-            "#,##0.00")
-
-#### category data
-# write data to sheet
-write_sheet(
-  wb,
-  "Table_2",
-  paste0(
-    "Table 2: Dependency Forming Medicines - England 2015/16 to ",
-    config$fy,
-    " - Yearly totals split by Drug Category and identified patients"
-  ),
-  c(
-    "1. Field definitions can be found on the 'Metadata' tab.",
-    "2. The patient counts shown in these statistics should only be analysed at the level at which they are presented. Adding together any patient counts is likely to result in an overestimate of the number of patients."
-  ),
-  category_data |> select(-`BNF Section Name`, -`BNF Section Code`),
-  14
-)
-
-#left align columns A to C
-format_data(wb,
-            "Table_2",
-            c("A", "B", "C"),
-            "left",
-            "")
-
-#right align columns D and E and round to whole numbers with thousand separator
-format_data(wb,
-            "Table_2",
-            c("D", "E"),
-            "right",
-            "#,##0")
-
-#right align column F and round to 2dp with thousand separator
-format_data(wb,
-            "Table_2",
-            c("F"),
-            "right",
-            "#,##0.00")
-
-#### ICB data
-# write data to sheet
-write_sheet(
-  wb,
-  "Table_3",
-  paste0(
-    "Table 3: Dependency Forming Medicines - England 2015/16 to ",
-    config$fy,
-    " - Yearly totals split by Integrated Care Board and identified patients"
-  ),
-  c(
-    "1. Field definitions can be found on the 'Metadata' tab.",
-    "2. The patient counts shown in these statistics should only be analysed at the level at which they are presented. Adding together any patient counts is likely to result in an overestimate of the number of patients.",
-    "3. Integrated Care Boards (ICBs) succeeded sustainability and transformation plans (STPs) and replaced the functions of clinical commissioning groups (CCGs) in July 2022 with ICB sub locations replacing CCGs during the transition period of 2022/23."
-  ),
-  icb_data,
-  14
-)
-
-#left align columns A to C
-format_data(wb,
-            "Table_3",
-            c("A", "B", "C", "D"),
-            "left",
-            "")
-
-#right align columns D and E and round to whole numbers with thousand separator
-format_data(wb,
-            "Table_3",
-            c("E", "F"),
-            "right",
-            "#,##0")
-
-#right align column F and round to 2dp with thousand separator
-format_data(wb,
-            "Table_3",
-            c("G"),
-            "right",
-            "#,##0.00")
-
-#### ICB category data
-# write data to sheet
-write_sheet(
-  wb,
-  "Table_4",
-  paste0(
-    "Table 4: Dependency Forming Medicines - England 2015/16 to ",
-    config$fy,
-    " - Yearly totals split by Integrated Care Board, Drug Category and identified patients"
-  ),
-  c(
-    "1. Field definitions can be found on the 'Metadata' tab.",
-    "2. The patient counts shown in these statistics should only be analysed at the level at which they are presented. Adding together any patient counts is likely to result in an overestimate of the number of patients.",
-    "3. Integrated Care Boards (ICBs) succeeded sustainability and transformation plans (STPs) and replaced the functions of clinical commissioning groups (CCGs) in July 2022 with ICB sub locations replacing CCGs during the transition period of 2022/23."
-  ),
-  icb_category_data,
-  14
-)
-
-#left align columns A to C
-format_data(wb,
-            "Table_4",
-            c("A", "B", "C", "D", "E"),
-            "left",
-            "")
-
-#right align columns D and E and round to whole numbers with thousand separator
-format_data(wb,
-            "Table_4",
-            c("F", "G"),
-            "right",
-            "#,##0")
-
-#right align column F and round to 2dp with thousand separator
-format_data(wb,
-            "Table_4",
-            c("H"),
-            "right",
-            "#,##0.00")
-
-#### National population data
-# write data to sheet
-write_sheet(
-  wb,
-  "Table_5",
-  paste0(
-    "Table 5: Dependency Forming Medicines - England 2015/16 to ",
-    config$fy,
-    " - Population totals split by financial year"
-  ),
-  c(
-    "1. Field definitions can be found on the 'Metadata' tab.",
-    "2. ONS population estimates taken from https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates.",
-    "3. ONS population estimates for 2022/2023 were not available prior to publication."
-  ),
-  population_data,
-  14
-)
-
-#left align columns A to C
-format_data(wb,
-            "Table_5",
-            c("A", "B"),
-            "left",
-            "")
-
-#right align columns D and E and round to whole numbers with thousand separator
-format_data(wb,
-            "Table_5",
-            c("C", "D"),
-            "right",
-            "#,##0")
-
-#right align column F and round to 2dp with thousand separator
-format_data(wb,
-            "Table_5",
-            c("E"),
-            "right",
-            "#,##0.00")
-
-#### National population category data
-# write data to sheet
-write_sheet(
-  wb,
-  "Table_6",
-  paste0(
-    "Table 6: Dependency Forming Medicines - England 2015/16 to ",
-    config$fy,
-    " - Population totals split by financial year and Drug Category"
-  ),
-  c(
-    "1. Field definitions can be found on the 'Metadata' tab.",
-    "2. ONS population estimates taken from https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates.",
-    "3. ONS population estimates for 2022/2023 were not available prior to publication."
-  ),
-  population_category_data,
-  14
-)
-
-#left align columns A to C
-format_data(wb,
-            "Table_6",
-            c("A", "B", "C"),
-            "left",
-            "")
-
-#right align columns D and E and round to whole numbers with thousand separator
-format_data(wb,
-            "Table_6",
-            c("D", "E"),
-            "right",
-            "#,##0")
-
-#right align column F and round to 2dp with thousand separator
-format_data(wb,
-            "Table_6",
-            c("F"),
-            "right",
-            "#,##0.00")
-
-# build cover sheet
-accessibleTables::makeCoverSheet(
-  paste0("Dependency Forming Medicines - England 2015/16 - ", config$fy),
-  "Costs and Items",
-  "Publication date: 7 September 2023",
-  wb,
-  sheetNames,
-  c(
-    "Metadata",
-    "Patient Identification Rates",
-    "Table 1: Total items",
-    "Table 2:  Items by category",
-    "Table 3:  Items by Integrated Care Board (ICB)",
-    "Table 4:  Items by ICB and category",
-    "Table 5:  National Population",
-    "Table 6:  Population by category"
-  ),
-  c("Metadata", sheetNames)
-)
-
-#save file into outputs folder
-openxlsx::saveWorkbook(wb,
-                       "outputs/dfm_2022_2023_costs_and_items_v001.xlsx",
-                       overwrite = TRUE)
-
+# 11. Build co-prescribing Excel tables ------------------------------------------------------
 
 # 5. Build demographics Excel file -------------------------------------------
 sheetNames_dem <- c(
@@ -1458,13 +1135,13 @@ rmarkdown::render("dfm_annual_narrative.Rmd",
 # background
 
 rmarkdown::render(
-  "dfm-background-september-2023.Rmd",
+  "dfm-background.Rmd",
   output_format = "html_document",
   output_file = "outputs/dfm_background_info_methodology_v001.html"
 )
 
 rmarkdown::render(
-  "dfm-background-september-2023.Rmd",
+  "dfm-background.Rmd",
   output_format = "word_document",
   output_file = "outputs/dfm_background_info_methodology_v001.docx"
 )

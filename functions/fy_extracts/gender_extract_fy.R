@@ -1,26 +1,23 @@
-imd_extract <- function(con,
-                        schema,
-                        table) {
+gender_extract_fy <- function(con,
+                           schema,
+                           table) {
   fact <- dplyr::tbl(src = con,
                      dbplyr::in_schema(schema, table)) |>
+    dplyr::mutate(PATIENT_COUNT = case_when(PATIENT_IDENTIFIED == "Y" ~ 1,
+                                            TRUE ~ 0)) |>
+    dplyr::filter(CATEGORY != "ANTIDEPRESSANTS") |>
     dplyr::mutate(
-      PATIENT_COUNT = case_when(PATIENT_IDENTIFIED == "Y" ~ 1,
-                                TRUE ~ 0),
-      IMD_QUINTILE = case_when(
-        IMD_DECILE <= 2 ~ "1 - Most Deprived",
-        IMD_DECILE <= 4 ~ "2",
-        IMD_DECILE <= 6 ~ "3",
-        IMD_DECILE <= 8 ~ "4",
-        IMD_DECILE <= 10 ~ "5 - Least Deprived",
+      PAT_GENDER = case_when(
+        PAT_GENDER == "Female" ~ "Female",
+        PAT_GENDER == "Male" ~ "Male",
         TRUE ~ "Unknown"
       )
     ) |>
-    dplyr::filter(CATEGORY != "ANTIDEPRESSANTS") |>
     dplyr::group_by(
       FINANCIAL_YEAR,
-      IMD_QUINTILE,
       IDENTIFIED_PATIENT_ID,
       PATIENT_IDENTIFIED,
+      PAT_GENDER,
       PATIENT_COUNT
     ) |>
     dplyr::summarise(
@@ -29,9 +26,12 @@ imd_extract <- function(con,
       .groups = "drop"
     )
   
-  fact_imd <- fact |>
-    dplyr::group_by(`Financial Year` = FINANCIAL_YEAR,
-                    `IMD Quintile` = IMD_QUINTILE) |>
+  fact_gender <- fact |>
+    dplyr::group_by(
+      `Financial Year` = FINANCIAL_YEAR,
+      `Patient Gender` = PAT_GENDER,
+      `Identified Patient Flag` = PATIENT_IDENTIFIED
+    ) |>
     dplyr::summarise(
       `Total Identified Patients` = sum(PATIENT_COUNT, na.rm = T),
       `Total Items` = sum(ITEM_COUNT, na.rm = T),
@@ -40,9 +40,9 @@ imd_extract <- function(con,
       .groups = "drop"
     ) |>
     dplyr::arrange(`Financial Year`,
-                   `IMD Quintile`) |>
+                   `Patient Gender`,
+                   desc(`Identified Patient Flag`)) |>
     collect()
+  return(fact_gender)
   
-  
-  return(fact_imd)
 }

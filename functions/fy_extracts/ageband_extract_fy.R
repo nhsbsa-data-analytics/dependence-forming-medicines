@@ -1,4 +1,4 @@
-ageband_extract <- function(con,
+ageband_extract_fy <- function(con,
                             schema,
                             table) {
   fact <- dplyr::tbl(src = con,

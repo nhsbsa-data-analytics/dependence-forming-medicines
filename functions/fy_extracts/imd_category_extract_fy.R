@@ -1,19 +1,28 @@
-icb_category_extract <- function(con,
+imd_category_extract_fy <- function(con,
                                  schema,
                                  table) {
   fact <- dplyr::tbl(src = con,
                      dbplyr::in_schema(schema, table)) |>
+    dplyr::mutate(
+      PATIENT_COUNT = case_when(PATIENT_IDENTIFIED == "Y" ~ 1,
+                                TRUE ~ 0),
+      IMD_QUINTILE = case_when(
+        IMD_DECILE <= 2 ~ "1 - Most Deprived",
+        IMD_DECILE <= 4 ~ "2",
+        IMD_DECILE <= 6 ~ "3",
+        IMD_DECILE <= 8 ~ "4",
+        IMD_DECILE <= 10 ~ "5 - Least Deprived",
+        TRUE ~ "Unknown"
+      )
+    ) |>
     dplyr::filter(CATEGORY != "ANTIDEPRESSANTS") |>
-    dplyr::mutate(PATIENT_COUNT = case_when(PATIENT_IDENTIFIED == "Y" ~ 1,
-                                            TRUE ~ 0)) |>
     dplyr::group_by(
       FINANCIAL_YEAR,
+      CATEGORY,
+      IMD_QUINTILE,
       IDENTIFIED_PATIENT_ID,
       PATIENT_IDENTIFIED,
-      PATIENT_COUNT,
-      CATEGORY,
-      ICB_NAME,
-      ICB_CODE
+      PATIENT_COUNT
     ) |>
     dplyr::summarise(
       ITEM_COUNT = sum(ITEM_COUNT, na.rm = T),
@@ -21,14 +30,11 @@ icb_category_extract <- function(con,
       .groups = "drop"
     )
   
-  fact_icb_cat <- fact |>
+  fact_imd_cat <- fact |>
     dplyr::group_by(
       `Financial Year` = FINANCIAL_YEAR,
-      `Integrated Care Board Name` = ICB_NAME,
-      `Integrated Care Board Code` = ICB_CODE,
       `Drug Category` = stringr::str_to_title(CATEGORY),
-      `Identified Patient Flag` = PATIENT_IDENTIFIED
-      
+      `IMD Quintile` = IMD_QUINTILE
     ) |>
     dplyr::summarise(
       `Total Identified Patients` = sum(PATIENT_COUNT, na.rm = T),
@@ -37,14 +43,10 @@ icb_category_extract <- function(con,
         100,
       .groups = "drop"
     ) |>
-    dplyr::arrange(
-      `Financial Year`,
-      `Integrated Care Board Name`,
-      `Drug Category`,
-      desc(`Identified Patient Flag`)
-    ) |>
+    dplyr::arrange(`Financial Year`,
+                   `Drug Category`,
+                   `IMD Quintile`) |>
     collect()
   
-  return(fact_icb_cat)
-  
+  return(fact_imd_cat)
 }
