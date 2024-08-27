@@ -104,73 +104,85 @@ age_data <-
   age_extract_fy(con = con,
               schema = schema,
               table = config$sql_table_name) |>
-  apply_sdc(rounding = F)
+  apply_sdc(rounding = F) |>
+  filter(`Financial Year` <= config$fy)
 
 age_gender_cat_data_fy <-
   age_gender_cat_extract_fy(con = con,
                          schema = schema,
                          table = config$sql_table_name) |>
-  apply_sdc(rounding = F)
+  apply_sdc(rounding = F) |>
+  filter(`Financial Year` <= config$fy)
 
 age_gender_data_fy <-
   age_gender_extract_fy(con = con,
                      schema = schema,
                      table = config$sql_table_name) |>
-  apply_sdc(rounding = F)
+  apply_sdc(rounding = F) |>
+  filter(`Financial Year` <= config$fy)
 
 ageband_data_fy <-
   ageband_extract_fy(con = con,
                   schema = schema,
                   table = config$sql_table_name) |>
-  apply_sdc(rounding = F)
+  apply_sdc(rounding = F) |>
+  filter(`Financial Year` <= config$fy)
 
 category_data_fy <-
   category_extract_fy(con = con,
                    schema = schema,
                    table = config$sql_table_name) |>
-  apply_sdc(rounding = F)
+  apply_sdc(rounding = F) |>
+  filter(`Financial Year` <= config$fy)
 
 gender_category_data_fy <-
   gender_category_extract_fy(con = con,
                           schema = schema,
                           table = config$sql_table_name) |>
-  apply_sdc(rounding = F)
+  apply_sdc(rounding = F) |>
+  filter(`Financial Year` <= config$fy)
 
 gender_data_fy <-
   gender_extract_fy(con = con,
                  schema = schema,
                  table = config$sql_table_name) |>
-  apply_sdc(rounding = F)
+  apply_sdc(rounding = F) |>
+  filter(`Financial Year` <= config$fy)
 
 icb_category_data_fy <-
   icb_category_extract_fy(con = con,
                        schema = schema,
                        table = config$sql_table_name) |>
-  apply_sdc(rounding = F)
+  apply_sdc(rounding = F) |>
+  filter(`Financial Year` <= config$fy)
 
 icb_data_fy <-
   icb_extract_fy(con = con,
               schema = schema,
               table = config$sql_table_name) |>
-  apply_sdc(rounding = F)
+  apply_sdc(rounding = F) |>
+  filter(`Financial Year` <= config$fy)
 
 imd_category_data_fy <-
   imd_category_extract_fy(con = con,
                        schema = schema,
                        table = config$sql_table_name) |>
-  apply_sdc(rounding = F)
+  apply_sdc(rounding = F) |>
+  filter(`Financial Year` <= config$fy)
 
 imd_data_fy <-
   imd_extract_fy(con = con,
               schema = schema,
               table = config$sql_table_name) |>
-  apply_sdc(rounding = F)
+  apply_sdc(rounding = F) |>
+  filter(`Financial Year` <= config$fy)
 
 national_data_fy <-
   national_extract_fy(con = con,
                    schema = schema,
                    table = config$sql_table_name) |>
-  apply_sdc(rounding = F)
+  apply_sdc(rounding = F) |>
+  filter(`Financial Year` <= config$fy)
 
 national_pop <- ons_national_pop(year = c(2015:2023),
                                  area = "ENPOP")
@@ -199,7 +211,8 @@ population_category_data_fy <- category_data_fy |>
     `Total Identified Patients`,
     `Mid-year Population Estimate` = ENPOP,
     `Patients per 1,000 Population`
-  )
+  ) |>
+  filter(`Financial Year` <= config$fy)
 
 population_data_fy <- national_data_fy |>
   dplyr::select(`Financial Year`,
@@ -219,19 +232,21 @@ population_data_fy <- national_data_fy |>
     `Total Identified Patients`,
     `Mid-year Population Estimate` = ENPOP,
     `Patients per 1,000 Population`
-  )
+  ) |>
+  filter(`Financial Year` <= config$fy)
 
 patient_identification_fy <-
   capture_rate_extract_fy(con = con,
                        schema = schema,
-                       table = config$sql_table_name)
+                       table = config$sql_table_name) |>
+  filter(`Financial Year` <= config$fy)
 
 
 patient_identification_dt <-
   capture_rate_extract_dt(con = con,
                           schema = schema,
-                          table = config$sql_table_name) |>
-  select(1, last_col(4):last_col())
+                          table = config$sql_table_name)  |>
+  select(1, last_col(5):last_col(1))
 
 # 4. Extract CY data required ------------------------------------------------
 
