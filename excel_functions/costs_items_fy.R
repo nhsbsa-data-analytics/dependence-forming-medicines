@@ -4,6 +4,8 @@ sheetNames <- c(
   "National_Population",
   "Category",
   "Category_Population",
+  "Paragraph",
+  "Chemical_Substance",
   "ICB",
   "ICB_Category"
 )
@@ -51,7 +53,7 @@ accessibleTables::create_metadata(wb,
                                   meta_fields,
                                   meta_descs)
 
-#### Patient identification
+# Patient_Identification --------------------------------------------------
 # write data to sheet
 write_sheet(
   wb,
@@ -80,20 +82,21 @@ format_data(wb,
             "right",
             "0.00")
 
-#### national data
+# National --------------------------------------------------
 # write data to sheet
 write_sheet(
   wb,
   "National",
   paste0(
-    "Table 1: Dependency Forming Medicines - England 2015/16 to ",
+    "Dependency Forming Medicines - England 2015/16 to ",
     config$fy,
     " - Total dispensed items and costs per financial year"
   ),
   c(
     "1. Field definitions can be found on the 'Metadata' tab.",
-    "2. The patient counts shown in these statistics should only be analysed at the level at which they are presented. Adding together any patient counts is likely to result in an overestimate of the number of patients.",
-    "3. Total costs and items may not be reconciled back to Prescribing Cost Analysis (PCA) publication figures as these figures are based around a 'prescribing view' of the data. This is where we use the drug or device that was prescribed to a patient, rather than the drug that was reimbursed to the dispenser to classify a prescription item. PCA uses a dispensing view where the inverse is true."
+    "2. Statistical disclosure control has been applied to cells containing fewer than 5 patients or items. These cells will appear blank.",
+    "3. The patient counts shown in these statistics should only be analysed at the level at which they are presented. Adding together any patient counts is likely to result in an overestimate of the number of patients.",
+    "4. Total costs and items may not be reconciled back to Prescribing Cost Analysis (PCA) publication figures as these figures are based around a 'prescribing view' of the data. This is where we use the drug or device that was prescribed to a patient, rather than the drug that was reimbursed to the dispenser to classify a prescription item. PCA uses a dispensing view where the inverse is true."
   ),
   national_data_fy,
   14
@@ -120,139 +123,20 @@ format_data(wb,
             "right",
             "#,##0.00")
 
-#### category data
-# write data to sheet
-write_sheet(
-  wb,
-  "Category",
-  paste0(
-    "Table 2: Dependency Forming Medicines - England 2015/16 to ",
-    config$fy,
-    " - Yearly totals split by Drug Category and identified patients"
-  ),
-  c(
-    "1. Field definitions can be found on the 'Metadata' tab.",
-    "2. The patient counts shown in these statistics should only be analysed at the level at which they are presented. Adding together any patient counts is likely to result in an overestimate of the number of patients."
-  ),
-  category_data_fy |> select(-`BNF Section Name`, -`BNF Section Code`),
-  14
-)
-
-#left align columns A to C
-format_data(wb,
-            "Category",
-            c("A", "B", "C"),
-            "left",
-            "")
-
-#right align columns D and E and round to whole numbers with thousand separator
-format_data(wb,
-            "Category",
-            c("D", "E"),
-            "right",
-            "#,##0")
-
-#right align column F and round to 2dp with thousand separator
-format_data(wb,
-            "Category",
-            c("F"),
-            "right",
-            "#,##0.00")
-
-#### ICB data
-# write data to sheet
-write_sheet(
-  wb,
-  "ICB",
-  paste0(
-    "Table 3: Dependency Forming Medicines - England 2015/16 to ",
-    config$fy,
-    " - Yearly totals split by Integrated Care Board and identified patients"
-  ),
-  c(
-    "1. Field definitions can be found on the 'Metadata' tab.",
-    "2. The patient counts shown in these statistics should only be analysed at the level at which they are presented. Adding together any patient counts is likely to result in an overestimate of the number of patients.",
-    "3. Integrated Care Boards (ICBs) succeeded sustainability and transformation plans (STPs) and replaced the functions of clinical commissioning groups (CCGs) in July 2022 with ICB sub locations replacing CCGs during the transition period of 2022/23."
-  ),
-  icb_data_fy,
-  14
-)
-
-#left align columns A to C
-format_data(wb,
-            "ICB",
-            c("A", "B", "C", "D"),
-            "left",
-            "")
-
-#right align columns D and E and round to whole numbers with thousand separator
-format_data(wb,
-            "ICB",
-            c("E", "F"),
-            "right",
-            "#,##0")
-
-#right align column F and round to 2dp with thousand separator
-format_data(wb,
-            "ICB",
-            c("G"),
-            "right",
-            "#,##0.00")
-
-#### ICB category data
-# write data to sheet
-write_sheet(
-  wb,
-  "ICB_Category",
-  paste0(
-    "Table 4: Dependency Forming Medicines - England 2015/16 to ",
-    config$fy,
-    " - Yearly totals split by Integrated Care Board, Drug Category and identified patients"
-  ),
-  c(
-    "1. Field definitions can be found on the 'Metadata' tab.",
-    "2. The patient counts shown in these statistics should only be analysed at the level at which they are presented. Adding together any patient counts is likely to result in an overestimate of the number of patients.",
-    "3. Integrated Care Boards (ICBs) succeeded sustainability and transformation plans (STPs) and replaced the functions of clinical commissioning groups (CCGs) in July 2022 with ICB sub locations replacing CCGs during the transition period of 2022/23."
-  ),
-  icb_category_data_fy,
-  14
-)
-
-#left align columns A to C
-format_data(wb,
-            "ICB_Category",
-            c("A", "B", "C", "D", "E"),
-            "left",
-            "")
-
-#right align columns D and E and round to whole numbers with thousand separator
-format_data(wb,
-            "ICB_Category",
-            c("F", "G"),
-            "right",
-            "#,##0")
-
-#right align column F and round to 2dp with thousand separator
-format_data(wb,
-            "ICB_Category",
-            c("H"),
-            "right",
-            "#,##0.00")
-
-#### National population data
+# National population --------------------------------------------------
 # write data to sheet
 write_sheet(
   wb,
   "National_Population",
   paste0(
-    "Table 5: Dependency Forming Medicines - England 2015/16 to ",
+    "Dependency Forming Medicines - England 2015/16 to ",
     config$fy,
     " - Population totals split by financial year"
   ),
   c(
     "1. Field definitions can be found on the 'Metadata' tab.",
-    "2. ONS population estimates taken from https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates.",
-    "3. ONS population estimates for 2022/2023 were not available prior to publication."
+    "2. Statistical disclosure control has been applied to cells containing fewer than 5 patients or items. These cells will appear blank.",
+    "3. ONS population estimates taken from https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates."
   ),
   population_data_fy,
   14
@@ -279,20 +163,60 @@ format_data(wb,
             "right",
             "#,##0.00")
 
-#### National population category data
+# Category --------------------------------------------------
+# write data to sheet
+write_sheet(
+  wb,
+  "Category",
+  paste0(
+    "Dependency Forming Medicines - England 2015/16 to ",
+    config$fy,
+    " - Yearly totals split by Drug Category and identified patients"
+  ),
+  c(
+    "1. Field definitions can be found on the 'Metadata' tab.",
+    "2. Statistical disclosure control has been applied to cells containing fewer than 5 patients or items. These cells will appear blank.",
+    "3. The patient counts shown in these statistics should only be analysed at the level at which they are presented. Adding together any patient counts is likely to result in an overestimate of the number of patients."
+  ),
+  category_data_fy |> select(-`BNF Section Name`, -`BNF Section Code`),
+  14
+)
+
+#left align columns A to C
+format_data(wb,
+            "Category",
+            c("A", "B", "C"),
+            "left",
+            "")
+
+#right align columns D and E and round to whole numbers with thousand separator
+format_data(wb,
+            "Category",
+            c("D", "E"),
+            "right",
+            "#,##0")
+
+#right align column F and round to 2dp with thousand separator
+format_data(wb,
+            "Category",
+            c("F"),
+            "right",
+            "#,##0.00")
+
+# Category population --------------------------------------------------
 # write data to sheet
 write_sheet(
   wb,
   "Category_Population",
   paste0(
-    "Table 6: Dependency Forming Medicines - England 2015/16 to ",
+    "Dependency Forming Medicines - England 2015/16 to ",
     config$fy,
     " - Population totals split by financial year and Drug Category"
   ),
   c(
     "1. Field definitions can be found on the 'Metadata' tab.",
-    "2. ONS population estimates taken from https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates.",
-    "3. ONS population estimates for 2022/2023 were not available prior to publication."
+    "2. Statistical disclosure control has been applied to cells containing fewer than 5 patients or items. These cells will appear blank.",
+    "3. ONS population estimates taken from https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates."
   ),
   population_category_data_fy,
   14
@@ -319,6 +243,169 @@ format_data(wb,
             "right",
             "#,##0.00")
 
+# Paragraph --------------------------------------------------
+# write data to sheet
+write_sheet(
+  wb,
+  "Paragraph",
+  paste0(
+    "Dependency Forming Medicines - England 2015/16 to ",
+    config$fy,
+    " - Yearly totals split by BNF paragraph and identified patients"
+  ),
+  c(
+    "1. Field definitions can be found on the 'Metadata' tab.",
+    "2. Statistical disclosure control has been applied to cells containing fewer than 5 patients or items. These cells will appear blank.",
+    "3. The patient counts shown in these statistics should only be analysed at the level at which they are presented. Adding together any patient counts is likely to result in an overestimate of the number of patients."
+  ),
+  paragraph_data_fy,
+  14
+)
+
+#left align columns A to C
+format_data(wb,
+            "Paragraph",
+            c("A", "B", "C", "D", "E", "F"),
+            "left",
+            "")
+
+#right align columns D and E and round to whole numbers with thousand separator
+format_data(wb,
+            "Paragraph",
+            c("G", "H"),
+            "right",
+            "#,##0")
+
+#right align column F and round to 2dp with thousand separator
+format_data(wb,
+            "Paragraph",
+            c("I"),
+            "right",
+            "#,##0.00")
+
+# Chemical substance --------------------------------------------------
+# write data to sheet
+write_sheet(
+  wb,
+  "Chemical_Substance",
+  paste0(
+    "Dependency Forming Medicines - England 2015/16 to ",
+    config$fy,
+    " - Yearly totals split by BNF chemical substance and identified patients"
+  ),
+  c(
+    "1. Field definitions can be found on the 'Metadata' tab.",
+    "2. Statistical disclosure control has been applied to cells containing fewer than 5 patients or items. These cells will appear blank.",
+    "3. The patient counts shown in these statistics should only be analysed at the level at which they are presented. Adding together any patient counts is likely to result in an overestimate of the number of patients."
+  ),
+  chem_sub_data_fy,
+  14
+)
+
+#left align columns A to C
+format_data(wb,
+            "Chemical_Substance",
+            c("A", "B", "C", "D", "E", "F", "G", "H"),
+            "left",
+            "")
+
+#right align columns D and E and round to whole numbers with thousand separator
+format_data(wb,
+            "Chemical_Substance",
+            c("I", "J"),
+            "right",
+            "#,##0")
+
+#right align column F and round to 2dp with thousand separator
+format_data(wb,
+            "Chemical_Substance",
+            c("K"),
+            "right",
+            "#,##0.00")
+
+# ICB --------------------------------------------------
+# write data to sheet
+write_sheet(
+  wb,
+  "ICB",
+  paste0(
+    "Dependency Forming Medicines - England 2015/16 to ",
+    config$fy,
+    " - Yearly totals split by Integrated Care Board and identified patients"
+  ),
+  c(
+    "1. Field definitions can be found on the 'Metadata' tab.",
+    "2. Statistical disclosure control has been applied to cells containing fewer than 5 patients or items. These cells will appear blank.",
+    "3. The patient counts shown in these statistics should only be analysed at the level at which they are presented. Adding together any patient counts is likely to result in an overestimate of the number of patients.",
+    "4. Integrated Care Boards (ICBs) succeeded sustainability and transformation plans (STPs) and replaced the functions of clinical commissioning groups (CCGs) in July 2022 with ICB sub locations replacing CCGs during the transition period of 2022/23."
+  ),
+  icb_data_fy,
+  14
+)
+
+#left align columns A to C
+format_data(wb,
+            "ICB",
+            c("A", "B", "C", "D"),
+            "left",
+            "")
+
+#right align columns D and E and round to whole numbers with thousand separator
+format_data(wb,
+            "ICB",
+            c("E", "F"),
+            "right",
+            "#,##0")
+
+#right align column F and round to 2dp with thousand separator
+format_data(wb,
+            "ICB",
+            c("G"),
+            "right",
+            "#,##0.00")
+
+# ICB category --------------------------------------------------
+# write data to sheet
+write_sheet(
+  wb,
+  "ICB_Category",
+  paste0(
+    "Dependency Forming Medicines - England 2015/16 to ",
+    config$fy,
+    " - Yearly totals split by Integrated Care Board, Drug Category and identified patients"
+  ),
+  c(
+    "1. Field definitions can be found on the 'Metadata' tab.",
+    "2. Statistical disclosure control has been applied to cells containing fewer than 5 patients or items. These cells will appear blank.",
+    "3. The patient counts shown in these statistics should only be analysed at the level at which they are presented. Adding together any patient counts is likely to result in an overestimate of the number of patients.",
+    "4. Integrated Care Boards (ICBs) succeeded sustainability and transformation plans (STPs) and replaced the functions of clinical commissioning groups (CCGs) in July 2022 with ICB sub locations replacing CCGs during the transition period of 2022/23."
+  ),
+  icb_category_data_fy,
+  14
+)
+
+#left align columns A to C
+format_data(wb,
+            "ICB_Category",
+            c("A", "B", "C", "D", "E"),
+            "left",
+            "")
+
+#right align columns D and E and round to whole numbers with thousand separator
+format_data(wb,
+            "ICB_Category",
+            c("F", "G"),
+            "right",
+            "#,##0")
+
+#right align column F and round to 2dp with thousand separator
+format_data(wb,
+            "ICB_Category",
+            c("H"),
+            "right",
+            "#,##0.00")
+
+# Cover sheet --------------------------------------------------
 # build cover sheet
 accessibleTables::makeCoverSheet(
   paste0("Dependency Forming Medicines - England 2015/16 - ", config$fy),
@@ -341,5 +428,5 @@ accessibleTables::makeCoverSheet(
 
 #save file into outputs folder
 openxlsx::saveWorkbook(wb,
-                       "outputs/dfm_2022_2023_costs_and_items_v001.xlsx",
+                       "outputs/dfm_2023_2024_costs_and_items_v001.xlsx",
                        overwrite = TRUE)

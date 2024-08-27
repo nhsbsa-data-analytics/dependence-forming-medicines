@@ -4,7 +4,13 @@ rm(list = ls())
 
 # source functions
 # get all .R files in the functions sub-folder and sub-folders of this
-function_files <- list.files(path = "functions", pattern = "\\.R$", recursive = TRUE, full.names = TRUE)
+function_files <-
+  list.files(
+    path = "functions",
+    pattern = "\\.R$",
+    recursive = TRUE,
+    full.names = TRUE
+  )
 
 # loop over function_files to source them all
 for (file in function_files) {
@@ -88,100 +94,124 @@ con <- nhsbsaR::con_nhsbsa(dsn = "FBS_8192k",
                            driver = "Oracle in OraClient19Home1",
                            "DWCP")
 
-schema <- config$sql_schema
-
 # 3. Extract FY data required ------------------------------------------------
 
 age_category_data_fy <-
-  age_category_extract_fy(con = con,
-                       schema = schema,
-                       table = config$sql_table_name) |>
-  apply_sdc(rounding = F) |>
+  age_category_extract_fy(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients") |>
   filter(`Financial Year` <= config$fy)
-  
 
-age_data <-
-  age_extract_fy(con = con,
-              schema = schema,
-              table = config$sql_table_name) |>
-  apply_sdc(rounding = F) |>
+
+age_data_fy <-
+  age_extract_fy(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients") |>
   filter(`Financial Year` <= config$fy)
 
 age_gender_cat_data_fy <-
-  age_gender_cat_extract_fy(con = con,
-                         schema = schema,
-                         table = config$sql_table_name) |>
-  apply_sdc(rounding = F) |>
+  age_gender_cat_extract_fy(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients") |>
   filter(`Financial Year` <= config$fy)
 
 age_gender_data_fy <-
-  age_gender_extract_fy(con = con,
-                     schema = schema,
-                     table = config$sql_table_name) |>
-  apply_sdc(rounding = F) |>
+  age_gender_extract_fy(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients") |>
   filter(`Financial Year` <= config$fy)
 
 ageband_data_fy <-
-  ageband_extract_fy(con = con,
-                  schema = schema,
-                  table = config$sql_table_name) |>
-  apply_sdc(rounding = F) |>
+  ageband_extract_fy(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients") |>
   filter(`Financial Year` <= config$fy)
 
 category_data_fy <-
-  category_extract_fy(con = con,
-                   schema = schema,
-                   table = config$sql_table_name) |>
-  apply_sdc(rounding = F) |>
+  category_extract_fy(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients") |>
   filter(`Financial Year` <= config$fy)
 
 gender_category_data_fy <-
-  gender_category_extract_fy(con = con,
-                          schema = schema,
-                          table = config$sql_table_name) |>
-  apply_sdc(rounding = F) |>
+  gender_category_extract_fy(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients") |>
   filter(`Financial Year` <= config$fy)
 
 gender_data_fy <-
-  gender_extract_fy(con = con,
-                 schema = schema,
-                 table = config$sql_table_name) |>
-  apply_sdc(rounding = F) |>
+  gender_extract_fy(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients") |>
   filter(`Financial Year` <= config$fy)
 
 icb_category_data_fy <-
-  icb_category_extract_fy(con = con,
-                       schema = schema,
-                       table = config$sql_table_name) |>
-  apply_sdc(rounding = F) |>
+  icb_category_extract_fy(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients") |>
   filter(`Financial Year` <= config$fy)
 
 icb_data_fy <-
-  icb_extract_fy(con = con,
-              schema = schema,
-              table = config$sql_table_name) |>
-  apply_sdc(rounding = F) |>
+  icb_extract_fy(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients") |>
   filter(`Financial Year` <= config$fy)
 
 imd_category_data_fy <-
-  imd_category_extract_fy(con = con,
-                       schema = schema,
-                       table = config$sql_table_name) |>
-  apply_sdc(rounding = F) |>
+  imd_category_extract_fy(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients") |>
   filter(`Financial Year` <= config$fy)
 
 imd_data_fy <-
-  imd_extract_fy(con = con,
-              schema = schema,
-              table = config$sql_table_name) |>
-  apply_sdc(rounding = F) |>
+  imd_extract_fy(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients") |>
   filter(`Financial Year` <= config$fy)
 
 national_data_fy <-
-  national_extract_fy(con = con,
-                   schema = schema,
-                   table = config$sql_table_name) |>
-  apply_sdc(rounding = F) |>
+  national_extract_fy(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients") |>
   filter(`Financial Year` <= config$fy)
 
 national_pop <- ons_national_pop(year = c(2015:2023),
@@ -237,16 +267,36 @@ population_data_fy <- national_data_fy |>
 
 patient_identification_fy <-
   capture_rate_extract_fy(con = con,
-                       schema = schema,
-                       table = config$sql_table_name) |>
+                          schema = config$sql_schema,
+                          table = config$sql_table_name) |>
   filter(`Financial Year` <= config$fy)
 
 
 patient_identification_dt <-
-  capture_rate_extract_dt(con = con,
-                          schema = schema,
-                          table = config$sql_table_name)  |>
+  capture_rate_extract_dt(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  )  |>
   select(1, last_col(5):last_col(1))
+
+paragraph_data_fy <- paragraph_extract_fy(
+  con = con,
+  schema = config$sql_schema,
+  table = config$sql_table_name
+)  |>
+  apply_sdc(suppress_column = "Total Identified Patients") |>
+  filter(`Financial Year` <= config$fy)
+
+chem_sub_data_fy <- chem_sub_extract_fy(
+  con = con,
+  schema = config$sql_schema,
+  table = config$sql_table_name
+)  |>
+  apply_sdc(suppress_column = "Total Identified Patients") |>
+  filter(`Financial Year` <= config$fy)
+
+
 
 # 4. Extract CY data required ------------------------------------------------
 
@@ -394,45 +444,7 @@ format_data(wb_dem,
             "right",
             "#,##0.00")
 
-#### gender data
-# write data to sheet
-write_sheet(
-  wb_dem,
-  "Table_2",
-  paste0(
-    "Table 2: Dependency Forming Medicines - England 2015/16 to ",
-    config$fy,
-    " - National prescribing by gender per financial year"
-  ),
-  c(
-    "1. Field definitions can be found on the 'Metadata' tab.",
-    "2. It is possible for a patient to be marked as 'unknown' or 'indeterminate'. Due to the low number of patients that these two groups contain the NHSBSA has decided to group these classifications together.",
-    "3. The NHSBSA does not use the latest national data standard relating to patient gender, and use historic nomenclature in some cases. Please see the detailed Background Information and Methodology notice released with this publication for further information."
-  ),
-  gender_data,
-  14
-)
 
-#left align columns A to C
-format_data(wb_dem,
-            "Table_2",
-            c("A", "B", "C"),
-            "left",
-            "")
-
-#right align columns D and E and round to whole numbers with thousand separator
-format_data(wb_dem,
-            "Table_2",
-            c("D", "E"),
-            "right",
-            "#,##0")
-
-#right align column F and round to 2dp with thousand separator
-format_data(wb_dem,
-            "Table_2",
-            c("F"),
-            "right",
-            "#,##0.00")
 
 #### gender category  data
 # write data to sheet
@@ -1142,27 +1154,20 @@ rmarkdown::render("dfm_annual_narrative.Rmd",
                   output_file = "outputs/dfm_summary_narrative_2023_24_v001.docx")
 
 # user engagement
-# 
+#
 # rmarkdown::render("dfm_user_engagement_2223.Rmd",
 #                   output_format = "html_document",
 #                   output_file = "outputs/dfm_user_engagement_2023_24_v001.html")
 
 # background
 
-rmarkdown::render(
-  "dfm-background.Rmd",
-  output_format = "html_document",
-  output_file = "outputs/dfm_background_info_methodology_v001.html"
-)
+rmarkdown::render("dfm-background.Rmd",
+                  output_format = "html_document",
+                  output_file = "outputs/dfm_background_info_methodology_v001.html")
 
-rmarkdown::render(
-  "dfm-background.Rmd",
-  output_format = "word_document",
-  output_file = "outputs/dfm_background_info_methodology_v001.docx"
-)
+rmarkdown::render("dfm-background.Rmd",
+                  output_format = "word_document",
+                  output_file = "outputs/dfm_background_info_methodology_v001.docx")
 
 # 8. disconnect from DWH  ---------
 DBI::dbDisconnect(con)
-
-
-
