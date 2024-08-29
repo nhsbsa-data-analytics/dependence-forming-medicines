@@ -78,7 +78,7 @@ knitr::opts_chunk$set(echo = FALSE,
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-12} 
-`r infoBox_border(header = "Changes to these statistics", text = paste0("We have made changes to how we count patients and assign them to an Index of Multiple Deprivation (IMD) quintile. Some historical figures may have changed from previous releases. You can read more about these changes in section 4.<br><br>Tapentadol phosphate has been added to the opioid drug category. Levomilnacipran and other antidepressant preparations have been removed from the antidpressant drug category.<br><br>We are interested in any feedback about the publication, which you can send by using our ", htmltools::HTML(paste("<a href='",config$stats_survey_link,"'>Official Statistics feedback survey</a>")),"."), width = "100%")` 
+`r infoBox_border(header = "Changes to these statistics", text = paste0("For this release, we have added supporting summary tables containing data presented by calendar year and financial quarter. These tables contain the same geographical and demographic breakdowns as the financial year tables.<br><br>We have also updated our methodology for assigning identified patients to gender groups. You can find more information in Section 4 - About these statistics.<br><br>We are interested in any feedback about the publication, which you can send by using our ", htmltools::HTML(paste("<a href='",config$stats_survey_link,"'>Official Statistics feedback survey</a>")),"."), width = "100%")` 
 ::: 
 ::::
 
@@ -104,9 +104,9 @@ Opioid drugs were the most prescribed dependency-forming medicines in England in
 
 There were 7.1 million identified patients that were prescribed dependency-forming medicines in England in 2022/23. This was a 12% decrease from 8.1 million identified patients in 2015/16.
 
-The most common group to receive prescribing for dependency-forming medicines in 2022/23 was female patients aged 55 to 59 with 410,000 identified patients.
+The most common group to be prescribed dependency-forming medicines in 2022/23 was female patients aged 55 to 59 with 410,000 identified patients.
 
-Areas of greater deprivation had the highest number of identified patients who were being prescribed dependency-forming medication in 2022/23, with 56% more patients receiving prescribing in the most deprived areas of the country compared to the least deprived.
+Areas of greater deprivation had the highest number of identified patients who were being prescribed dependency-forming medication in 2022/23. 56% more patients received prescribing in the most deprived areas of the country compared to those in the least deprived.
 
 ---
 
@@ -114,7 +114,9 @@ Areas of greater deprivation had the highest number of identified patients who w
 
 ### 1.1. Background {.toc-ignore}
 
-This publication was developed in response to the Public Health England (PHE) dependence and withdrawal associated with some prescribed medicines review also known as the [prescribed medicines review (PMR)](https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/940255/PHE_PMR_report_Dec2020.pdf), particularly its recommendation that the availability and use of data on the prescribing of medicines that can cause dependence be increased.
+This  publication was developed in response to the Public Health England (PHE) review into the dependence and withdrawal associated with some prescribed medicines.
+
+Known as the [prescribed medicines review (PMR)](https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/940255/PHE_PMR_report_Dec2020.pdf), it particularly recommended an increase in the availability and use of data on the prescribing of medicines that can cause dependence.
 
 This publication includes data on 5 categories of medicines overall:
 
@@ -124,7 +126,7 @@ This publication includes data on 5 categories of medicines overall:
 *	Benzodiazepines
 *	Z-drugs
 
-Antidepressants are not included in the volume and cost or demographics measures. The current National Institute for Health and Care Excellence (NICE) [guidance](https://www.nice.org.uk/guidance/ng215) makes the distinction that antidepressants can cause withdrawal symptoms but are historically not dependency-forming. Additionally, the statistics for antidepressants can be found in the [Medicines Used in Mental Health publication](https://www.nhsbsa.nhs.uk/statistical-collections/medicines-used-mental-health-england). Antidepressants are included in the co-prescribing measures in this publication.
+Antidepressants are not included in the measures for volume, cost or demographics. The [current National Institute for Health and Care Excellence (NICE) [uidance](https://www.nice.org.uk/guidance/ng215) makes the distinction that antidepressants can cause withdrawal symptoms but are historically not dependency-forming. Additionally, the statistics for antidepressants can be found in the [Medicines Used in Mental Health publication](https://www.nhsbsa.nhs.uk/statistical-collections/medicines-used-mental-health-england). Antidepressants are included in the co-prescribing measures in this publication.
 
 This publication aims to describe the prescribing of dependency-forming medicines in England that are dispensed in the community. This does not include data on medicines prescribed and dispensed in secondary care, prisons, or issued by a private prescriber as this is not held by the NHSBSA.
 
@@ -140,15 +142,17 @@ These statistics detail:
 
 These statistics use the BNF therapeutic classifications defined in the British National Formulary (BNF) using the classification system prior to BNF edition 70. Each January the NHSBSA updates the classification of drugs within the BNF hierarchy which may involve some drugs changing classification between years of this publication. The categories of dependency-forming drugs do not align to specific sections of the BNF and have been filtered on chemical substance. A complete list can be found in appendix A of the background and methodology note that accompanies this release.
 
-Many drugs have multiple uses, and although classified in the BNF by their primary therapeutic use may be issued to treat a condition outside of this. Due to this, these statistics may not give accurate estimations of prescribing to treat specific conditions. This also means that unlike the PMR which excluded opioids prescribed for cancer, using patient details from the PHE cancer registry, these statistics do not exclude patients diagnosed with cancer and who are using an opioid to manage the pain that can be associated with malignant diseases, especially as part of end-of-life care. This means that some measures and the data for opioid pain medicines include more patients than the PMR analysis.
+Many drugs have multiple uses, and although classified in the BNF by their primary therapeutic use may be issued to treat a condition outside of this. Due to this, these statistics may not give accurate estimations of prescribing to treat specific conditions.
 
-To exclude items used to treat an existing drug dependence or substance misuse disorder, drugs prescribed on FP10MDA installment forms and from BNF Section 0410 --- Drugs used in substance dependence were excluded from these statistics.
+These statistics do not exclude patients diagnosed with cancer and who are using an opioid to manage the pain that can be associated with malignant diseases, especially as part of end-of-life care. However, the PMR excluded opioids prescribed for cancer, using patient details from the PHE cancer registry. This means that some measures and the data for opioid pain medicines include more patients than the PMR analysis.
+
+To exclude items used to treat an existing drug dependence or substance misuse disorder, drugs prescribed on FP10MDA instalment forms and from BNF Section 4.10 - Drugs used in substance dependence, were excluded from these statistics.
 
 ### 1.2. Key events
 
 ```{r key events, results = TRUE}
 Date  <- c("June 2015","September 2019","August 2021","April 2022","May 2022")
-Event <- c("All Party Parliamentary Group for [Prescribed Drug Dependence](http://prescribeddrug.org/) launched to  address the growing problem of prescribed drug dependence.", "Public Health England (PHE) [prescribed medicines review (PMR)](https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/940255/PHE_PMR_report_Dec2020.pdf) intended to identify the scale, distribution and causes of prescription drug dependence published.", "Updated Opioid medicines and the risk of addiction [Safety leaflet](https://www.gov.uk/guidance/opioid-medicines-and-the-risk-of-addiction) published by Medicines and Healthcare products Regulatory Agency (MHRA)", "Medicines associated with dependence or withdrawal symptoms: safe prescribing and withdrawal management for adults guidance published by [National Institute for Health and Care Excellence (NICE)](https://www.nice.org.uk/guidance/ng215)","[Opioid comparator dashboard](https://www.nhsbsa.nhs.uk/access-our-data-products/epact2/dashboards-and-specifications/opioid-prescribing-comparators-dashboard) to support Primary Care Networks (PCN) and GP practices published by NHSBSA")
+Event <- c("All Party Parliamentary Group for [Prescribed Drug Dependence](http://prescribeddrug.org/) launched to  address the growing problem of prescribed drug dependence.", "Public Health England (PHE) [prescribed medicines review (PMR)](https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/940255/PHE_PMR_report_Dec2020.pdf) intended to identify the scale, distribution and causes of prescription drug dependence published.", "Updated Opioid medicines and the risk of addiction [Safety leaflet](https://www.gov.uk/guidance/opioid-medicines-and-the-risk-of-addiction) published by Medicines and Healthcare products Regulatory Agency (MHRA)", "Medicines associated with dependence or withdrawal symptoms: safe prescribing and withdrawal management for adults guidance published by [NICE](https://www.nice.org.uk/guidance/ng215)","[Opioid comparator dashboard](https://www.nhsbsa.nhs.uk/access-our-data-products/epact2/dashboards-and-specifications/opioid-prescribing-comparators-dashboard) to support Primary Care Networks (PCN) and GP practices published by NHSBSA")
 d <- data.frame(Date, Event)
 knitr::kable(d, align = "ll")
 ```
@@ -181,7 +185,7 @@ knitr::kable(d, align = "ll")
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-12} 
-`r infoBox_border("Tolerance", text = "Tolerance is a neuroadaptation arising from repeatedly taking some drugs and medicines, which can mean higher doses are required to achieve the same effect. Withdrawal is the side effects or physiological reactions that a patient experiences when they stop taking a medication.", width = "100%")`
+`r infoBox_border("Tolerance", text = "Tolerance is a neuroadaptation arising from repeatedly taking some drugs and medicines, which can mean higher doses are required to achieve the same effect.", width = "100%")`
 ::: 
 ::::
 
@@ -191,13 +195,19 @@ knitr::kable(d, align = "ll")
 ::: 
 ::::
 
+::::{.row style="display: flex; padding-bottom: 10px;"} 
+:::{.col-md-12} 
+`r infoBox_border("Withdrawal", text = " Withdrawal is the side effects or physiological reactions that a patient experiences when they stop taking a medication.", width = "100%")`
+::: 
+::::
+
 ### 1.4. Patient identification {.toc-ignore}
 
 When the NHSBSA processes prescriptions it is not always possible to capture the NHS number of the patient. Table 1 shows the proportion of items for which a patient could be identified. This means that the data relating to patient counts represents most, but not all, patients.
 
 Due to an increase in digital prescription processing through the Electronic Prescription Service (EPS) during the COVID-19 pandemic, more patients were identified in 2020/21, 2021/22 and 2022/23 compared to previous years. As patient identification rates increased, any increases in the number of identified patients between periods are likely to be an overestimate of the actual increase in patient numbers. This is because the proportion of patients who could be identified has increased. Conversely, any decrease over the same period is likely to be an underestimate of the actual decrease.
 
-Where patients are identified, to assign them to a single age band their age is calculated on the 30 September of the given financial year. For patients where date of birth has not been captured, they have been included in an unknown category.
+Where patients are identified, their age is calculated on 30 September of the given financial year to assign them to a single age band. For patients where date of birth has not been captured, they have been included in an unknown category.
 
 Gender information was not available from PDS for a small number of patients in each year, typically fewer than 100. This may be because it was not disclosed by the patient or not recorded by the organisation that collected the data.
 
@@ -299,7 +309,7 @@ Source: [Dependency-forming medicines summary tables - Costs and items (Table 1)
 
 The costs for dependency-forming medicines was £380 million in 2022/23. This was a 51% decrease from £780 million in 2015/16, and a 5% decrease from £400 million in 2021/22.
 
-The changes from 2016/17 to 2018/19 were due to pregabalin, a gabapenintoid coming off patent and entering Category M of the drug tariff, meaning cheaper generic equivalents could be prescribed from August 2017. This can be seen more clearly in figure 5.
+The changes from 2016/17 to 2018/19 were due to pregabalin, a gabapenintoid coming off patent and entering Category M of the drug tariff, meaning cheaper generic equivalents could be prescribed from August 2017. This is more apparent in figure 5 and it's data.
 
 #### Number of dependency-forming medicine items prescribed by Drug Category per financial year {.tabset}
 
@@ -341,7 +351,7 @@ Source: [Dependency-forming medicines summary tables - Costs and items (Table 2)
 
 Opioid drugs remain the most prescribed dependency-forming medicine with 39 million items in 2022/23. This was a 6% decrease from 42 million items in 2015/16, and a 1% decrease from 40 million items in 2021/22. The number of opioid items prescribed has decreased every year since 2016/17.
 
-Prescribing of gabapenintoids increased by 49% from 11 million items in 2015/16 to 16 million in 2022/23. The two remaining drug categories decreased in prescribing between 2015/16 and 2022/23. Benzodiazepine items decreased by 26% from 8.7 million to 6.4 million. Finally, Z-drugs decreased by 17% from 6.4 million items in 2015/16 to 5.3 million in 2022/23.
+Prescribing of gabapenintoids increased by 49% from 11 million items in 2015/16 to 16 million in 2022/23. The 2 remaining drug categories decreased in prescribing between 2015/16 and 2022/23. Benzodiazepine items decreased by 26% from 8.7 million to 6.4 million. Finally, Z-drugs decreased by 17% from 6.4 million items in 2015/16 to 5.3 million in 2022/23.
 
 #### Number of identified patients per 1,000 population by Drug Category per financial year {.tabset}
 
@@ -381,13 +391,11 @@ Source: [Dependency-forming medicines summary tables - Costs and items (Table 4)
 :::
 ::::
 
-Data for this per population metric has been limited to financial year 2021/22 due to mid year population estimates from ONS for 2022/23 not being available prior to release.
+There were 100 patients per 1,000 population receiving opioid drugs, approximately 10% of the population of England in 2021/22. This was an increase of 1 patient per 1,000 population from the 99 per 1,000 population in 2020/21. This was the first increase after 5 years of consecutive decreases from 118 patients per 1,000 population in 2015/16.
 
-There were 100 patients per 1,000 population receiving opioid drugs, approximately 10% of the population of England in 2021/22. This was an increase of 1 patient per 1,000 population from the 99 per 1,000 population in 2020/21. This was the first increase after five years of consecutive decreases from 118 patients per 1,000 population in 2015/16.
+Both benzodiazepines and Z-drugs have decreased in the number of patients per 1,000 population for 6 consecutive years. Benzodiazepines dropped from 27 patients per 1,000 population in 2015/16 to 19 patients per 1,000 population in 2021/22. Z-drugs dropped from 19 patients per 1,000 population in 2015/16 to 15 patients per 1,000 population in 2021/22.
 
-Both benzodiazepines and Z-drugs have decreased the number of patients per 1,000 population for 6 consecutive years. Benzodiazepines dropped from 27 patients per 1,000 population in 2015/16 to 19 patients per 1,000 population in 2021/22. Z-drugs dropped from 19 patients per 1,000 population in 2015/16 to 15 patients per 1,000 population in 2021/22.
-
-The patients per 1,000 population receiving gabapenintoids increased in 2021/22 to 27 patients per 1,000 population from 23 per 1,000 patients per 1,000 population in 2015/16.
+The patients per 1,000 population receiving gabapenintoids increased in 2021/22 to 27 patients per 1,000 population from 23 patients per 1,000 population in 2015/16.
 
 The patients per 1,000 population are calculated using the [ONS population estimates](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates) for mid-year 2021.
 
@@ -431,7 +439,7 @@ In 2022/23, opioid drugs had a cost of £280 million. This was a decrease of 33%
 
 Gabapenintoids had a cost of £65 million in 2022/23, a decrease of 80% from the £320 million in 2015/16 and a 5% decrease from the £69 million in 2021/22. The costs of gabapenintoids decreased in consecutive years between 2017/18 and 2019/20 following pregabalin entering category M of the drug tariff meaning cheaper generic equivalents could be prescribed from August 2017.
 
-For the remaining two drug categories, benzodiapezines increased in cost by 25% from £25 million in 2021/22 to £31 million in 2022/23 and Z-drugs decreased in cost by 8% from £4.5 million in 2021/22 to £4.1 million in 2022/23.
+For the remaining 2 drug categories, benzodiapezines increased in cost by 25% from £25 million in 2021/22 to £31 million in 2022/23 and Z-drugs decreased in cost by 8% from £4.5 million in 2021/22 to £4.1 million in 2022/23.
 
 #### Average number of dependency-forming medicine items per patient by financial year {.tabset}
 
@@ -532,16 +540,16 @@ Source: [Dependency-forming medicines summary tables - Patient demographics (Tab
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-6} 
-`r infoBox_no_border(header = "", text = "<b>In 2022/23 410,000 female patients aged 55 to 59 were prescribed a dependency-forming item.</b>", width = "100%")` 
+`r infoBox_no_border(header = "", text = "<b>In 2022/23, 410,000 female patients aged 55 to 59 were prescribed a dependency-forming item.</b>", width = "100%")` 
 ::: 
 :::{.col-md-6} 
-`r infoBox_no_border(header = "", text = "<b>In 2022/23 300,000 male patients aged 60 to 64 were prescribed a dependency-forming item.</b>", width = "100%")` 
+`r infoBox_no_border(header = "", text = "<b>In 2022/23, 300,000 male patients aged 60 to 64 were prescribed a dependency-forming item.</b>", width = "100%")` 
 :::
 ::::
 
-The most common group to receive prescribing for dependency-forming medicines in 2022/23 was female patients aged 55 to 59 with 410,000 identified patients, 6% of all patients who received a dependency-forming item. The most common age group for male patients was 60 to 64 with 300,000 identified patients, 4% of all patients who received a dependency-forming item.
+The most common group to be prescribed dependency-forming medicines in 2022/23 was female patients aged 55 to 59, with 410,000 identified patients. This was 6% of all patients who received a dependency-forming item. 
 
-More information on how we calculate a patient's age can be found in section 4 of this summary.
+The most common age group for male patients was 60 to 64, with 300,000 identified patients. This was 4% of all patients who received a dependency-forming item.
 
 #### Number of identified patients receiving dependency-forming medicines prescribing by IMD quintile {.tabset}
 
@@ -571,16 +579,14 @@ Source: [Dependency-forming medicines summary tables - Patient demographics (Tab
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-6} 
-`r infoBox_no_border(header = "", text = "<b>In 2022/23 1.8 million patients who were prescribed a dependency-forming item were from the most deprived areas in England.</b>", width = "100%")` 
+`r infoBox_no_border(header = "", text = "<b>In 2022/23, 1.8 million patients who were prescribed a dependency-forming item were from the most deprived areas in England.</b>", width = "100%")` 
 ::: 
 :::{.col-md-6} 
-`r infoBox_no_border(header = "", text = "<b>In 2022/23 1.2 million patients who were prescribed a dependency-forming item were from the least deprived areas in England.</b>", width = "100%")` 
+`r infoBox_no_border(header = "", text = "<b>In 2022/23, 1.2 million patients who were prescribed a dependency-forming item were from the least deprived areas in England.</b>", width = "100%")` 
 :::
 ::::
 
-In 2022/23, there were 1.8 million identified patients prescribed dependency-forming medicines in the most deprived areas in England, 56% more than the 1.2 million identified patients that received prescribing in the least deprived areas. In general, more people were prescribed dependency-forming medicines in more deprived areas in 2022/23. This pattern has remained consistent since 2015/16.
-
-The English Indices of Deprivation have been used to provide a measure of patient deprivation. The deprivation quintiles reported are those of the patient. More information on this measure can be found in section 4 of this summary.
+In 2022/23, there were 1.8 million identified patients prescribed dependency-forming medicines in the most deprived areas in England. This was 56% more than the 1.2 million identified patients that received prescribing in the least deprived areas. In general, more people were prescribed dependency-forming medicines in more deprived areas in 2022/23. This pattern has remained consistent since 2015/16.
 
 ### 2.3. Co-prescribing of drug categories
 
@@ -621,7 +627,7 @@ Source: [Dependency-forming medicines summary tables - Patient demographics (Tab
 
 Co-prescribing is where a patient is receiving drugs from more than one category of dependency-forming medicine. Antidepressants which have been excluded from the previous sections have been included here because of the increased risk factors when combined with dependency-forming medicines. It is not possible to distinguish whether multiple prescriptions which have been reported for the same month were given consecutively or concurrently. As such, some activity will show as co-prescribing when in fact the individual was prescribed one medicine and another separately, and both were reported in the same month. March 2023 has been used for this analysis as the most recent month of available data and as it was representative of the recent trends in co-prescribing.
 
-In total, an estimated 6.6 million identified patients received a prescription in March 2023 in at least one of the categories. Of these 1.2 million were receiving prescriptions in 2 categories, representing 19% of patients. Less than a tenth of a percent of patients received a drug from all 5 categories of dependency-forming medication. 
+In total, an estimated 6.6 million identified patients received a prescription in March 2023 in at least one of the categories. Of these, 1.2 million were receiving prescriptions in 2 categories, representing 19% of patients. Less than 0.1% of patients received a drug from all 5 categories of dependency-forming medication. 
 
 #### Number of identified patients receiving prescribing of a combination of two dependency-forming medicines {.tabset}
 
@@ -649,7 +655,9 @@ get_download_button(title = "Download table data", data = figure_11_data, filena
 
 Source: [Dependency-forming medicines summary tables - Patient demographics (Table 11)](`r config$demographics_excel`)
 
-The most popular combination of drugs in March 2023 for those patients receiving items from 2 categories of dependency-forming medicines was opioids and antidepressants with 640,000 patients, 52% of patients who received prescribing in two categories of dependency-forming medicines. This was followed by gabapentinoids and antidepressants with 220,000 patients, 18% of patients who received prescribing in two categories of dependency-forming medicines. These proportions were consistent across 2022/23.
+In March 2023, the most popular combination of drugs for those patients receiving items from 2 categories of dependency-forming medicines was opioids and antidepressants with 640,000 patients. This was 52% of patients who received prescribing in two categories of dependency-forming medicines. 
+
+This was followed by gabapentinoids and antidepressants with 220,000 patients. This was 18% of patients who received prescribing in 2 categories of dependency-forming medicines. These proportions were consistent across 2022/23.
 
 ---
 
@@ -661,11 +669,11 @@ Opioids provide pain relief by acting on areas in the spinal cord and brain to b
 
 Most opioids are schedule 2 controlled drugs, unless very low strength which may be schedule 5, and are available in a wide variety of medication forms.
 
-Opioids should only be considered for the short to medium-term treatment of chronic non-malignant pain, when other therapies have been insufficient and the benefits of use are considered to outweigh the risks of harm.
+Opioids should only be considered for the short-to-medium-term treatment of chronic non-malignant pain, when other therapies have been insufficient and the benefits of use are considered to outweigh the risks of harm.
 
-Opioid analgesics are usually used for palliative care where potential for dependence is not a deterrent and chronic (lasting more than 12 weeks) moderate-to-severe pain where other treatments have been insufficient due to the potential for dependence.
+Opioid analgesics are usually used for palliative care, where potential for dependence is not a deterrent, and chronic (lasting more than 12 weeks) moderate-to-severe pain exists where other treatments have been insufficient due to the potential for dependence.
 
-You can find out more information on [opioid analgesics](https://bnf.nice.org.uk/treatment-summaries/analgesics/#opioid-analgesics-and-dependence) on the NICE website. [Resources for the prescribing of opioids](https://fpm.ac.uk/opioids-aware) have been produced by the Faculty of Pain Medicine in partnership with PHE.
+You can find out [more information on opioid analgesics](https://bnf.nice.org.uk/treatment-summaries/analgesics/#opioid-analgesics-and-dependence) on the NICE website. [Resources for the prescribing of opioids](https://fpm.ac.uk/opioids-aware) have been produced by the Faculty of Pain Medicine in partnership with PHE.
 
 ### 3.2. Gabapentinoids {.toc-ignore}
 
@@ -675,7 +683,7 @@ In epilepsy, gabapentinoids stop seizures by reducing the abnormal electrical ac
 
 With nerve pain, they block pain by affecting the pain messages travelling through the brain and down the spine.
 
-When pregabalin is used to treat anxiety it prevents the brain from releasing the chemicals that cause anxiety.
+When pregabalin is used to treat anxiety, it prevents the brain from releasing the chemicals that cause anxiety.
 
 Both gabapenintoids are schedule 3 controlled drugs and are available as capsules, tablets, or a liquid.
 
@@ -683,11 +691,11 @@ You can find out more about [gabapentin](https://www.nhs.uk/medicines/gabapentin
 
 ### 3.3. Benzodiazepines {.toc-ignore}
 
-Benzodiazepines are a commonly used  hypnotic and anxiolytic medicine; hypnotics and anxiolytics are used to treat insomnia and anxiety respectively.  Benzodiazepines work by increasing the effects of a calming chemical in the brain called gamma-aminobutyric acid (GABA).
+Benzodiazepines are a commonly used hypnotic and anxiolytic medicine. Hypnotics and anxiolytics are used to treat insomnia and anxiety respectively. Benzodiazepines work by increasing the effects of a calming chemical in the brain called gamma-aminobutyric acid (GABA).
 
-Benzodiazepines are indicated for the short-term relief of severe anxiety; long-term use should be avoided and should also only be used to treat insomnia only when it is severe, disabling, or causing the patient extreme distress
+Benzodiazepines are indicated for the short-term relief of severe anxiety. Long-term use should be avoided and should also only be used to treat insomnia only when it is severe, disabling, or causing the patient extreme distress
 
-The majority of benzodiazepines are schedule 4 controlled drugs with some belonging to schedule 3 and are available as capsules, tablets, injectables, suppositories or a liquid.
+The majority of benzodiazepines are schedule 4 controlled drugs with some belonging to schedule 3, and are available as capsules, tablets, injectables, suppositories or a liquid.
 
 Insomnia is difficulty getting to sleep or staying asleep for long enough to feel refreshed in the morning, despite there being enough opportunity to sleep. An insomniac may also experience:
 
@@ -699,7 +707,7 @@ Insomnia is difficulty getting to sleep or staying asleep for long enough to fee
 
 Anxiety is a feeling of unease, such as worry or fear, which can be mild or severe. Everyone experiences feelings of anxiety at some point in their life and feeling anxious is sometimes perfectly normal. However, people with generalised anxiety disorder (GAD) find it hard to control their worries. Their feelings of anxiety are more constant and often affect their daily life. There are several conditions for which anxiety is the main symptom. Panic disorder, phobias and post-traumatic stress disorder can all cause severe anxiety.
 
-You can find more information about [insomnia](https://www.nhs.uk/conditions/insomnia/) and [anxiety](https://www.nhs.uk/conditions/generalised-anxiety-disorder/) from the NHS website and further information about [hypnotics and anxiolytics](https://bnf.nice.org.uk/treatment-summaries/hypnotics-and-anxiolytics/) at the NICE website though this includes drugs other than benzodiazepines.
+You can find more information about [insomnia](https://www.nhs.uk/conditions/insomnia/) and [anxiety](https://www.nhs.uk/conditions/generalised-anxiety-disorder/) from the NHS website, and further information about [hypnotics and anxiolytics](https://bnf.nice.org.uk/treatment-summaries/hypnotics-and-anxiolytics/) at the NICE website, though this includes drugs other than benzodiazepines.
 
 ### 3.4. Z-drugs {.toc-ignore}
 
@@ -713,9 +721,9 @@ You can find more information about [insomnia](https://www.nhs.uk/conditions/ins
 
 Antidepressant drugs are licensed to treat major depression. Health professionals use the words depression, depressive illness or clinical depression to refer to depression. It is a serious illness and very different from the common experience of feeling unhappy or fed up for a short period of time. Depressed people may have feelings of extreme sadness that can last for a long time. These feelings are severe enough to interfere with daily life, and can last for weeks, months or years, rather than days.
 
-It should be noted that antidepressant drugs are used for indications other than depression, for example migraine, chronic pain, Myalgic Encephalomyelitis (ME), or a range of other conditions. Clinical indication isn't captured by the NHSBSA. Therefore, the statistics on these drugs do not relate solely to prescribing for depression.
+It should be noted that antidepressant drugs are used for indications other than depression. For example, they can used for migraine, chronic pain, Myalgic Encephalomyelitis (ME), or a range of other conditions. Clinical indication is not captured by the NHSBSA. Therefore, the statistics on these drugs do not relate solely to prescribing for depression.
 
-You can find more information about [depression](https://www.nhs.uk/conditions/clinical-depression/) on the NHS website.
+You can find more [information about depression](https://www.nhs.uk/conditions/clinical-depression/) on the NHS website.
 
 ---
 
@@ -729,7 +737,7 @@ The patient counts shown in these statistics should only be analysed at the leve
 
 ### 4.2. Patient age and gender {.toc-ignore}
 
-The age and gender of patients used in these statistics is derived from data provided by the NHS Personal Demographics Service (PDS) for NHS numbers that have been successfully verified by them. A patient's age, used to assign them to an age group, has been calculated on 30 September for the given financial year. It is possible that a patient's PDS information may change over the course of the year, in these cases patients may be subject to multiple counting in these analyses.
+The age and gender of patients used in these statistics is derived from data provided by the NHS Personal Demographics Service (PDS) for NHS numbers that have been successfully verified by them. A patient’s age, used to assign them to an age group, has been calculated on 30 September for the given financial year. It is possible that a patient’s PDS information may change over the course of the year, in these cases patients may be subject to multiple counting in these analyses.
 
 ### 4.3. Index of deprivation {.toc-ignore}
 
@@ -741,15 +749,11 @@ IMD deciles are calculated by ranking census lower-layer super output areas (LSO
 
 ### 4.4. Geographies included in this publication {.toc-ignore}
 
-The patient deprivation measures given in these statistics are based upon the LSOA of the postcode of the patient as matched to the May 2023 NSPL file. However, higher geographies included in the statistical summary tables of this publication, such as ICB, use NHSBSA administrative records, not geographical boundaries, and more closely reflect the operational organisation of practices than other geographical data sources.
+The patient deprivation measures given in these statistics are based upon the LSOA of the postcode of the patient, as matched to the May 2023 NSPL file. However, higher geographies included in the statistical summary tables of this publication, such as ICB, use NHSBSA administrative records, not geographical boundaries, and more closely reflect the operational organisation of practices than other geographical data sources.
 
 ### 4.5. Co-prescribing measures {.toc-ignore}
 
 In these statistics, co-prescribing refers to the reporting of 2 or more drug categories of medicine for the same identified patient in the same month. Co-prescribing is reported based on the number of categories, up to 5, that were reported in the same month, with greater than one deemed to be co-prescribing. The main limitation is that it is not possible to distinguish whether multiple prescriptions that have been reported for the same month were given consecutively or concurrently. As such, some activity will be flagged in this analysis as co-prescribing, implying they were received at the same time, when in fact the individual was prescribed one medicine and then another separately, and both were reported in the same month.
-
-### 4.6. Planned changes to this publication {.toc-ignore}
-
-This is an experimental official statistic release. Experimental statistics are newly developed or innovative statistics. These are published so that users and stakeholders can be involved in the assessment of their suitability and quality at an early stage. More information on how users can give us their feedback can be found in section 8 of this summary. We will regularly be reviewing the methodology used within the statistics.
 
 ---
 
@@ -758,14 +762,13 @@ This is an experimental official statistic release. Experimental statistics are 
 The high-level figures in this statistical summary have been rounded as per the table below:
 
 ```{r rounding_table}
-rounding_table <- data.table(
+rounding_table <- data.frame(
   "From" = c("0", "1,001", "10,001", "100,001", "1,000,001", "10,000,001", "100,000,001"),
   "To" = c("1,000", "10,000", "100,000", "1,000,000", "10,000,000", "100,000,000", "100,000,000,000"),
   "Round to nearest" = c("1", "100", "1,000", "10,000", "100,000", "1,000,000", "10,000,000")
 )
 
-knitr::kable(rounding_table, align = "rrr")|>
-  kable_styling(bootstrap_options = c("striped"))
+knitr::kable(rounding_table, align = "rrr")
 ```
 
 All changes and totals are calculated prior to rounding. Percentage changes are calculated prior to rounding and then are rounded to the nearest whole number. As all figures within this statistical summary have been rounded, they may not match totals elsewhere when aggregated.
@@ -776,9 +779,7 @@ The summary tables released with this publication allow users to investigate thi
 
 ## 6. Statistical disclosure control
 
-Statistical disclosure control has been applied to these statistics. Patient count, items, and net ingredient cost (NIC) have been redacted in the supporting summary tables if they relate to fewer than 5 patients. Further information about our statistical disclosure control protocol [can be found on our website](https://www.nhsbsa.nhs.uk/policies-and-procedures).
-
-The high-level figures in this statistical summary have been rounded where appropriate for clarity, in most cases to three significant figures. This is to make this narrative as accessible as possible to all readers. The summary tables released with this publication allow users to investigate this data at lower levels of granularity. Figures in the supplementary tables have not been rounded.
+Statistical disclosure control has been applied to these statistics. Patient count, items, and net ingredient cost (NIC) have been redacted in the supporting summary tables if they relate to fewer than 5 patients. [Further information about our statistical disclosure control protocol can be found on our website](https://www.nhsbsa.nhs.uk/policies-and-procedures).
 
 ---
 
@@ -788,25 +789,25 @@ If you need information on this website in a different format like accessible PD
 
 **Email**: accessibility@nhsbsa.nhs.uk
 
-**Phone**: 0191 203 5318
+**Telephone**: 0191 203 5318
 
 [Find out about call charges](https://www.nhsbsa.nhs.uk/contact-us/call-charges-and-phone-numbers)
 
 We’ll consider your request and get back to you in 5 working days.
 
-These contact details are only for accessibility queries. This inbox is not for technical queries or IT problems. If you have a query that is not about accessibility, go to the ‘Contact us’ section of this page.
+These contact details are only for accessibility queries. This email address is not for technical queries or IT problems. If you have a query that is not about accessibility, go to the ‘Feedback and contact us’ section of this page.
 
-View our [Accessibility statement for Official Statistics Narratives](https://www.nhsbsa.nhs.uk/accessibility-statement-official-statistics-narratives).
+Read our [Accessibility statement for Official Statistics Narratives](https://www.nhsbsa.nhs.uk/accessibility-statement-official-statistics-narratives).
 
 ---
 
 ## 8. Feedback and contact us
 
-Feedback is important to us; we welcome any questions and comments relating to these statistics.
+Feedback is important to us. We welcome any questions and comments relating to these statistics.
 
 You can complete a [short survey about this publication](`r config$stats_survey_link`) to help us improve the Official Statistics that we produce. All responses will remain anonymous, and individuals will not be identifiable in any report that we produce.
 
-You can view our [privacy policy](https://www.nhsbsa.nhs.uk/our-policies/privacy) on our website to see how your data is used and stored.
+You can read our [privacy policy](https://www.nhsbsa.nhs.uk/our-policies/privacy) on our website to find out how your data is used and stored.
 
 You can contact us by:
 
