@@ -1,14 +1,23 @@
-### Pipeline to run PCA annual publication
+### Pipeline to run dfm annual publication
 # clear environment
 rm(list = ls())
 
+## NOTE: Need to automate this?
+max_year_month <- 202403
+
 # source functions
-# get all .R files in the functions sub-folder
-function_files <- list.files(path = "functions", pattern = "\\.R$")
+# get all .R files in the functions sub-folder and sub-folders of this
+function_files <-
+  list.files(
+    path = "functions",
+    pattern = "\\.R$",
+    recursive = TRUE,
+    full.names = TRUE
+  )
 
 # loop over function_files to source them all
 for (file in function_files) {
-  source(file.path("functions", file))
+  source(file)
 }
 
 # 1. Setup --------------------------------------------
@@ -76,22 +85,11 @@ req_pkgs <-
 #library/install packages as required
 nhsbsaUtils::check_and_install_packages(req_pkgs)
 
-# set up logging
-lf <-
-  logr::log_open(paste0(
-    "Y:/Official Stats/DFM/log/dfm_log",
-    format(Sys.time(), "%d%m%y%H%M%S"),
-    ".log"
-  ))
-
 # load config
 config <- yaml::yaml.load_file("config.yml")
-log_print("Config loaded", hide_notes = TRUE)
-log_print(config, hide_notes = TRUE)
 
 # load options
 nhsbsaUtils::publication_options()
-log_print("Options loaded", hide_notes = TRUE)
 
 # 2. connect to DWH  ---------
 #build connection to warehouse
@@ -99,103 +97,128 @@ con <- nhsbsaR::con_nhsbsa(dsn = "FBS_8192k",
                            driver = "Oracle in OraClient19Home1",
                            "DWCP")
 
-schema <-
-  as.character(svDialogs::dlgInput("Enter scheme name: ")$res)
+# 3. Extract FY data required ------------------------------------------------
+age_category_data_fy <-
+  age_category_extract_fy(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients") |>
+  filter(`Financial Year` <= config$fy)
 
-# 3. Extract data required ------------------------------------------------
+age_data_fy <-
+  age_extract_fy(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients") |>
+  filter(`Financial Year` <= config$fy)
 
-age_category_data <-
-  age_category_extract(con = con,
-                       schema = schema,
-                       table = config$sql_table_name) |>
-  apply_sdc(rounding = F)
+age_gender_cat_data_fy <-
+  age_gender_cat_extract_fy(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients") |>
+  filter(`Financial Year` <= config$fy)
 
-age_data <-
-  age_extract(con = con,
-              schema = schema,
-              table = config$sql_table_name) |>
-  apply_sdc(rounding = F)
+age_gender_data_fy <-
+  age_gender_extract_fy(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients") |>
+  filter(`Financial Year` <= config$fy)
 
-age_gender_cat_data <-
-  age_gender_cat_extract(con = con,
-                         schema = schema,
-                         table = config$sql_table_name) |>
-  apply_sdc(rounding = F)
+ageband_data_fy <-
+  ageband_extract_fy(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients") |>
+  filter(`Financial Year` <= config$fy)
 
-age_gender_data <-
-  age_gender_extract(con = con,
-                     schema = schema,
-                     table = config$sql_table_name) |>
-  apply_sdc(rounding = F)
+category_data_fy <-
+  category_extract_fy(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients") |>
+  filter(`Financial Year` <= config$fy)
 
-ageband_data <-
-  ageband_extract(con = con,
-                  schema = schema,
-                  table = config$sql_table_name) |>
-  apply_sdc(rounding = F)
+gender_category_data_fy <-
+  gender_category_extract_fy(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients") |>
+  filter(`Financial Year` <= config$fy)
 
-category_data <-
-  category_extract(con = con,
-                   schema = schema,
-                   table = config$sql_table_name) |>
-  apply_sdc(rounding = F)
+gender_data_fy <-
+  gender_extract_fy(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients") |>
+  filter(`Financial Year` <= config$fy)
 
-coprescribing_data <-
-  coprescribing_extract(con = con,
-                        schema = schema,
-                        table = config$sql_table_name)
+icb_category_data_fy <-
+  icb_category_extract_fy(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients") |>
+  filter(`Financial Year` <= config$fy)
 
-coprescribing_matrix_data <-
-  coprescribing_matrix_extract(con = con,
-                               schema = schema,
-                               table = config$sql_table_name)
+icb_data_fy <-
+  icb_extract_fy(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients") |>
+  filter(`Financial Year` <= config$fy)
 
-gender_category_data <-
-  gender_category_extract(con = con,
-                          schema = schema,
-                          table = config$sql_table_name) |>
-  apply_sdc(rounding = F)
+imd_category_data_fy <-
+  imd_category_extract_fy(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients") |>
+  filter(`Financial Year` <= config$fy)
 
-gender_data <-
-  gender_extract(con = con,
-                 schema = schema,
-                 table = config$sql_table_name) |>
-  apply_sdc(rounding = F)
+imd_data_fy <-
+  imd_extract_fy(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients") |>
+  filter(`Financial Year` <= config$fy)
 
-icb_category_data <-
-  icb_category_extract(con = con,
-                       schema = schema,
-                       table = config$sql_table_name) |>
-  apply_sdc(rounding = F)
+national_data_fy <-
+  national_extract_fy(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients") |>
+  filter(`Financial Year` <= config$fy)
 
-icb_data <-
-  icb_extract(con = con,
-              schema = schema,
-              table = config$sql_table_name) |>
-  apply_sdc(rounding = F)
-
-imd_category_data <-
-  imd_category_extract(con = con,
-                       schema = schema,
-                       table = config$sql_table_name) |>
-  apply_sdc(rounding = F)
-
-imd_data <-
-  imd_extract(con = con,
-              schema = schema,
-              table = config$sql_table_name) |>
-  apply_sdc(rounding = F)
-
-national_data <-
-  national_extract(con = con,
-                   schema = schema,
-                   table = config$sql_table_name) |>
-  apply_sdc(rounding = F)
-
-national_pop <- ons_national_pop(year = c(2015:2021),
+national_pop <- ons_national_pop(year = c(2015:2023),
                                  area = "ENPOP")
 
-population_category_data <- category_data |>
+population_category_data_fy <- category_data_fy |>
   dplyr::ungroup() |>
   dplyr::select(
     `Financial Year`,
@@ -219,9 +242,10 @@ population_category_data <- category_data |>
     `Total Identified Patients`,
     `Mid-year Population Estimate` = ENPOP,
     `Patients per 1,000 Population`
-  )
+  ) |>
+  filter(`Financial Year` <= config$fy)
 
-population_data <- national_data |>
+population_data_fy <- national_data_fy |>
   dplyr::select(`Financial Year`,
                 `Identified Patient Flag`,
                 `Total Identified Patients`) |>
@@ -239,902 +263,462 @@ population_data <- national_data |>
     `Total Identified Patients`,
     `Mid-year Population Estimate` = ENPOP,
     `Patients per 1,000 Population`
-  )
+  ) |>
+  filter(`Financial Year` <= config$fy)
+
+patient_identification_fy <-
+  capture_rate_extract_fy(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  filter(`Financial Year` <= config$fy)
+
 
 patient_identification_dt <-
-  capture_rate_extract_dt(con = con,
-                          schema = schema,
-                          table = config$sql_table_name) |>
-  select(1, last_col(4):last_col())
+  capture_rate_extract_dt(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  )  |>
+  select(1, last_col(5):last_col(1))
 
-patient_identification <-
-  capture_rate_extract(con = con,
-                       schema = schema,
-                       table = config$sql_table_name)
+paragraph_data_fy <- paragraph_extract_fy(
+  con = con,
+  schema = config$sql_schema,
+  table = config$sql_table_name
+)  |>
+  apply_sdc(suppress_column = "Total Identified Patients") |>
+  filter(`Financial Year` <= config$fy)
 
+chem_sub_data_fy <- chem_sub_extract_fy(
+  con = con,
+  schema = config$sql_schema,
+  table = config$sql_table_name
+)  |>
+  apply_sdc(suppress_column = "Total Identified Patients") |>
+  apply_sdc(suppress_column = "Total Items") |>
+  filter(`Financial Year` <= config$fy)
 
-# 4. Build costs and items Excel tables ------------------------------------------------------
-sheetNames <- c(
-  "Patient_Identification",
-  "Table_1",
-  "Table_2",
-  "Table_3",
-  "Table_4",
-  "Table_5",
-  "Table_6"
-)
+# 4. Extract CY data required ------------------------------------------------
+age_category_data_cy <-
+  age_category_extract_cy(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients",
+            exclude_columns = c("Calendar Year")) |>
+  filter(`Calendar Year` <= config$cy,
+         `Calendar Year` >= "2016")
 
-wb <- accessibleTables::create_wb(sheetNames)
+age_data_cy <-
+  age_extract_cy(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients",
+            exclude_columns = c("Calendar Year")) |>
+  filter(`Calendar Year` <= config$cy,
+         `Calendar Year` >= "2016")
 
-#create metadata tab (will need to open file and auto row heights once ran)
-meta_fields <- c(
-  "Drug Category",
-  "Financial Year",
-  "Identified Patient",
-  "Integrated Care Board Code",
-  "Integrated Care Board Name",
-  "Mid-Year England Population Estimate",
-  "Mid-Year Population Year",
-  "Patients per 1,000 Population",
-  "Total Items",
-  "Total Net Ingredient Cost (GBP)",
-  "Total Patients"
-)
+age_gender_cat_data_cy <-
+  age_gender_cat_extract_cy(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients",
+            exclude_columns = c("Calendar Year")) |>
+  filter(`Calendar Year` <= config$cy,
+         `Calendar Year` >= "2016")
 
-meta_descs <-
-  c(
-    "The category of class of drug that can cause dependence.",
-    "The financial year to which the data belongs.",
-    "This shows where an item has been attributed to an NHS number that has been verified by the Personal Demographics Service (PDS).",
-    "The unique code used to refer to an Integrated Care Board (ICB).",
-    "The name given to the Integrated Care Board (ICB) that a prescribing organisation belongs to. This is based upon NHSBSA administrative records, not geographical boundaries and more closely reflect the operational organisation of practices than other geographical data sources.",
-    "The population estimate for the corresponding Mid-Year Population Year.",
-    "The year in which population estimates were taken, required due to the presentation of this data in financial year format.",
-    "(Total Identified Patients / Mid-Year England Population Estimate) * 1000.",
-    "The number of prescription items dispensed. 'Items' is the number of times a product appears on a prescription form. Prescription forms include both paper prescriptions and electronic messages.",
-    "Total Net Ingredient Cost is the amount that would be paid using the basic price of the prescribed drug or appliance and the quantity prescribed. Sometimes called the 'Net Ingredient Cost' (NIC). The basic price is given either in the Drug Tariff or is determined from prices published by manufacturers, wholesalers or suppliers. Basic price is set out in Parts 8 and 9 of the Drug Tariff. For any drugs or appliances not in Part 8, the price is usually taken from the manufacturer, wholesaler or supplier of the product. This is given in GBP (£).",
-    "Where patients are identified via the flag, the number of patients that the data corresponds to. This will always be 0 where 'Identified Patient' = N."
-    
+age_gender_data_cy <-
+  age_gender_extract_cy(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients",
+            exclude_columns = c("Calendar Year")) |>
+  filter(`Calendar Year` <= config$cy,
+         `Calendar Year` >= "2016")
+
+ageband_data_cy <-
+  ageband_extract_cy(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients",
+            exclude_columns = c("Calendar Year")) |>
+  filter(`Calendar Year` <= config$cy,
+         `Calendar Year` >= "2016")
+
+category_data_cy <-
+  category_extract_cy(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients",
+            exclude_columns = c("Calendar Year")) |>
+  filter(`Calendar Year` <= config$cy,
+         `Calendar Year` >= "2016")
+
+gender_category_data_cy <-
+  gender_category_extract_cy(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients",
+            exclude_columns = c("Calendar Year")) |>
+  filter(`Calendar Year` <= config$cy,
+         `Calendar Year` >= "2016")
+
+gender_data_cy <-
+  gender_extract_cy(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients",
+            exclude_columns = c("Calendar Year")) |>
+  filter(`Calendar Year` <= config$cy,
+         `Calendar Year` >= "2016")
+
+icb_category_data_cy <-
+  icb_category_extract_cy(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients",
+            exclude_columns = c("Calendar Year")) |>
+  filter(`Calendar Year` <= config$cy,
+         `Calendar Year` >= "2016")
+
+icb_data_cy <-
+  icb_extract_cy(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients",
+            exclude_columns = c("Calendar Year")) |>
+  filter(`Calendar Year` <= config$cy,
+         `Calendar Year` >= "2016")
+
+imd_category_data_cy <-
+  imd_category_extract_cy(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients",
+            exclude_columns = c("Calendar Year")) |>
+  filter(`Calendar Year` <= config$cy,
+         `Calendar Year` >= "2016")
+
+imd_data_cy <-
+  imd_extract_cy(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients",
+            exclude_columns = c("Calendar Year")) |>
+  filter(`Calendar Year` <= config$cy,
+         `Calendar Year` >= "2016")
+
+national_data_cy <-
+  national_extract_cy(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients",
+            exclude_columns = c("Calendar Year")) |>
+  filter(`Calendar Year` <= config$cy,
+         `Calendar Year` >= "2016")
+
+population_category_data_cy <- category_data_cy |>
+  dplyr::ungroup() |>
+  dplyr::select(
+    `Calendar Year`,
+    `Identified Patient Flag`,
+    `Drug Category`,
+    `Total Identified Patients`
+  ) |>
+  dplyr::mutate(`Mid-year Population Year` = as.numeric((substr(
+    c(`Calendar Year`), 1, 4
+  )))) |>
+  dplyr::filter(`Identified Patient Flag` == "Y") |>
+  dplyr::left_join(select(national_pop, YEAR, ENPOP),
+                   by = c("Mid-year Population Year" = "YEAR")) |>
+  dplyr::mutate(`Patients per 1,000 Population` = ((`Total Identified Patients` /
+                                                      ENPOP) * 1000)) |>
+  
+  dplyr::select(
+    `Calendar Year`,
+    `Mid-year Population Year`,
+    `Drug Category`,
+    `Total Identified Patients`,
+    `Mid-year Population Estimate` = ENPOP,
+    `Patients per 1,000 Population`
+  ) |>
+  filter(`Calendar Year` <= config$cy,
+         `Calendar Year` >= "2016")
+
+population_data_cy <- national_data_cy |>
+  dplyr::select(`Calendar Year`,
+                `Identified Patient Flag`,
+                `Total Identified Patients`) |>
+  dplyr::mutate(`Mid-year Population Year` = as.numeric((substr(
+    c(`Calendar Year`), 1, 4
+  )))) |>
+  dplyr::filter(`Identified Patient Flag` == "Y") |>
+  dplyr::left_join(select(national_pop, YEAR, ENPOP),
+                   by = c("Mid-year Population Year" = "YEAR")) |>
+  dplyr::mutate(`Patients per 1,000 Population` = ((`Total Identified Patients` /
+                                                      ENPOP) * 1000)) |>
+  dplyr::select(
+    `Calendar Year`,
+    `Mid-year Population Year`,
+    `Total Identified Patients`,
+    `Mid-year Population Estimate` = ENPOP,
+    `Patients per 1,000 Population`
+  ) |>
+  filter(`Calendar Year` <= config$cy,
+         `Calendar Year` >= "2016")
+
+patient_identification_cy <-
+  capture_rate_extract_cy(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  filter(`Calendar Year` <= config$cy,
+         `Calendar Year` >= "2016")
+
+paragraph_data_cy <- paragraph_extract_cy(
+  con = con,
+  schema = config$sql_schema,
+  table = config$sql_table_name
+)  |>
+  apply_sdc(suppress_column = "Total Identified Patients",
+            exclude_columns = c("Calendar Year")) |>
+  filter(`Calendar Year` <= config$cy,
+         `Calendar Year` >= "2016")
+
+chem_sub_data_cy <- chem_sub_extract_cy(
+  con = con,
+  schema = config$sql_schema,
+  table = config$sql_table_name
+)  |>
+  apply_sdc(suppress_column = "Total Identified Patients",
+            exclude_columns = c("Calendar Year")) |>
+  apply_sdc(suppress_column = "Total Items",
+            exclude_columns = c("Calendar Year")) |>
+  filter(`Calendar Year` <= config$cy,
+         `Calendar Year` >= "2016")
+
+# 5. Extract quarterly data required ------------------------------------------------
+age_category_data_quarterly <-
+  age_category_extract_quarterly(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients")
+
+age_data_quarterly <-
+  age_extract_quarterly(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients")
+
+age_gender_cat_data_quarterly <-
+  age_gender_cat_extract_quarterly(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients")
+
+age_gender_data_quarterly <-
+  age_gender_extract_quarterly(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients")
+
+ageband_data_quarterly <-
+  ageband_extract_quarterly(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients")
+
+category_data_quarterly <-
+  category_extract_quarterly(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients")
+
+gender_category_data_quarterly <-
+  gender_category_extract_quarterly(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients")
+
+gender_data_quarterly <-
+  gender_extract_quarterly(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients")
+
+icb_category_data_quarterly <-
+  icb_category_extract_quarterly(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients")
+
+icb_data_quarterly <-
+  icb_extract_quarterly(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients")
+
+imd_category_data_quarterly <-
+  imd_category_extract_quarterly(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients")
+
+imd_data_quarterly <-
+  imd_extract_quarterly(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients")
+
+national_data_quarterly <-
+  national_extract_quarterly(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients")
+
+patient_identification_quarterly <-
+  capture_rate_extract_quarterly(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
   )
 
-accessibleTables::create_metadata(wb,
-                                  meta_fields,
-                                  meta_descs)
+paragraph_data_quarterly <- paragraph_extract_quarterly(
+  con = con,
+  schema = config$sql_schema,
+  table = config$sql_table_name
+)  |>
+  apply_sdc(suppress_column = "Total Identified Patients")
 
-#### Patient identification
-# write data to sheet
-write_sheet(
-  wb,
-  "Patient_Identification",
-  paste0(
-    "Dependency Forming Medicines - 2015/16 to ",
-    config$fy,
-    " - Proportion of items for which an NHS number was recorded (%)"
-  ),
-  c(
-    "The below proportions reflect the percentage of prescription items where a PDS verified NHS number was recorded."
-  ),
-  patient_identification,
-  42
-)
-#left align columns A to C
-format_data(wb,
-            "Patient_Identification",
-            c("A", "B"),
-            "left",
-            "")
-#right align columns and round to 2 DP - D (if using long data not pivoting wider) (!!NEED TO UPDATE AS DATA EXPANDS!!)
-format_data(wb,
-            "Patient_Identification",
-            c("C"),
-            "right",
-            "0.00")
+chem_sub_data_quarterly <- chem_sub_extract_quarterly(
+  con = con,
+  schema = config$sql_schema,
+  table = config$sql_table_name
+)  |>
+  apply_sdc(suppress_column = "Total Identified Patients") |>
+  apply_sdc(suppress_column = "Total Items")
 
-#### national data
-# write data to sheet
-write_sheet(
-  wb,
-  "Table_1",
-  paste0(
-    "Table 1: Dependency Forming Medicines - England 2015/16 to ",
-    config$fy,
-    " - Total dispensed items and costs per financial year"
-  ),
-  c(
-    "1. Field definitions can be found on the 'Metadata' tab.",
-    "2. The patient counts shown in these statistics should only be analysed at the level at which they are presented. Adding together any patient counts is likely to result in an overestimate of the number of patients.",
-    "3. Total costs and items may not be reconciled back to Prescribing Cost Analysis (PCA) publication figures as these figures are based around a 'prescribing view' of the data. This is where we use the drug or device that was prescribed to a patient, rather than the drug that was reimbursed to the dispenser to classify a prescription item. PCA uses a dispensing view where the inverse is true."
-  ),
-  national_data,
-  14
-)
+# 6. Extract monthly data required ------------------------------------------------
+category_data_monthly <-
+  category_extract_monthly(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
+  apply_sdc(suppress_column = "Total Identified Patients",
+            exclude_columns = c("Year Month")) |>
+  apply_sdc(suppress_column = "Total Items",
+            exclude_columns = c("Year Month"))
 
-#left align columns A to C
-format_data(wb,
-            "Table_1",
-            c("A", "B"),
-            "left",
-            "")
+chem_sub_data_monthly <- chem_sub_extract_monthly(
+  con = con,
+  schema = config$sql_schema,
+  table = config$sql_table_name
+)  |>
+  apply_sdc(suppress_column = "Total Identified Patients",
+            exclude_columns = c("Year Month")) |>
+  apply_sdc(suppress_column = "Total Items",
+            exclude_columns = c("Year Month"))
 
-#right align columns D and E and round to whole numbers with thousand separator
-format_data(wb,
-            "Table_1",
-            c("C", "D"),
-            "right",
-            "#,##0")
+paragraph_data_monthly <- paragraph_extract_monthly(
+  con = con,
+  schema = config$sql_schema,
+  table = config$sql_table_name
+)  |>
+  apply_sdc(suppress_column = "Total Identified Patients",
+            exclude_columns = c("Year Month")) |>
+  apply_sdc(suppress_column = "Total Items",
+            exclude_columns = c("Year Month"))
 
-#right align column F and round to 2dp with thousand separator
-format_data(wb,
-            "Table_1",
-            c("E"),
-            "right",
-            "#,##0.00")
-
-#### category data
-# write data to sheet
-write_sheet(
-  wb,
-  "Table_2",
-  paste0(
-    "Table 2: Dependency Forming Medicines - England 2015/16 to ",
-    config$fy,
-    " - Yearly totals split by Drug Category and identified patients"
-  ),
-  c(
-    "1. Field definitions can be found on the 'Metadata' tab.",
-    "2. The patient counts shown in these statistics should only be analysed at the level at which they are presented. Adding together any patient counts is likely to result in an overestimate of the number of patients."
-  ),
-  category_data |> select(-`BNF Section Name`, -`BNF Section Code`),
-  14
-)
-
-#left align columns A to C
-format_data(wb,
-            "Table_2",
-            c("A", "B", "C"),
-            "left",
-            "")
-
-#right align columns D and E and round to whole numbers with thousand separator
-format_data(wb,
-            "Table_2",
-            c("D", "E"),
-            "right",
-            "#,##0")
-
-#right align column F and round to 2dp with thousand separator
-format_data(wb,
-            "Table_2",
-            c("F"),
-            "right",
-            "#,##0.00")
-
-#### ICB data
-# write data to sheet
-write_sheet(
-  wb,
-  "Table_3",
-  paste0(
-    "Table 3: Dependency Forming Medicines - England 2015/16 to ",
-    config$fy,
-    " - Yearly totals split by Integrated Care Board and identified patients"
-  ),
-  c(
-    "1. Field definitions can be found on the 'Metadata' tab.",
-    "2. The patient counts shown in these statistics should only be analysed at the level at which they are presented. Adding together any patient counts is likely to result in an overestimate of the number of patients.",
-    "3. Integrated Care Boards (ICBs) succeeded sustainability and transformation plans (STPs) and replaced the functions of clinical commissioning groups (CCGs) in July 2022 with ICB sub locations replacing CCGs during the transition period of 2022/23."
-  ),
-  icb_data,
-  14
-)
-
-#left align columns A to C
-format_data(wb,
-            "Table_3",
-            c("A", "B", "C", "D"),
-            "left",
-            "")
-
-#right align columns D and E and round to whole numbers with thousand separator
-format_data(wb,
-            "Table_3",
-            c("E", "F"),
-            "right",
-            "#,##0")
-
-#right align column F and round to 2dp with thousand separator
-format_data(wb,
-            "Table_3",
-            c("G"),
-            "right",
-            "#,##0.00")
-
-#### ICB category data
-# write data to sheet
-write_sheet(
-  wb,
-  "Table_4",
-  paste0(
-    "Table 4: Dependency Forming Medicines - England 2015/16 to ",
-    config$fy,
-    " - Yearly totals split by Integrated Care Board, Drug Category and identified patients"
-  ),
-  c(
-    "1. Field definitions can be found on the 'Metadata' tab.",
-    "2. The patient counts shown in these statistics should only be analysed at the level at which they are presented. Adding together any patient counts is likely to result in an overestimate of the number of patients.",
-    "3. Integrated Care Boards (ICBs) succeeded sustainability and transformation plans (STPs) and replaced the functions of clinical commissioning groups (CCGs) in July 2022 with ICB sub locations replacing CCGs during the transition period of 2022/23."
-  ),
-  icb_category_data,
-  14
-)
-
-#left align columns A to C
-format_data(wb,
-            "Table_4",
-            c("A", "B", "C", "D", "E"),
-            "left",
-            "")
-
-#right align columns D and E and round to whole numbers with thousand separator
-format_data(wb,
-            "Table_4",
-            c("F", "G"),
-            "right",
-            "#,##0")
-
-#right align column F and round to 2dp with thousand separator
-format_data(wb,
-            "Table_4",
-            c("H"),
-            "right",
-            "#,##0.00")
-
-#### National population data
-# write data to sheet
-write_sheet(
-  wb,
-  "Table_5",
-  paste0(
-    "Table 5: Dependency Forming Medicines - England 2015/16 to ",
-    config$fy,
-    " - Population totals split by financial year"
-  ),
-  c(
-    "1. Field definitions can be found on the 'Metadata' tab.",
-    "2. ONS population estimates taken from https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates.",
-    "3. ONS population estimates for 2022/2023 were not available prior to publication."
-  ),
-  population_data,
-  14
-)
-
-#left align columns A to C
-format_data(wb,
-            "Table_5",
-            c("A", "B"),
-            "left",
-            "")
-
-#right align columns D and E and round to whole numbers with thousand separator
-format_data(wb,
-            "Table_5",
-            c("C", "D"),
-            "right",
-            "#,##0")
-
-#right align column F and round to 2dp with thousand separator
-format_data(wb,
-            "Table_5",
-            c("E"),
-            "right",
-            "#,##0.00")
-
-#### National population category data
-# write data to sheet
-write_sheet(
-  wb,
-  "Table_6",
-  paste0(
-    "Table 6: Dependency Forming Medicines - England 2015/16 to ",
-    config$fy,
-    " - Population totals split by financial year and Drug Category"
-  ),
-  c(
-    "1. Field definitions can be found on the 'Metadata' tab.",
-    "2. ONS population estimates taken from https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates.",
-    "3. ONS population estimates for 2022/2023 were not available prior to publication."
-  ),
-  population_category_data,
-  14
-)
-
-#left align columns A to C
-format_data(wb,
-            "Table_6",
-            c("A", "B", "C"),
-            "left",
-            "")
-
-#right align columns D and E and round to whole numbers with thousand separator
-format_data(wb,
-            "Table_6",
-            c("D", "E"),
-            "right",
-            "#,##0")
-
-#right align column F and round to 2dp with thousand separator
-format_data(wb,
-            "Table_6",
-            c("F"),
-            "right",
-            "#,##0.00")
-
-# build cover sheet
-accessibleTables::makeCoverSheet(
-  paste0("Dependency Forming Medicines - England 2015/16 - ", config$fy),
-  "Costs and Items",
-  "Publication date: 7 September 2023",
-  wb,
-  sheetNames,
-  c(
-    "Metadata",
-    "Patient Identification Rates",
-    "Table 1: Total items",
-    "Table 2:  Items by category",
-    "Table 3:  Items by Integrated Care Board (ICB)",
-    "Table 4:  Items by ICB and category",
-    "Table 5:  National Population",
-    "Table 6:  Population by category"
-  ),
-  c("Metadata", sheetNames)
-)
-
-#save file into outputs folder
-openxlsx::saveWorkbook(wb,
-                       "outputs/dfm_2022_2023_costs_and_items_v001.xlsx",
-                       overwrite = TRUE)
-
-
-# 5. Build demographics Excel file -------------------------------------------
-sheetNames_dem <- c(
-  "Patient_Identification",
-  "Table_1",
-  "Table_2",
-  "Table_3",
-  "Table_4",
-  "Table_5",
-  "Table_6",
-  "Table_7",
-  "Table_8",
-  "Table_9",
-  "Table_10",
-  "Table_11"
-)
-
-wb_dem <- accessibleTables::create_wb(sheetNames_dem)
-
-#create metadata tab (will need to open file and auto row heights once ran)
-meta_fields_dem <- c(
-  "Age Band",
-  "Drug Category",
-  "Financial Year",
-  "Identified Patient",
-  "IMD Quintile",
-  "Patient Gender",
-  "Total Items",
-  "Total Net Ingredient Cost (GBP)",
-  "Total Patients",
-  "Year Month"
-)
-
-meta_descs_dem <-
-  c(
-    "The age band of the patient as of the 30th September of the corresponding financial year the drug was prescribed.",
-    "The category of class of drug that can cause dependence.",
-    "The financial year to which the data belongs.",
-    "This shows where an item has been attributed to an NHS number that has been verified by the Personal Demographics Service (PDS).",
-    "The IMD Quintile of the patient, based on the location of their practice, where '1' is the 20% of areas with the highest deprivation score in the Index of Multiple Deprivation (IMD) from the English Indices of Deprivation 2019, and '5' is the 20% of areas with the lowest IMD deprivation score. Unknown values are where we have been unable to match the patient postcode to a postcode in the National Statistics Postcode Lookup (NSPL).",
-    "The gender of the patient as noted at the time the prescription was processed. This includes where the patient has been identified but the gender has not been recorded.",
-    "The number of prescription items dispensed. 'Items' is the number of times a product appears on a prescription form. Prescription forms include both paper prescriptions and electronic messages.",
-    "Total Net Ingredient Cost is the amount that would be paid using the basic price of the prescribed drug or appliance and the quantity prescribed. Sometimes called the 'Net Ingredient Cost' (NIC). The basic price is given either in the Drug Tariff or is determined from prices published by manufacturers, wholesalers or suppliers. Basic price is set out in Parts 8 and 9 of the Drug Tariff. For any drugs or appliances not in Part 8, the price is usually taken from the manufacturer, wholesaler or supplier of the product. This is given in GBP (Â£).",
-    "Where patients are identified via the flag, the number of patients that the data corresponds to. This will always be 0 where 'Identified Patient' = N.",
-    "The year and month to which the data belongs, denoted in YYYYMM format."
+# 7. Extract co-prescribing data required ------------------------------------------------
+coprescribing_data <-
+  coprescribing_extract(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
   )
 
-accessibleTables::create_metadata(wb_dem,
-                                  meta_fields_dem,
-                                  meta_descs_dem)
+coprescribing_matrix_data <-
+  coprescribing_matrix_extract(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  )
 
-#### Patient identification
-# write data to sheet
-write_sheet(
-  wb_dem,
-  "Patient_Identification",
-  paste0(
-    "Dependency Forming Medicines - 2015/16 to ",
-    config$fy,
-    " - Proportion of items for which an NHS number was recorded (%)"
-  ),
-  c(
-    "The below proportions reflect the percentage of prescription items where a PDS verified NHS number was recorded."
-  ),
-  patient_identification,
-  17
-)
-#left align columns A to C
-format_data(wb_dem,
-            "Patient_Identification",
-            c("A", "B"),
-            "left",
-            "")
-#right align columns and round to 2 DP - D (if using long data not pivoting wider) (!!NEED TO UPDATE AS DATA EXPANDS!!)
-format_data(wb_dem,
-            "Patient_Identification",
-            c("C"),
-            "right",
-            "0.00")
+# 8. Build fy Excel tables ------------------------------------------------------
+source(file.path("excel_functions", "costs_items_fy.R"))
 
-#### national data
-# write data to sheet
-write_sheet(
-  wb_dem,
-  "Table_1",
-  paste0(
-    "Table 1: Dependency Forming Medicines - England 2015/16 to ",
-    config$fy,
-    " - Total dispensed items and costs per financial year"
-  ),
-  c(
-    "1. Field definitions can be found on the 'Metadata' tab.",
-    "2. The patient counts shown in these statistics should only be analysed at the level at which they are presented. Adding together any patient counts is likely to result in an overestimate of the number of patients.",
-    "3. Total costs and items may not be reconciled back to Prescribing Cost Analysis (PCA) publication figures as these figures are based around a 'prescribing view' of the data. This is where we use the drug or device that was prescribed to a patient, rather than the drug that was reimbursed to the dispenser to classify a prescription item. PCA uses a dispensing view where the inverse is true."
-  ),
-  national_data,
-  14
-)
+# 9. Build cy Excel tables ------------------------------------------------------
+source(file.path("excel_functions", "costs_items_cy.R"))
 
-#left align columns A to C
-format_data(wb_dem,
-            "Table_1",
-            c("A", "B"),
-            "left",
-            "")
+# 10. Build quarterly Excel tables ------------------------------------------------------
+source(file.path("excel_functions", "costs_items_quarterly.R"))
 
-#right align columns D and E and round to whole numbers with thousand separator
-format_data(wb_dem,
-            "Table_1",
-            c("C", "D"),
-            "right",
-            "#,##0")
+# 11. Build co-prescribing Excel tables ------------------------------------------------------
+source(file.path("excel_functions", "co_prescribing.R"))
 
-#right align column F and round to 2dp with thousand separator
-format_data(wb_dem,
-            "Table_1",
-            c("E"),
-            "right",
-            "#,##0.00")
-
-#### gender data
-# write data to sheet
-write_sheet(
-  wb_dem,
-  "Table_2",
-  paste0(
-    "Table 2: Dependency Forming Medicines - England 2015/16 to ",
-    config$fy,
-    " - National prescribing by gender per financial year"
-  ),
-  c(
-    "1. Field definitions can be found on the 'Metadata' tab.",
-    "2. It is possible for a patient to be marked as 'unknown' or 'indeterminate'. Due to the low number of patients that these two groups contain the NHSBSA has decided to group these classifications together.",
-    "3. The NHSBSA does not use the latest national data standard relating to patient gender, and use historic nomenclature in some cases. Please see the detailed Background Information and Methodology notice released with this publication for further information."
-  ),
-  gender_data,
-  14
-)
-
-#left align columns A to C
-format_data(wb_dem,
-            "Table_2",
-            c("A", "B", "C"),
-            "left",
-            "")
-
-#right align columns D and E and round to whole numbers with thousand separator
-format_data(wb_dem,
-            "Table_2",
-            c("D", "E"),
-            "right",
-            "#,##0")
-
-#right align column F and round to 2dp with thousand separator
-format_data(wb_dem,
-            "Table_2",
-            c("F"),
-            "right",
-            "#,##0.00")
-
-#### gender category  data
-# write data to sheet
-write_sheet(
-  wb_dem,
-  "Table_3",
-  paste0(
-    "Table 3: Dependency Forming Medicines - England 2015/16 to ",
-    config$fy,
-    " - Yearly patients, items and costs by Drug Category split by patient gender"
-  ),
-  c(
-    "1. Field definitions can be found on the 'Metadata' tab.",
-    "2. It is possible for a patient to be marked as 'unknown' or 'indeterminate'. Due to the low number of patients that these two groups contain the NHSBSA has decided to group these classifications together.",
-    "3. The NHSBSA does not use the latest national data standard relating to patient gender, and use historic nomenclature in some cases. Please see the detailed Background Information and Methodology notice released with this publication for further information.",
-    "4. Statistical disclosure control is applied where prescribing relates to fewer than 5 patients. In these instances, figures are shown as blanks."
-  ),
-  gender_category_data,
-  14
-)
-
-#left align columns A to C
-format_data(wb_dem,
-            "Table_3",
-            c("A", "B", "C", "D"),
-            "left",
-            "")
-
-#right align columns D and E and round to whole numbers with thousand separator
-format_data(wb_dem,
-            "Table_3",
-            c("E", "F"),
-            "right",
-            "#,##0")
-
-#right align column F and round to 2dp with thousand separator
-format_data(wb_dem,
-            "Table_3",
-            c("G"),
-            "right",
-            "#,##0.00")
-
-#### age data
-# write data to sheet
-write_sheet(
-  wb_dem,
-  "Table_4",
-  paste0(
-    "Table 4: Dependency Forming Medicines - England 2015/16 to ",
-    config$fy,
-    " - National prescribing by age per financial year"
-  ),
-  c("1. Field definitions can be found on the 'Metadata' tab."),
-  age_data,
-  14
-)
-
-#left align columns A to C
-format_data(wb_dem,
-            "Table_4",
-            c("A", "B", "C"),
-            "left",
-            "")
-
-#right align columns D and E and round to whole numbers with thousand separator
-format_data(wb_dem,
-            "Table_4",
-            c("D", "E"),
-            "right",
-            "#,##0")
-
-#right align column F and round to 2dp with thousand separator
-format_data(wb_dem,
-            "Table_4",
-            c("F"),
-            "right",
-            "#,##0.00")
-
-#### age category  data
-# write data to sheet
-write_sheet(
-  wb_dem,
-  "Table_5",
-  paste0(
-    "Table 5: Dependency Forming Medicines - England 2015/16 to ",
-    config$fy,
-    " - Yearly patients, items and costs by Drug Category split by patient gender"
-  ),
-  c(
-    "1. Field definitions can be found on the 'Metadata' tab.",
-    "2. The patient counts shown in these statistics should only be analysed at the level at which they are presented. Adding together any patient counts is likely to result in an overestimate of the number of patients.",
-    "3. Statistical disclosure control has been applied to cells containing 5 or fewer patients or items. These cells will appear blank."
-  ),
-  age_category_data,
-  14
-)
-
-#left align columns A to C
-format_data(wb_dem,
-            "Table_5",
-            c("A", "B", "C", "D"),
-            "left",
-            "")
-
-#right align columns D and E and round to whole numbers with thousand separator
-format_data(wb_dem,
-            "Table_5",
-            c("E", "F"),
-            "right",
-            "#,##0")
-
-#right align column F and round to 2dp with thousand separator
-format_data(wb_dem,
-            "Table_5",
-            c("G"),
-            "right",
-            "#,##0.00")
-
-#### age gender  data
-# write data to sheet
-write_sheet(
-  wb_dem,
-  "Table_6",
-  paste0(
-    "Table 6: Dependency Forming Medicines - England 2015/16 to ",
-    config$fy,
-    " - National prescribing by age and gender per financial year"
-  ),
-  c(
-    "1. Field definitions can be found on the 'Metadata' tab.",
-    "2. These totals only include patients where both age and gender are known."
-  ),
-  age_gender_data,
-  14
-)
-
-#left align columns A to C
-format_data(wb_dem,
-            "Table_6",
-            c("A", "B", "C", "D"),
-            "left",
-            "")
-
-#right align columns D and E and round to whole numbers with thousand separator
-format_data(wb_dem,
-            "Table_6",
-            c("E", "F"),
-            "right",
-            "#,##0")
-
-#right align column F and round to 2dp with thousand separator
-format_data(wb_dem,
-            "Table_6",
-            c("G"),
-            "right",
-            "#,##0.00")
-
-#### age gender category data
-# write data to sheet
-write_sheet(
-  wb_dem,
-  "Table_7",
-  paste0(
-    "Table 7: Dependency Forming Medicines - England 2015/16 to ",
-    config$fy,
-    " - Yearly patients, items and costs by Drug Category split by patient age and gender"
-  ),
-  c(
-    "1. Field definitions can be found on the 'Metadata' tab.",
-    "2. These totals only include patients where both age and gender are known.",
-    "3. The patient counts shown in these statistics should only be analysed at the level at which they are presented. Adding together any patient counts is likely to result in an overestimate of the number of patients.",
-    "4. Statistical disclosure control has been applied to cells containing 5 or fewer patients or items. These cells will appear blank."
-    
-  ),
-  age_gender_cat_data,
-  14
-)
-
-#left align columns A to C
-format_data(wb_dem,
-            "Table_7",
-            c("A", "B", "C", "D", "E"),
-            "left",
-            "")
-
-#right align columns D and E and round to whole numbers with thousand separator
-format_data(wb_dem,
-            "Table_7",
-            c("F", "G"),
-            "right",
-            "#,##0")
-
-#right align column F and round to 2dp with thousand separator
-format_data(wb_dem,
-            "Table_7",
-            c("H"),
-            "right",
-            "#,##0.00")
-
-#### imd data
-# write data to sheet
-write_sheet(
-  wb_dem,
-  "Table_8",
-  paste0(
-    "Table 8: Dependency Forming Medicines - England 2015/16 to ",
-    config$fy,
-    " - Yearly patients, items and costs by IMD Quintile"
-  ),
-  c(
-    "1. Field definitions can be found on the 'Metadata' tab.",
-    "2. IMD Quintiles used are taken from the English Indices of Deprivation 2019 National Statistics publication.",
-    "3. Where a patients lower-layer super output areas (LSOAs) is not available or has not been able to to be matched to National Statistics Postcode Lookup (May 2022) the records are reported as 'unknown' IMD Quintile.",
-    "4. The patient counts shown in these statistics should only be analysed at the level at which they are presented. Adding together any patient counts is likely to result in an overestimate of the number of patients."
-  ),
-  imd_data,
-  14
-)
-
-#left align columns A to C
-format_data(wb_dem,
-            "Table_8",
-            c("A", "B"),
-            "left",
-            "")
-
-#right align columns D and E and round to whole numbers with thousand separator
-format_data(wb_dem,
-            "Table_8",
-            c("C", "D"),
-            "right",
-            "#,##0")
-
-#right align column F and round to 2dp with thousand separator
-format_data(wb_dem,
-            "Table_8",
-            c("E"),
-            "right",
-            "#,##0.00")
-
-#### imd category data
-# write data to sheet
-write_sheet(
-  wb_dem,
-  "Table_9",
-  paste0(
-    "Table 9: Dependency Forming Medicines - England 2015/16 to ",
-    config$fy,
-    " - Yearly patients, items and costs by Drug Category split by IMD Quintile"
-  ),
-  c(
-    "1. Field definitions can be found on the 'Metadata' tab.",
-    "2. IMD Quintiles used are taken from the English Indices of Deprivation 2019 National Statistics publication.",
-    "3. Where a patients lower-layer super output areas (LSOAs) is not available or has not been able to to be matched to National Statistics Postcode Lookup (May 2022) the records are reported as 'unknown' IMD Quintile.",
-    "4. The patient counts shown in these statistics should only be analysed at the level at which they are presented. Adding together any patient counts is likely to result in an overestimate of the number of patients."
-  ),
-  imd_category_data,
-  14
-)
-
-#left align columns A to C
-format_data(wb_dem,
-            "Table_9",
-            c("A", "B", "C"),
-            "left",
-            "")
-
-#right align columns D and E and round to whole numbers with thousand separator
-format_data(wb_dem,
-            "Table_9",
-            c("D", "E"),
-            "right",
-            "#,##0")
-
-#right align column F and round to 2dp with thousand separator
-format_data(wb_dem,
-            "Table_9",
-            c("F"),
-            "right",
-            "#,##0.00")
-
-#### copresc data
-# write data to sheet
-write_sheet(
-  wb_dem,
-  "Table_10",
-  paste0(
-    "Table 10: Dependency Forming Medicines - England 2015/16 to ",
-    config$fy,
-    " - Monthly patients by number of categories of drugs recieved"
-  ),
-  c(
-    "1. Field definitions can be found on the 'Metadata' tab.",
-    "2. The patient counts shown in these statistics should only be analysed at the level at which they are presented. Adding together any patient counts is likely to result in an overestimate of the number of patients."
-  ),
-  coprescribing_data,
-  14
-)
-
-#left align columns A to C
-format_data(wb_dem,
-            "Table_10",
-            c("A"),
-            "left",
-            "")
-
-#right align columns D and E and round to whole numbers with thousand separator
-format_data(wb_dem,
-            "Table_10",
-            c("B", "C"),
-            "right",
-            "#,##0")
-
-#### copresc matrix data
-# write data to sheet
-write_sheet(
-  wb_dem,
-  "Table_11",
-  paste0(
-    "Table 11: Dependency Forming Medicines - England 2015/16 to ",
-    config$fy,
-    " - Monthly patients by combination of drugs recieved for those recieving 2 drug categories"
-  ),
-  c(
-    "1. Field definitions can be found on the 'Metadata' tab.",
-    "2. The patient counts shown in these statistics should only be analysed at the level at which they are presented. Adding together any patient counts is likely to result in an overestimate of the number of patients."
-  ),
-  coprescribing_matrix_data,
-  14
-)
-
-#left align columns A to C
-format_data(wb_dem,
-            "Table_11",
-            c("A", "B"),
-            "left",
-            "")
-
-#right align columns D and E and round to whole numbers with thousand separator
-format_data(wb_dem,
-            "Table_11",
-            c("C"),
-            "right",
-            "#,##0")
-
-# build cover sheet
-accessibleTables::makeCoverSheet(
-  paste0("Dependency Forming Medicines - England 2015/16 - ", config$fy),
-  "Patient Demographics",
-  "Publication date: 7 September 2023",
-  wb_dem,
-  sheetNames_dem,
-  c(
-    "Metadata",
-    "Patient Identification Rates",
-    "Table 1: Total Items",
-    "Table 2: Gender",
-    "Table 3: Gender by category",
-    "Table 4: Age band",
-    "Table 5: Age band by category",
-    "Table 6: Age band and gender",
-    "Table 7: Age band and gender by category",
-    "Table 8: Indices of Deprivation",
-    "Table 9: Indices of Deprivation by category",
-    "Table 10: Coprescribing",
-    "Table 11: Coprescribing Combinations"
-  ),
-  c("Metadata", sheetNames_dem)
-)
+# 12. Create charts/tables and data ----------------------------------------
 
 
-#save file into outputs folder
-openxlsx::saveWorkbook(wb_dem,
-                       "outputs/dfm_2022_2023_patient_demographics_v001.xlsx",
-                       overwrite = TRUE)
-
-
-# 6. Create charts/tables and data ----------------------------------------
-
-table_1_data <- patient_identification |>
+## Table 1 -----------------------------------------------------------------
+table_1_data <- patient_identification_fy |>
   filter(`Drug Category` != "ANTIDEPRESSANTS") |>
-  rename_with( ~ gsub(" ", "_", toupper(gsub(
+  mutate(`Drug Category` = str_to_title(`Drug Category`)) |>
+  rename_with(~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything())
 
@@ -1146,17 +730,10 @@ table_1 <- patient_identification_dt |>
                                      TRUE ~ `Drug Category`)) |>
   mutate(across(where(is.numeric), round, 2)) |>
   mutate(across(where(is.numeric), format, nsmall = 2)) |>
-  mutate(across(contains("20"), ~ paste0(.x, "%"))) |>
-  DT::datatable(rownames = FALSE,
-                options = list(dom = "t",
-                               columnDefs = list(
-                                 list(orderable = FALSE,
-                                      targets = "_all"),
-                                 list(className = "dt-left", targets = 0:0),
-                                 list(className = "dt-right", targets = 1:5)
-                               )))
+  mutate(across(contains("20"), ~ paste0(.x, "%")))
 
-figure_1_data <- national_data |>
+## Figure 1 / Table 2 -----------------------------------------------------------------
+figure_1_raw <- national_data_fy |>
   group_by(`Financial Year`) |>
   summarise(
     `Prescription items` = sum(`Total Items`),
@@ -1164,13 +741,20 @@ figure_1_data <- national_data |>
   ) |>
   pivot_longer(
     cols = c(`Prescription items`, `Identified patients`),
-    names_to = "measure",
-    values_to = "value"
-  ) |>
-  rename_with( ~ gsub(" ", "_", toupper(gsub(
+    names_to = "Measure",
+    values_to = "Value"
+  )
+
+table_2 <- figure_1_raw |>
+  arrange(Measure) |>
+  mutate(Value = format(Value, big.mark = ",")) |>
+  pivot_wider(names_from = c("Measure"),
+              values_from = c("Value"))
+
+figure_1_data <- figure_1_raw |>
+  rename_with(~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything())
-
 
 figure_1 <- group_chart_hc(
   data = figure_1_data,
@@ -1179,23 +763,51 @@ figure_1 <- group_chart_hc(
   group = MEASURE,
   type = "line",
   xLab = "Financial year",
-  yLab = "Number of prescription items/identified patients",
+  yLab = "Number of identified patients / prescription items",
   title = ""
-  
+) |>
+  hc_subtitle(text = "M = Millions",
+              align = "left") |>
+  highcharter::hc_plotOptions(series = list(enableMouseTracking = FALSE))
+
+# adjust figure 1 datalabels to match scale (M)
+figure_1$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
+  "function formatCurrency() {
+    var ynum = this.point.y/1000000;
+    var options = { maximumSignificantDigits: 3, minimumSignificantDigits: 3 };
+    return ynum.toLocaleString('en-GB', options) + 'M';
+}
+"
 )
 
-figure_2_data <- national_data |>
+figure_1$x$hc_opts$series[[2]]$dataLabels$formatter <- JS(
+  "function formatCurrency() {
+    var ynum = this.point.y/1000000;
+    var options = { maximumSignificantDigits: 3, minimumSignificantDigits: 3 };
+    return ynum.toLocaleString('en-GB', options) + 'M';
+}
+"
+)
+
+## Figure 2 / Table 3 -----------------------------------------------------------------
+figure_2_raw <- national_data_fy |>
   group_by(`Financial Year`) |>
   summarise(`Total Net Ingredient Cost (GBP)` = sum(`Total Net Ingredient Cost (GBP)`)) |>
   pivot_longer(
     cols = c(`Total Net Ingredient Cost (GBP)`),
     names_to = "measure",
     values_to = "value"
-  ) |>
-  rename_with( ~ gsub(" ", "_", toupper(gsub(
+  )
+
+table_3 <- figure_2_raw |>
+  mutate(value = format(value, big.mark = ",")) |>
+  pivot_wider(names_from = c("measure"),
+              values_from = c("value"))
+
+figure_2_data <- figure_2_raw |>
+  rename_with(~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything())
-
 
 figure_2 <- group_chart_hc(
   data = figure_2_data,
@@ -1204,12 +816,26 @@ figure_2 <- group_chart_hc(
   group = MEASURE,
   type = "line",
   xLab = "Financial year",
-  yLab = "Cost (GBP)",
+  yLab = "Total Net Ingredient Cost (GBP)",
   title = "",
   currency = TRUE
+) |>
+  hc_subtitle(text = "M = Millions",
+              align = "left") |>
+  highcharter::hc_plotOptions(series = list(enableMouseTracking = FALSE)) |>
+  hc_legend(enabled = FALSE)
+
+figure_2$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
+  "function formatCurrency() {
+    var ynum = this.point.y/1000000;
+    var options = { maximumSignificantDigits: 3, minimumSignificantDigits: 3 };
+    return '£' + ynum.toLocaleString('en-GB', options) + 'M';
+}
+"
 )
 
-figure_3_data <- category_data |>
+## Figure 3 / Table 4 -----------------------------------------------------------------
+figure_3_raw <- category_data_fy |>
   mutate(`Drug Category` = case_when(`Drug Category` == "Z-Drugs" ~ "Z-drugs",
                                      TRUE ~ `Drug Category`)) |>
   group_by(`Financial Year`, `Drug Category`) |>
@@ -1218,12 +844,18 @@ figure_3_data <- category_data |>
     cols = c(`Total Items`),
     names_to = "measure",
     values_to = "value"
-  ) |>
-  rename_with( ~ gsub(" ", "_", toupper(gsub(
+  ) 
+
+table_4 <- figure_3_raw |>
+  mutate(value = format(value, big.mark = ",")) |>
+  pivot_wider(names_from = c("measure"),
+              values_from = c("value"))
+  
+figure_3_data <- figure_3_raw |>
+  rename_with(~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything()) |>
   mutate(ROUNDED_VALUE = signif(VALUE, 3))
-
 
 figure_3 <- group_chart_hc(
   data = figure_3_data,
@@ -1239,10 +871,11 @@ figure_3 <- group_chart_hc(
   hc_tooltip(enabled = TRUE,
              shared = TRUE,
              sort = TRUE) |>
-  hc_legend(enabled = TRUE)
+  hc_subtitle(text = "M = Millions",
+              align = "left")
 
-
-figure_4_data <- population_category_data |>
+## Figure 4 / Table 5 -----------------------------------------------------------------
+figure_4_raw <- population_category_data_fy |>
   mutate(`Drug Category` = case_when(`Drug Category` == "Z-Drugs" ~ "Z-drugs",
                                      TRUE ~ `Drug Category`)) |>
   group_by(`Financial Year`, `Drug Category`) |>
@@ -1251,7 +884,14 @@ figure_4_data <- population_category_data |>
     cols = c(`Patients per 1,000 Population`),
     names_to = "measure",
     values_to = "value"
-  ) |>
+  ) 
+
+table_5 <- figure_4_raw |>
+  mutate(value = format(round(value, 1), big.mark = ",")) |>
+  pivot_wider(names_from = c("measure"),
+              values_from = c("value"))
+  
+figure_4_data <- figure_4_raw |>
   rename_with( ~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything()) |>
@@ -1274,7 +914,8 @@ figure_4 <- group_chart_hc(
              sort = TRUE) |>
   hc_legend(enabled = TRUE)
 
-figure_5_data <- category_data |>
+## Figure 5 / Table 6 -----------------------------------------------------------------
+figure_5_raw <- category_data_fy |>
   mutate(`Drug Category` = case_when(`Drug Category` == "Z-Drugs" ~ "Z-drugs",
                                      TRUE ~ `Drug Category`)) |>
   group_by(`Financial Year`, `Drug Category`) |>
@@ -1283,8 +924,15 @@ figure_5_data <- category_data |>
     cols = c(`Total Net Ingredient Cost (GBP)`),
     names_to = "measure",
     values_to = "value"
-  ) |>
-  rename_with( ~ gsub(" ", "_", toupper(gsub(
+  ) 
+
+table_6 <- figure_5_raw |>
+  mutate(value = format(round(value, 1), big.mark = ",")) |>
+  pivot_wider(names_from = c("measure"),
+              values_from = c("value"))
+
+figure_5_data <- figure_5_raw |>
+  rename_with(~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything()) |>
   na.omit() |>
@@ -1304,16 +952,26 @@ figure_5 <- group_chart_hc(
   hc_tooltip(enabled = TRUE,
              shared = TRUE,
              sort = TRUE) |>
-  hc_legend(enabled = TRUE)
+  hc_legend(enabled = TRUE)|>
+  hc_subtitle(text = "M = Millions",
+              align = "left")
 
-figure_6_data <- national_data |>
+## Figure 6 / Table 7 -----------------------------------------------------------------
+figure_6_raw <- national_data_fy |>
   filter(`Identified Patient Flag` == "Y") |>
   mutate(`Items Per Patient` = `Total Items`  / `Total Identified Patients`) |>
   select(`Financial Year`,
          `Total Items`,
          `Total Identified Patients`,
-         `Items Per Patient`) |>
-  rename_with( ~ gsub(" ", "_", toupper(gsub(
+         `Items Per Patient`)
+
+table_7 <- figure_6_raw |>
+  mutate(`Total Items` = format(`Total Items`, big.mark = ","),
+         `Total Identified Patients` = format(`Total Identified Patients`, big.mark = ","),
+         `Items Per Patient` = format(round(`Items Per Patient`,1), big.mark = ","))
+
+figure_6_data <- figure_6_raw |>
+  rename_with(~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything())
 
@@ -1325,9 +983,16 @@ figure_6 <- basic_chart_hc(
   xLab = "Financial year",
   yLab = "Prescription items per patient",
   title = ""
-)
+)|>
+  hc_yAxis(min = 0)|>
+  highcharter::hc_plotOptions(
+    series = list(
+      enableMouseTracking = FALSE
+    )
+  )
 
-figure_7_data <- gender_data |>
+## Figure 7 / Table 8 -----------------------------------------------------------------
+figure_7_raw <- gender_data_fy |>
   filter(`Patient Gender` != "Unknown") |>
   group_by(`Financial Year`, `Patient Gender`) |>
   summarise(`Total Identified Patients` =
@@ -1336,8 +1001,17 @@ figure_7_data <- gender_data |>
     cols = c(`Total Identified Patients`),
     names_to = "measure",
     values_to = "value"
-  ) |>
-  rename_with( ~ gsub(" ", "_", toupper(gsub(
+  )
+
+table_8 <- figure_7_raw |>
+  mutate(value = format(round(value, 1), big.mark = ",")) |>
+  select(-measure) |>
+  rename(
+    "Total Identified Patients" = 3
+  )
+
+figure_7_data <- figure_7_raw |>
+  rename_with(~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything()) |>
   mutate(ROUNDED_VALUE = signif(VALUE, 3))
@@ -1347,32 +1021,56 @@ figure_7 <-  group_chart_hc(
   x = FINANCIAL_YEAR,
   y = ROUNDED_VALUE,
   group = PATIENT_GENDER,
-  type = "column",
+  type = "line",
   xLab = "Financial year",
   yLab = "Number of identified patients",
   title = "",
-  dlOn = F
+  dlOn = T
 ) |>
-  hc_tooltip(enabled = T,
-             shared = T,
-             sort = T)
+  hc_subtitle(text = "M = Millions",
+              align = "left") |>
+  highcharter::hc_plotOptions(series = list(enableMouseTracking = FALSE))
 
-figure_8_data <- age_gender_data |>
+# adjust figure 1 datalabels to match scale (M)
+figure_7$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
+  "function formatCurrency() {
+    var ynum = this.point.y/1000000;
+    var options = { maximumSignificantDigits: 3, minimumSignificantDigits: 3 };
+    return ynum.toLocaleString('en-GB', options) + 'M';
+}
+"
+)
+
+figure_7$x$hc_opts$series[[2]]$dataLabels$formatter <- JS(
+  "function formatCurrency() {
+    var ynum = this.point.y/1000000;
+    var options = { maximumSignificantDigits: 3, minimumSignificantDigits: 3 };
+    return ynum.toLocaleString('en-GB', options) + 'M';
+}
+"
+)
+## Figure 8 / Table 9 -----------------------------------------------------------------
+figure_8_raw <- age_gender_data_fy |>
   select(`Financial Year`,
          `Age Band`,
          `Patient Gender`,
          `Total Identified Patients`) |>
-  filter(`Financial Year` == max(`Financial Year`)) |>
-  rename_with( ~ gsub(" ", "_", toupper(gsub(
+  filter(`Financial Year` == max(`Financial Year`))
+
+table_9 <- figure_8_raw |>
+  mutate(`Total Identified Patients` = format(`Total Identified Patients`, big.mark = ","))
+
+figure_8_data <- figure_8_raw |>
+  rename_with(~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything())
 
-
-figure_8 <-  age_gender_chart(figure_8_data,
+figure_8 <- age_gender_chart(figure_8_data,
                               labels = FALSE)
 
-figure_9_data <- imd_data |>
-  select(-`Total Items`, -`Total Net Ingredient Cost (GBP)`) |>
+## Figure 9 / Table 10 -----------------------------------------------------------------
+figure_9_raw <- imd_data_fy |>
+  select(-`Total Items`,-`Total Net Ingredient Cost (GBP)`) |>
   filter(`Financial Year` == max(`Financial Year`),
          `IMD Quintile` != "Unknown") |>
   arrange(`IMD Quintile`) |>
@@ -1380,8 +1078,15 @@ figure_9_data <- imd_data |>
     cols = c(`Total Identified Patients`),
     names_to = "measure",
     values_to = "value"
-  ) |>
-  rename_with( ~ gsub(" ", "_", toupper(gsub(
+  )
+
+table_10 <- figure_9_raw |>
+  mutate(value = format(round(value, 1), big.mark = ",")) |>
+  pivot_wider(names_from = c("measure"),
+              values_from = c("value"))
+
+figure_9_data <- figure_9_raw |>
+  rename_with(~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything())
 
@@ -1393,18 +1098,38 @@ figure_9 <- basic_chart_hc(
   xLab = "IMD quintile",
   yLab = "Number of identified patients",
   title = ""
+)|>
+  hc_subtitle(text = "K = Thousands",
+              align = "left") |>
+  highcharter::hc_plotOptions(series = list(enableMouseTracking = FALSE)) 
+
+figure_9$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
+  "function formatCurrency() {
+    var ynum = this.point.y/1000;
+    var options = { maximumSignificantDigits: 3, minimumSignificantDigits: 3 };
+    return ynum.toLocaleString('en-GB', options) + 'K';
+}
+"
 )
 
-figure_10_data <- coprescribing_data |>
-  filter(`Year Month` == max(`Year Month`),
+## Figure 10 / Table 11 -----------------------------------------------------------------
+figure_10_raw <- coprescribing_data |>
+  filter(`Year Month` == max_year_month,
          `Number of Categories` > 1) |>
   arrange(`Number of Categories`) |>
   pivot_longer(
     cols = c(`Total Identified Patients`),
     names_to = "measure",
     values_to = "value"
-  ) |>
-  rename_with( ~ gsub(" ", "_", toupper(gsub(
+  ) 
+
+table_11 <- figure_10_raw |>
+  mutate(value = format(round(value, 1), big.mark = ",")) |>
+  pivot_wider(names_from = c("measure"),
+              values_from = c("value"))
+  
+figure_10_data <- figure_10_raw |>
+  rename_with(~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything())
 
@@ -1417,22 +1142,41 @@ figure_10 <-
     xLab = "Number of Categories",
     yLab = "Number of identified patients",
     title = ""
-  )
+  )|>
+  hc_subtitle(text = "K = Thousands",
+              align = "left") |>
+  highcharter::hc_plotOptions(series = list(enableMouseTracking = FALSE))
 
-figure_11_data <- coprescribing_matrix_data |>
-  filter(`Year Month` == max(`Year Month`)) |>
+# adjust figure 1 datalabels to match scale (M)
+figure_10$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
+  "function formatCurrency() {
+    var ynum = this.point.y/1000;
+    var options = { maximumSignificantDigits: 3, minimumSignificantDigits: 3 };
+    return ynum.toLocaleString('en-GB', options) + 'K';
+}
+"
+)
+
+## Figure 11 / Table 12 -----------------------------------------------------------------
+figure_11_raw <- coprescribing_matrix_data |>
+  filter(`Year Month` == max_year_month) |>
   arrange(desc(`Total Identified Patients`)) |>
-  
   pivot_longer(
     cols = c(`Total Identified Patients`),
     names_to = "measure",
     values_to = "value"
-  ) |>
-  rename_with( ~ gsub(" ", "_", toupper(gsub(
+  ) 
+
+table_12 <- figure_11_raw |>
+  mutate(value = format(round(value, 1), big.mark = ",")) |>
+  pivot_wider(names_from = c("measure"),
+              values_from = c("value"))
+
+figure_11_data <- figure_11_raw |>
+  rename_with(~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything()) |>
   mutate(DRUG_COMBINATION = str_replace(DRUG_COMBINATION, "and ", "and <br>"))
-
 
 figure_11 <- basic_chart_hc(
   data = figure_11_data,
@@ -1443,47 +1187,48 @@ figure_11 <- basic_chart_hc(
   yLab = "Number of identified patients",
   title = ""
 ) |>
-  hc_tooltip(enabled = T,
-             shared = T,
-             sort = T) |>
-  hc_xAxis(labels = list(rotation = 45))
+  hc_xAxis(labels = list(rotation = 45))|>
+  hc_subtitle(text = "K = Thousands",
+              align = "left") |>
+  highcharter::hc_plotOptions(series = list(enableMouseTracking = FALSE))
 
+# adjust figure 1 datalabels to match scale (M)
+figure_11$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
+  "function formatCurrency() {
+    var ynum = this.point.y/1000;
+    var options = { maximumSignificantDigits: 3, minimumSignificantDigits: 3 };
+    return ynum.toLocaleString('en-GB', options) + 'K';
+}
+"
+)
 
-# 7. create markdowns -------
+# 13. create markdowns -------
 
 # narrative
 
 rmarkdown::render("dfm_annual_narrative.Rmd",
                   output_format = "html_document",
-                  output_file = "outputs/dfm_summary_narrative_2022_23_v001.html")
+                  output_file = "outputs/dfm_summary_narrative_2023_24_v001.html")
 
 rmarkdown::render("dfm_annual_narrative.Rmd",
                   output_format = "word_document",
-                  output_file = "outputs/dfm_summary_narrative_2022_23_v001.docx")
+                  output_file = "outputs/dfm_summary_narrative_2023_24_v001.docx")
 
 # user engagement
-
-rmarkdown::render("dfm_user_engagement_2223.Rmd",
-                  output_format = "html_document",
-                  output_file = "outputs/dfm_user_engagement_2022_23_v001.html")
+#
+# rmarkdown::render("dfm_user_engagement_2223.Rmd",
+#                   output_format = "html_document",
+#                   output_file = "outputs/dfm_user_engagement_2023_24_v001.html")
 
 # background
 
-rmarkdown::render(
-  "dfm-background-september-2023.Rmd",
-  output_format = "html_document",
-  output_file = "outputs/dfm_background_info_methodology_v001.html"
-)
+rmarkdown::render("dfm-background.Rmd",
+                  output_format = "html_document",
+                  output_file = "outputs/dfm_background_info_methodology_v001.html")
 
-rmarkdown::render(
-  "dfm-background-september-2023.Rmd",
-  output_format = "word_document",
-  output_file = "outputs/dfm_background_info_methodology_v001.docx"
-)
+rmarkdown::render("dfm-background.Rmd",
+                  output_format = "word_document",
+                  output_file = "outputs/dfm_background_info_methodology_v001.docx")
 
-# 8. disconnect from DWH  ---------
+# 14. disconnect from DWH  ---------
 DBI::dbDisconnect(con)
-log_print("Disconnected from DWH", hide_notes = TRUE)
-
-#close log
-logr::log_close()

@@ -30,14 +30,18 @@ age_gender_chart <- function(data,
         title = list(text = "Age group"),
         categories = categories,
         reversed = FALSE,
-        labels = list(step = 1)
+        labels = list(step = 1),
+        lineWidth = 1.5,
+        lineColor = "#768692"
       ),
       list(
         categories = categories,
         opposite = TRUE,
         reversed = FALSE,
         linkedTo = 0,
-        labels = list(step = 1)
+        labels = list(step = 1),
+        lineWidth = 1.5,
+        lineColor = "#768692"
       )
     ) |>
     highcharter::hc_tooltip(
@@ -66,7 +70,11 @@ age_gender_chart <- function(data,
         )
       )
     ) |>
-    highcharter::hc_plotOptions(series = list(stacking = 'normal')) |>
+    highcharter::hc_plotOptions(series = list(stacking = 'normal'),
+                                bar = list(
+                                  pointPadding = 0,
+                                  groupPadding = 0
+                                )) |>
     highcharter::hc_series(
       list(
         dataLabels = list(

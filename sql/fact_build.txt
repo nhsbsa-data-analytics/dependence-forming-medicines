@@ -1,23 +1,27 @@
---DROP TABLE    pfd_tdim_202307  PURGE;
-CREATE TABLE  dfm_tdim_202308  COMPRESS FOR QUERY HIGH AS
+--DROP TABLE    dfm_tdim_202407  PURGE;
+CREATE TABLE  dfm_tdim_202407  COMPRESS FOR QUERY HIGH AS
 
-WITH  tdim  as  (
+WITH tdim as (
 
 select
   year_month
   ,financial_year
-  ,count(year_month)	over(partition by	financial_year)	as	ym_count
+  ,calendar_year
+  ,financial_quarter_ext
+  ,financial_year||' Q'||financial_quarter as financial_quarter
+  ,count(year_month) over(partition by	financial_year)	as	ym_count
+  ,count(year_month) over(partition by financial_quarter_ext) as  qtr_count
 from
   dim.year_month_dim
 where 1  =  1
   and year_month  between 201504  and mgmt.pkg_public_dwh_functions.f_get_latest_period('EPACT2')
 ) 
 
-select * from tdim where ym_count = 12
+select * from tdim where qtr_count = 3
 ;
 
---DROP TABLE    dfm_org_dim_202308 PURGE;
-CREATE TABLE  dfm_org_dim_202308 COMPRESS FOR QUERY HIGH AS
+--DROP TABLE    dfm_org_dim_202407 PURGE;
+CREATE TABLE  dfm_org_dim_202407 COMPRESS FOR QUERY HIGH AS
 
 WITH
 
@@ -76,10 +80,6 @@ max_org AS  (
     ,cur_pcd.lvl_5_cur_postcode
     ,UPPER(REPLACE(ons.pcd, ' ', ''))         AS  pcd
     ,ons.lsoa11 AS  practice_lsoa_code
---    ,NVL(TO_CHAR(TO_NUMBER(ons.imd_decile)), 'Unknown')	AS	imd_decile
---		,NVL(TO_CHAR(TO_NUMBER(ons.imd_rank)), 'Unknown')	  AS	imd_rank
-    ,TO_NUMBER(ons.imd_decile)	AS	imd_decile_prac
-    ,TO_NUMBER(ons.imd_rank)	  AS	imd_rank_prac
     ,case 	when	l5.cur_area_ltst_clsd = 'Y' 	or 	l5.cur_area_team_ltst_nm	in	('ENGLISH/WELSH DUMMY DENTAL','UNIDENTIFIED DEPUTISING SERVICES','UNIDENTIFIED DOCTORS')	then	'UNKNOWN ICB'
 				else 	l5.cur_frmttd_area_team_ltst_nm	end		as	icb_name
 		,case 	when	l5.cur_area_ltst_clsd = 'Y' 	or 	l5.cur_area_team_ltst_nm	in	('ENGLISH/WELSH DUMMY DENTAL','UNIDENTIFIED DEPUTISING SERVICES','UNIDENTIFIED DOCTORS')	then	'-'
@@ -95,15 +95,15 @@ max_org AS  (
     ON  l5.lvl_5_oupdt  = cur_pcd.lvl_5_oupdt
     AND l5.lvl_5_ou     = cur_pcd.lvl_5_ou
   LEFT OUTER JOIN
-    grali.ons_nspl_may_23 ons
+    ost.ons_nspl_may_24_11cen ons
     ON  cur_pcd.lvl_5_cur_postcode  = UPPER(REPLACE(ons.pcd, ' ', ''))
 )
 
 SELECT  * FROM  org
 ;
 
-DROP TABLE    dfm_drug_dim_202308  PURGE;
-CREATE TABLE  dfm_drug_dim_202308  COMPRESS FOR QUERY HIGH AS
+--DROP TABLE    dfm_drug_dim_202407  PURGE;
+CREATE TABLE  dfm_drug_dim_202407  COMPRESS FOR QUERY HIGH AS
 
 SELECT
   cdr.year_month
@@ -131,7 +131,7 @@ SELECT
 FROM
   dim.cdr_ep_drug_bnf_dim cdr
 INNER JOIN
-  dfm_tdim_202308  tdim
+  dfm_tdim_202407  tdim
   ON  cdr.year_month  = tdim.year_month
 WHERE 1 = 1
   AND cdr.bnf_chemical_substance in (
@@ -140,127 +140,118 @@ WHERE 1 = 1
   ,'0401010T0'
   ,'0401010L0'
   ,'0401010N0'
-        ,'0401020E0'
-        ,'0401020K0'
-        ,'0401020P0'
-        ,'0401020T0'
-        ,'0401010R0'
-        ,'0401010P0'
-        ,'0401020A0'
-        ,'040702020'
-        ,'040702040'
-        ,'040702050'
-        ,'0407010F0'
-        ,'0407010N0'
-        ,'0407020A0'
-        ,'0407020AB'
-        ,'0407020AD'
-        ,'0407020AF'
-        ,'0407020AG'
-        ,'0407020AH'
-        ,'0407020B0'
-        ,'0407020C0'
-        ,'0407020D0'
-        ,'0407020G0'
-        ,'0407020H0'
-        ,'0407020K0'
-        ,'0407020L0'
-        ,'0407020M0'
-        ,'0407020P0'
-        ,'0407020Q0'
-        ,'0407020T0'
-        ,'0407020U0'
-        ,'0407020V0'
-        ,'0407020Z0'
-        ,'0401010Z0'
-        ,'0401010Y0'
-        ,'0401010W0'
-        ,'0403020Q0'
-        ,'0403020M0'
-        ,'0403020K0'
-        ,'0403040X0'
-        ,'0403010L0'
-        ,'0403010S0'
-        ,'0403040S0'
-        ,'0403010Y0'
-        ,'0403040Y0'
-        ,'0403010V0'
-        ,'0403010X0'
-        ,'0403030L0'
-        ,'0403030E0'
-        ,'0403030D0'
-        ,'0403040W0'
-        ,'0403010B0'
-        ,'0403030Q0'
-        ,'0403020H0'
-        ,'0403010J0'
-        ,'0403010F0'
-        ,'0403040R0'
-        ,'0403010T0'
-        ,'0403010C0'
-        ,'0403040T0'
-        ,'0403030P0'
-        ,'0403010N0'
-        ,'0403040AB'
-        ,'0403040F0'
-        ,'0403030Z0'
-        ,'0403040U0'
-        ,'0403010R0'
-        ,'0403030X0'
-        ,'0403040Z0')
+  ,'0401020E0'
+  ,'0401020K0'
+  ,'0401020P0'
+  ,'0401020T0'
+  ,'0401010R0'
+  ,'0401010P0'
+  ,'0401020A0'
+  ,'040702020'
+  ,'040702040'
+  ,'040702050'
+  ,'0407010F0'
+  ,'0407010N0'
+  ,'0407020A0'
+  ,'0407020AB'
+  ,'0407020AD'
+  ,'0407020AF'
+  ,'0407020AG'
+  ,'0407020AH'
+  ,'0407020B0'
+  ,'0407020C0'
+  ,'0407020D0'
+  ,'0407020G0'
+  ,'0407020H0'
+  ,'0407020K0'
+  ,'0407020L0'
+  ,'0407020M0'
+  ,'0407020P0'
+  ,'0407020Q0'
+  ,'0407020T0'
+  ,'0407020U0'
+  ,'0407020V0'
+  ,'0407020Z0'
+  ,'0401010Z0'
+  ,'0401010Y0'
+  ,'0401010W0'
+  ,'0403020Q0'
+  ,'0403020M0'
+  ,'0403020K0'
+  ,'0403040X0'
+  ,'0403010L0'
+  ,'0403010S0'
+  ,'0403040S0'
+  ,'0403010Y0'
+  ,'0403040Y0'
+  ,'0403010V0'
+  ,'0403010X0'
+  ,'0403030L0'
+  ,'0403030E0'
+  ,'0403030D0'
+  ,'0403040W0'
+  ,'0403010B0'
+  ,'0403030Q0'
+  ,'0403020H0'
+  ,'0403010J0'
+  ,'0403010F0'
+  ,'0403040R0'
+  ,'0403010T0'
+  ,'0403010C0'
+  ,'0403040T0'
+  ,'0403030P0'
+  ,'0403010N0'
+  ,'0403040AB'
+  ,'0403040F0'
+  ,'0403030Z0'
+  ,'0403040U0'
+  ,'0403010R0'
+  ,'0403030X0'
+  ,'0403040Z0')
 ;
 
-
-
-DROP TABLE    dfm_fact_202308  PURGE;
-CREATE TABLE  dfm_fact_202308  COMPRESS FOR  QUERY HIGH  AS
+--DROP TABLE    dfm_fact_202407  PURGE;
+CREATE TABLE  dfm_fact_202407  COMPRESS FOR  QUERY HIGH  AS
 
 WITH  fact  AS  (
   
  SELECT
     tdim.financial_year
+    ,tdim.calendar_year
+    ,tdim.financial_quarter
     ,fact.year_month
     ,fact.pds_dob
     ,fact.patient_lsoa_code
     ,fact.identified_patient_id
     ,fact.patient_identified
-    ,fact.pds_gender
     ,fact.eps_part_date
     ,org.region_name
     ,org.region_code
     ,org.icb_name
     ,org.icb_code
     ,drug.category
-    --,drug.gen_presentation_bnf_descr
-    --,drug.generic_bnf_code
-    --,drug.presentation_bnf_descr
-    --,drug.presentation_bnf
     ,drug.chemical_substance_bnf_descr
     ,drug.bnf_chemical_substance
     ,drug.paragraph_descr
     ,drug.bnf_paragraph
     ,drug.section_descr
     ,drug.bnf_section
-    --,drug.vmpp_uom
     ,org.practice_lsoa_code
     ,nvl(trunc((to_number(substr(tdim.financial_year,1,4)||'0930') - to_number(to_char(fact.pds_dob,'YYYYMMDD')))/10000),-1)	AS	calc_age
-    ,CASE WHEN  fact.pds_gender = 1 THEN  'Male'
-          WHEN  fact.pds_gender = 2 THEN  'Female'
-          ELSE  'Unknown' END AS  gender_descr
     ,sum(item_count)        AS  item_count
     ,sum(item_pay_dr_nic)   AS  item_pay_dr_nic
     ,sum(item_calc_pay_qty) AS  item_calc_pay_qty
   FROM
     aml.px_form_item_elem_comb_fact_av  fact
   INNER JOIN
-    dfm_tdim_202308  tdim
+    dfm_tdim_202407  tdim
     ON  fact.year_month = tdim.year_month
   INNER JOIN
-    dfm_org_dim_202308 org
+    dfm_org_dim_202407 org
     ON  fact.presc_type_prnt =  org.lvl_5_oupdt
     AND fact.presc_id_prnt   =  org.lvl_5_ou
   INNER JOIN
-    dfm_drug_dim_202308  drug
+    dfm_drug_dim_202407  drug
     ON  fact.calc_prec_drug_record_id = drug.record_id
     AND fact.year_month               = drug.year_month
   WHERE 1 = 1
@@ -276,29 +267,25 @@ WITH  fact  AS  (
     AND fact.mod_flag = 'N'
   GROUP BY
     tdim.financial_year
+    ,tdim.calendar_year
+    ,tdim.financial_quarter
     ,fact.year_month
     ,fact.pds_dob
     ,fact.patient_lsoa_code
     ,fact.identified_patient_id
     ,fact.patient_identified
-    ,fact.pds_gender
     ,fact.eps_part_date
     ,org.region_name
     ,org.region_code
     ,org.icb_name
     ,org.icb_code
     ,drug.category
-    --,drug.gen_presentation_bnf_descr
-    --,drug.generic_bnf_code
-    --,drug.presentation_bnf_descr
-    --,drug.presentation_bnf
     ,drug.chemical_substance_bnf_descr
     ,drug.bnf_chemical_substance
     ,drug.paragraph_descr
     ,drug.bnf_paragraph
     ,drug.section_descr
     ,drug.bnf_section
-    --,drug.vmpp_uom
     ,org.practice_lsoa_code
     ,nvl(trunc((to_number(substr(tdim.financial_year,1,4)||'0930') - to_number(to_char(fact.pds_dob,'YYYYMMDD')))/10000),-1)
 )
@@ -306,11 +293,61 @@ WITH  fact  AS  (
 SELECT * from fact
 ;
 
-DROP TABLE    dfm_fact_category_202308  PURGE;
-CREATE TABLE  dfm_fact_category_202308  COMPRESS FOR  QUERY HIGH  AS
+--DROP TABLE dfm_patreg_202407 PURGE;
+CREATE TABLE dfm_patreg_202407 COMPRESS FOR QUERY HIGH  AS
+with
+-- get dummy NHS numbers and their attributes
+dpr as (
+    select
+    patient_id
+    ,pds_verified
+    ,0 as pat_gender_code
+    ,'Unknown' as pat_gender
+    ,to_date('01-JAN-1901') as pat_dob
+  from
+    dim.patient_registration_av
+  where 1=1
+    and patient_id in ('5C21EC99BF6FD21D19D57DB71E8D565E37259B802934F748FCE94969D737B279',
+'84D9C4B849506B6D8F8075A9000E7E0A254BE71060EA889FAD3C88395988F4FC',
+'CE3A598687C8D2E5AA6BEDAD20E059B4A78CCA0ADAD7E563B07998D5CD226B8C',
+'D2D02EA74DE2C9FAB1D802DB969C18D409A8663A9697977BB1C98CCDD9DE4372')
+)
+-- get all non-dummy info
+,pr as (
+    select
+    patient_id
+    ,pds_verified
+    ,pat_gender_code
+    ,pat_gender
+    ,pat_dob
+  from
+    dim.patient_registration_av
+    where 1=1
+    and patient_id not in ('5C21EC99BF6FD21D19D57DB71E8D565E37259B802934F748FCE94969D737B279',
+'84D9C4B849506B6D8F8075A9000E7E0A254BE71060EA889FAD3C88395988F4FC',
+'CE3A598687C8D2E5AA6BEDAD20E059B4A78CCA0ADAD7E563B07998D5CD226B8C',
+'D2D02EA74DE2C9FAB1D802DB969C18D409A8663A9697977BB1C98CCDD9DE4372')
+)
+--union data together to give one dimension
+,pat as (
+    select
+    *
+  from
+    dpr
+  union all
+  select
+    *
+  from
+    pr
+)
+
+select * from pat;
+
+--DROP TABLE    dfm_fact_category_202407  PURGE;
+CREATE TABLE  dfm_fact_category_202407  COMPRESS FOR  QUERY HIGH  AS
 
 WITH  fact  AS  (
-select * from dfm_fact_202308
+select * from dfm_fact_202407
 ),
 
 lsoa AS  (
@@ -328,35 +365,41 @@ lsoa AS  (
   FROM
     lsoa
   LEFT OUTER JOIN
-    mawil.imd_2019  imd
+    ost.imd_2019  imd
     ON  lsoa.lsoa_code  = imd.lsoa11
 )
 
 
 SELECT
-    financial_year
-    ,year_month
-    ,pds_dob
-    ,identified_patient_id
-    ,patient_identified
-    ,region_name
-    ,region_code
-    ,icb_name
-    ,icb_code
-    ,category
-    ,section_descr
-    ,bnf_section
-    ,paragraph_descr
-    ,bnf_paragraph
-    ,chemical_substance_bnf_descr
-    ,bnf_chemical_substance
-    ,pds_gender
-    ,calc_age
-    ,gender_descr
-    ,imd_decile
-    ,item_count
-    ,item_pay_dr_nic
-    ,item_calc_pay_qty
+    imd.financial_year
+    ,imd.calendar_year
+    ,imd.financial_quarter
+    ,imd.year_month
+    ,imd.pds_dob
+    ,imd.identified_patient_id
+    ,imd.patient_identified
+    ,imd.region_name
+    ,imd.region_code
+    ,imd.icb_name
+    ,imd.icb_code
+    ,imd.category
+    ,imd.section_descr
+    ,imd.bnf_section
+    ,imd.paragraph_descr
+    ,imd.bnf_paragraph
+    ,imd.chemical_substance_bnf_descr
+    ,imd.bnf_chemical_substance
+    ,imd.calc_age
+    ,dems.pat_gender
+    ,imd.imd_decile
+    ,imd.item_count
+    ,imd.item_pay_dr_nic
+    ,imd.item_calc_pay_qty
 FROM
   imd
+LEFT JOIN 
+    dfm_patreg_202407 dems
+    on imd.identified_patient_id = dems.patient_id
     ;
+
+GRANT SELECT ON dfm_fact_category_202407  TO grali, kigra, mawil, grpla, asemp;  
