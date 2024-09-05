@@ -1,6 +1,9 @@
-### Pipeline to run PCA annual publication
+### Pipeline to run dfm annual publication
 # clear environment
 rm(list = ls())
+
+## NOTE: Need to automate this?
+max_year_month <- 202403
 
 # source functions
 # get all .R files in the functions sub-folder and sub-folders of this
@@ -264,9 +267,11 @@ population_data_fy <- national_data_fy |>
   filter(`Financial Year` <= config$fy)
 
 patient_identification_fy <-
-  capture_rate_extract_fy(con = con,
-                          schema = config$sql_schema,
-                          table = config$sql_table_name) |>
+  capture_rate_extract_fy(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
   filter(`Financial Year` <= config$fy)
 
 
@@ -490,9 +495,11 @@ population_data_cy <- national_data_cy |>
          `Calendar Year` >= "2016")
 
 patient_identification_cy <-
-  capture_rate_extract_cy(con = con,
-                          schema = config$sql_schema,
-                          table = config$sql_table_name) |>
+  capture_rate_extract_cy(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  ) |>
   filter(`Calendar Year` <= config$cy,
          `Calendar Year` >= "2016")
 
@@ -549,7 +556,7 @@ age_gender_data_quarterly <-
     schema = config$sql_schema,
     table = config$sql_table_name
   ) |>
-  apply_sdc(suppress_column = "Total Identified Patients") 
+  apply_sdc(suppress_column = "Total Identified Patients")
 
 ageband_data_quarterly <-
   ageband_extract_quarterly(
@@ -624,16 +631,18 @@ national_data_quarterly <-
   apply_sdc(suppress_column = "Total Identified Patients")
 
 patient_identification_quarterly <-
-  capture_rate_extract_quarterly(con = con,
-                          schema = config$sql_schema,
-                          table = config$sql_table_name) 
+  capture_rate_extract_quarterly(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  )
 
 paragraph_data_quarterly <- paragraph_extract_quarterly(
   con = con,
   schema = config$sql_schema,
   table = config$sql_table_name
 )  |>
-  apply_sdc(suppress_column = "Total Identified Patients") 
+  apply_sdc(suppress_column = "Total Identified Patients")
 
 chem_sub_data_quarterly <- chem_sub_extract_quarterly(
   con = con,
@@ -677,14 +686,18 @@ paragraph_data_monthly <- paragraph_extract_monthly(
 
 # 7. Extract co-prescribing data required ------------------------------------------------
 coprescribing_data <-
-  coprescribing_extract(con = con,
-                        schema = config$sql_schema,
-                        table = config$sql_table_name)
+  coprescribing_extract(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  )
 
 coprescribing_matrix_data <-
-  coprescribing_matrix_extract(con = con,
-                               schema = config$sql_schema,
-                               table = config$sql_table_name)
+  coprescribing_matrix_extract(
+    con = con,
+    schema = config$sql_schema,
+    table = config$sql_table_name
+  )
 
 # 8. Build fy Excel tables ------------------------------------------------------
 source(file.path("excel_functions", "costs_items_fy.R"))
@@ -700,9 +713,12 @@ source(file.path("excel_functions", "co_prescribing.R"))
 
 # 12. Create charts/tables and data ----------------------------------------
 
-table_1_data <- patient_identification |>
+
+## Table 1 -----------------------------------------------------------------
+table_1_data <- patient_identification_fy |>
   filter(`Drug Category` != "ANTIDEPRESSANTS") |>
-  rename_with( ~ gsub(" ", "_", toupper(gsub(
+  mutate(`Drug Category` = str_to_title(`Drug Category`)) |>
+  rename_with(~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything())
 
@@ -714,17 +730,10 @@ table_1 <- patient_identification_dt |>
                                      TRUE ~ `Drug Category`)) |>
   mutate(across(where(is.numeric), round, 2)) |>
   mutate(across(where(is.numeric), format, nsmall = 2)) |>
-  mutate(across(contains("20"), ~ paste0(.x, "%"))) |>
-  DT::datatable(rownames = FALSE,
-                options = list(dom = "t",
-                               columnDefs = list(
-                                 list(orderable = FALSE,
-                                      targets = "_all"),
-                                 list(className = "dt-left", targets = 0:0),
-                                 list(className = "dt-right", targets = 1:5)
-                               )))
+  mutate(across(contains("20"), ~ paste0(.x, "%")))
 
-figure_1_data <- national_data |>
+## Figure 1 / Table 2 -----------------------------------------------------------------
+figure_1_raw <- national_data_fy |>
   group_by(`Financial Year`) |>
   summarise(
     `Prescription items` = sum(`Total Items`),
@@ -732,13 +741,20 @@ figure_1_data <- national_data |>
   ) |>
   pivot_longer(
     cols = c(`Prescription items`, `Identified patients`),
-    names_to = "measure",
-    values_to = "value"
-  ) |>
-  rename_with( ~ gsub(" ", "_", toupper(gsub(
+    names_to = "Measure",
+    values_to = "Value"
+  )
+
+table_2 <- figure_1_raw |>
+  arrange(Measure) |>
+  mutate(Value = format(Value, big.mark = ",")) |>
+  pivot_wider(names_from = c("Measure"),
+              values_from = c("Value"))
+
+figure_1_data <- figure_1_raw |>
+  rename_with(~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything())
-
 
 figure_1 <- group_chart_hc(
   data = figure_1_data,
@@ -747,23 +763,51 @@ figure_1 <- group_chart_hc(
   group = MEASURE,
   type = "line",
   xLab = "Financial year",
-  yLab = "Number of prescription items/identified patients",
+  yLab = "Number of identified patients / prescription items",
   title = ""
-  
+) |>
+  hc_subtitle(text = "M = Millions",
+              align = "left") |>
+  highcharter::hc_plotOptions(series = list(enableMouseTracking = FALSE))
+
+# adjust figure 1 datalabels to match scale (M)
+figure_1$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
+  "function formatCurrency() {
+    var ynum = this.point.y/1000000;
+    var options = { maximumSignificantDigits: 3, minimumSignificantDigits: 3 };
+    return ynum.toLocaleString('en-GB', options) + 'M';
+}
+"
 )
 
-figure_2_data <- national_data |>
+figure_1$x$hc_opts$series[[2]]$dataLabels$formatter <- JS(
+  "function formatCurrency() {
+    var ynum = this.point.y/1000000;
+    var options = { maximumSignificantDigits: 3, minimumSignificantDigits: 3 };
+    return ynum.toLocaleString('en-GB', options) + 'M';
+}
+"
+)
+
+## Figure 2 / Table 3 -----------------------------------------------------------------
+figure_2_raw <- national_data_fy |>
   group_by(`Financial Year`) |>
   summarise(`Total Net Ingredient Cost (GBP)` = sum(`Total Net Ingredient Cost (GBP)`)) |>
   pivot_longer(
     cols = c(`Total Net Ingredient Cost (GBP)`),
     names_to = "measure",
     values_to = "value"
-  ) |>
-  rename_with( ~ gsub(" ", "_", toupper(gsub(
+  )
+
+table_3 <- figure_2_raw |>
+  mutate(value = format(value, big.mark = ",")) |>
+  pivot_wider(names_from = c("measure"),
+              values_from = c("value"))
+
+figure_2_data <- figure_2_raw |>
+  rename_with(~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything())
-
 
 figure_2 <- group_chart_hc(
   data = figure_2_data,
@@ -772,12 +816,26 @@ figure_2 <- group_chart_hc(
   group = MEASURE,
   type = "line",
   xLab = "Financial year",
-  yLab = "Cost (GBP)",
+  yLab = "Total Net Ingredient Cost (GBP)",
   title = "",
   currency = TRUE
+) |>
+  hc_subtitle(text = "M = Millions",
+              align = "left") |>
+  highcharter::hc_plotOptions(series = list(enableMouseTracking = FALSE)) |>
+  hc_legend(enabled = FALSE)
+
+figure_2$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
+  "function formatCurrency() {
+    var ynum = this.point.y/1000000;
+    var options = { maximumSignificantDigits: 3, minimumSignificantDigits: 3 };
+    return '£' + ynum.toLocaleString('en-GB', options) + 'M';
+}
+"
 )
 
-figure_3_data <- category_data |>
+## Figure 3 / Table 4 -----------------------------------------------------------------
+figure_3_raw <- category_data_fy |>
   mutate(`Drug Category` = case_when(`Drug Category` == "Z-Drugs" ~ "Z-drugs",
                                      TRUE ~ `Drug Category`)) |>
   group_by(`Financial Year`, `Drug Category`) |>
@@ -786,12 +844,18 @@ figure_3_data <- category_data |>
     cols = c(`Total Items`),
     names_to = "measure",
     values_to = "value"
-  ) |>
-  rename_with( ~ gsub(" ", "_", toupper(gsub(
+  ) 
+
+table_4 <- figure_3_raw |>
+  mutate(value = format(value, big.mark = ",")) |>
+  pivot_wider(names_from = c("measure"),
+              values_from = c("value"))
+  
+figure_3_data <- figure_3_raw |>
+  rename_with(~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything()) |>
   mutate(ROUNDED_VALUE = signif(VALUE, 3))
-
 
 figure_3 <- group_chart_hc(
   data = figure_3_data,
@@ -807,10 +871,11 @@ figure_3 <- group_chart_hc(
   hc_tooltip(enabled = TRUE,
              shared = TRUE,
              sort = TRUE) |>
-  hc_legend(enabled = TRUE)
+  hc_subtitle(text = "M = Millions",
+              align = "left")
 
-
-figure_4_data <- population_category_data |>
+## Figure 4 / Table 5 -----------------------------------------------------------------
+figure_4_raw <- population_category_data_fy |>
   mutate(`Drug Category` = case_when(`Drug Category` == "Z-Drugs" ~ "Z-drugs",
                                      TRUE ~ `Drug Category`)) |>
   group_by(`Financial Year`, `Drug Category`) |>
@@ -819,7 +884,14 @@ figure_4_data <- population_category_data |>
     cols = c(`Patients per 1,000 Population`),
     names_to = "measure",
     values_to = "value"
-  ) |>
+  ) 
+
+table_5 <- figure_4_raw |>
+  mutate(value = format(round(value, 1), big.mark = ",")) |>
+  pivot_wider(names_from = c("measure"),
+              values_from = c("value"))
+  
+figure_4_data <- figure_4_raw |>
   rename_with( ~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything()) |>
@@ -842,7 +914,8 @@ figure_4 <- group_chart_hc(
              sort = TRUE) |>
   hc_legend(enabled = TRUE)
 
-figure_5_data <- category_data |>
+## Figure 5 / Table 6 -----------------------------------------------------------------
+figure_5_raw <- category_data_fy |>
   mutate(`Drug Category` = case_when(`Drug Category` == "Z-Drugs" ~ "Z-drugs",
                                      TRUE ~ `Drug Category`)) |>
   group_by(`Financial Year`, `Drug Category`) |>
@@ -851,8 +924,15 @@ figure_5_data <- category_data |>
     cols = c(`Total Net Ingredient Cost (GBP)`),
     names_to = "measure",
     values_to = "value"
-  ) |>
-  rename_with( ~ gsub(" ", "_", toupper(gsub(
+  ) 
+
+table_6 <- figure_5_raw |>
+  mutate(value = format(round(value, 1), big.mark = ",")) |>
+  pivot_wider(names_from = c("measure"),
+              values_from = c("value"))
+
+figure_5_data <- figure_5_raw |>
+  rename_with(~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything()) |>
   na.omit() |>
@@ -872,16 +952,26 @@ figure_5 <- group_chart_hc(
   hc_tooltip(enabled = TRUE,
              shared = TRUE,
              sort = TRUE) |>
-  hc_legend(enabled = TRUE)
+  hc_legend(enabled = TRUE)|>
+  hc_subtitle(text = "M = Millions",
+              align = "left")
 
-figure_6_data <- national_data |>
+## Figure 6 / Table 7 -----------------------------------------------------------------
+figure_6_raw <- national_data_fy |>
   filter(`Identified Patient Flag` == "Y") |>
   mutate(`Items Per Patient` = `Total Items`  / `Total Identified Patients`) |>
   select(`Financial Year`,
          `Total Items`,
          `Total Identified Patients`,
-         `Items Per Patient`) |>
-  rename_with( ~ gsub(" ", "_", toupper(gsub(
+         `Items Per Patient`)
+
+table_7 <- figure_6_raw |>
+  mutate(`Total Items` = format(`Total Items`, big.mark = ","),
+         `Total Identified Patients` = format(`Total Identified Patients`, big.mark = ","),
+         `Items Per Patient` = format(round(`Items Per Patient`,1), big.mark = ","))
+
+figure_6_data <- figure_6_raw |>
+  rename_with(~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything())
 
@@ -893,9 +983,16 @@ figure_6 <- basic_chart_hc(
   xLab = "Financial year",
   yLab = "Prescription items per patient",
   title = ""
-)
+)|>
+  hc_yAxis(min = 0)|>
+  highcharter::hc_plotOptions(
+    series = list(
+      enableMouseTracking = FALSE
+    )
+  )
 
-figure_7_data <- gender_data |>
+## Figure 7 / Table 8 -----------------------------------------------------------------
+figure_7_raw <- gender_data_fy |>
   filter(`Patient Gender` != "Unknown") |>
   group_by(`Financial Year`, `Patient Gender`) |>
   summarise(`Total Identified Patients` =
@@ -904,8 +1001,17 @@ figure_7_data <- gender_data |>
     cols = c(`Total Identified Patients`),
     names_to = "measure",
     values_to = "value"
-  ) |>
-  rename_with( ~ gsub(" ", "_", toupper(gsub(
+  )
+
+table_8 <- figure_7_raw |>
+  mutate(value = format(round(value, 1), big.mark = ",")) |>
+  select(-measure) |>
+  rename(
+    "Total Identified Patients" = 3
+  )
+
+figure_7_data <- figure_7_raw |>
+  rename_with(~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything()) |>
   mutate(ROUNDED_VALUE = signif(VALUE, 3))
@@ -915,32 +1021,56 @@ figure_7 <-  group_chart_hc(
   x = FINANCIAL_YEAR,
   y = ROUNDED_VALUE,
   group = PATIENT_GENDER,
-  type = "column",
+  type = "line",
   xLab = "Financial year",
   yLab = "Number of identified patients",
   title = "",
-  dlOn = F
+  dlOn = T
 ) |>
-  hc_tooltip(enabled = T,
-             shared = T,
-             sort = T)
+  hc_subtitle(text = "M = Millions",
+              align = "left") |>
+  highcharter::hc_plotOptions(series = list(enableMouseTracking = FALSE))
 
-figure_8_data <- age_gender_data |>
+# adjust figure 1 datalabels to match scale (M)
+figure_7$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
+  "function formatCurrency() {
+    var ynum = this.point.y/1000000;
+    var options = { maximumSignificantDigits: 3, minimumSignificantDigits: 3 };
+    return ynum.toLocaleString('en-GB', options) + 'M';
+}
+"
+)
+
+figure_7$x$hc_opts$series[[2]]$dataLabels$formatter <- JS(
+  "function formatCurrency() {
+    var ynum = this.point.y/1000000;
+    var options = { maximumSignificantDigits: 3, minimumSignificantDigits: 3 };
+    return ynum.toLocaleString('en-GB', options) + 'M';
+}
+"
+)
+## Figure 8 / Table 9 -----------------------------------------------------------------
+figure_8_raw <- age_gender_data_fy |>
   select(`Financial Year`,
          `Age Band`,
          `Patient Gender`,
          `Total Identified Patients`) |>
-  filter(`Financial Year` == max(`Financial Year`)) |>
-  rename_with( ~ gsub(" ", "_", toupper(gsub(
+  filter(`Financial Year` == max(`Financial Year`))
+
+table_9 <- figure_8_raw |>
+  mutate(`Total Identified Patients` = format(`Total Identified Patients`, big.mark = ","))
+
+figure_8_data <- figure_8_raw |>
+  rename_with(~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything())
 
-
-figure_8 <-  age_gender_chart(figure_8_data,
+figure_8 <- age_gender_chart(figure_8_data,
                               labels = FALSE)
 
-figure_9_data <- imd_data |>
-  select(-`Total Items`, -`Total Net Ingredient Cost (GBP)`) |>
+## Figure 9 / Table 10 -----------------------------------------------------------------
+figure_9_raw <- imd_data_fy |>
+  select(-`Total Items`,-`Total Net Ingredient Cost (GBP)`) |>
   filter(`Financial Year` == max(`Financial Year`),
          `IMD Quintile` != "Unknown") |>
   arrange(`IMD Quintile`) |>
@@ -948,8 +1078,15 @@ figure_9_data <- imd_data |>
     cols = c(`Total Identified Patients`),
     names_to = "measure",
     values_to = "value"
-  ) |>
-  rename_with( ~ gsub(" ", "_", toupper(gsub(
+  )
+
+table_10 <- figure_9_raw |>
+  mutate(value = format(round(value, 1), big.mark = ",")) |>
+  pivot_wider(names_from = c("measure"),
+              values_from = c("value"))
+
+figure_9_data <- figure_9_raw |>
+  rename_with(~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything())
 
@@ -961,18 +1098,38 @@ figure_9 <- basic_chart_hc(
   xLab = "IMD quintile",
   yLab = "Number of identified patients",
   title = ""
+)|>
+  hc_subtitle(text = "K = Thousands",
+              align = "left") |>
+  highcharter::hc_plotOptions(series = list(enableMouseTracking = FALSE)) 
+
+figure_9$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
+  "function formatCurrency() {
+    var ynum = this.point.y/1000;
+    var options = { maximumSignificantDigits: 3, minimumSignificantDigits: 3 };
+    return ynum.toLocaleString('en-GB', options) + 'K';
+}
+"
 )
 
-figure_10_data <- coprescribing_data |>
-  filter(`Year Month` == max(`Year Month`),
+## Figure 10 / Table 11 -----------------------------------------------------------------
+figure_10_raw <- coprescribing_data |>
+  filter(`Year Month` == max_year_month,
          `Number of Categories` > 1) |>
   arrange(`Number of Categories`) |>
   pivot_longer(
     cols = c(`Total Identified Patients`),
     names_to = "measure",
     values_to = "value"
-  ) |>
-  rename_with( ~ gsub(" ", "_", toupper(gsub(
+  ) 
+
+table_11 <- figure_10_raw |>
+  mutate(value = format(round(value, 1), big.mark = ",")) |>
+  pivot_wider(names_from = c("measure"),
+              values_from = c("value"))
+  
+figure_10_data <- figure_10_raw |>
+  rename_with(~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything())
 
@@ -985,22 +1142,41 @@ figure_10 <-
     xLab = "Number of Categories",
     yLab = "Number of identified patients",
     title = ""
-  )
+  )|>
+  hc_subtitle(text = "K = Thousands",
+              align = "left") |>
+  highcharter::hc_plotOptions(series = list(enableMouseTracking = FALSE))
 
-figure_11_data <- coprescribing_matrix_data |>
-  filter(`Year Month` == max(`Year Month`)) |>
+# adjust figure 1 datalabels to match scale (M)
+figure_10$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
+  "function formatCurrency() {
+    var ynum = this.point.y/1000;
+    var options = { maximumSignificantDigits: 3, minimumSignificantDigits: 3 };
+    return ynum.toLocaleString('en-GB', options) + 'K';
+}
+"
+)
+
+## Figure 11 / Table 12 -----------------------------------------------------------------
+figure_11_raw <- coprescribing_matrix_data |>
+  filter(`Year Month` == max_year_month) |>
   arrange(desc(`Total Identified Patients`)) |>
-  
   pivot_longer(
     cols = c(`Total Identified Patients`),
     names_to = "measure",
     values_to = "value"
-  ) |>
-  rename_with( ~ gsub(" ", "_", toupper(gsub(
+  ) 
+
+table_12 <- figure_11_raw |>
+  mutate(value = format(round(value, 1), big.mark = ",")) |>
+  pivot_wider(names_from = c("measure"),
+              values_from = c("value"))
+
+figure_11_data <- figure_11_raw |>
+  rename_with(~ gsub(" ", "_", toupper(gsub(
     "[^[:alnum:] ]", "", .
   ))), everything()) |>
   mutate(DRUG_COMBINATION = str_replace(DRUG_COMBINATION, "and ", "and <br>"))
-
 
 figure_11 <- basic_chart_hc(
   data = figure_11_data,
@@ -1011,11 +1187,20 @@ figure_11 <- basic_chart_hc(
   yLab = "Number of identified patients",
   title = ""
 ) |>
-  hc_tooltip(enabled = T,
-             shared = T,
-             sort = T) |>
-  hc_xAxis(labels = list(rotation = 45))
+  hc_xAxis(labels = list(rotation = 45))|>
+  hc_subtitle(text = "K = Thousands",
+              align = "left") |>
+  highcharter::hc_plotOptions(series = list(enableMouseTracking = FALSE))
 
+# adjust figure 1 datalabels to match scale (M)
+figure_11$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
+  "function formatCurrency() {
+    var ynum = this.point.y/1000;
+    var options = { maximumSignificantDigits: 3, minimumSignificantDigits: 3 };
+    return ynum.toLocaleString('en-GB', options) + 'K';
+}
+"
+)
 
 # 13. create markdowns -------
 
